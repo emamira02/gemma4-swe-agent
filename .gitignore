@@ -1,0 +1,10 @@
+# Competition data must never be redistributed (Kaggle rules 2.4.b)
+data/
+*.parquet
+*.jsonl
+# Large / secret artifacts
+*.safetensors
+kaggle.json
+.env
+__pycache__/
+*.zip
