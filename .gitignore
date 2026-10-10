@@ -9,3 +9,4 @@ kaggle.json
 __pycache__/
 *.zip
 third_party/
+results/private/

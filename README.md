@@ -37,6 +37,16 @@ Entry for **Google – The Gemma 4 Developer Agent Competition** (Kaggle, host G
 | E4 | + test-driven repair sub-agent | pass rate, retries, time/issue |
 | E5 (optional) | LoRA on tool-use traces | only if E0–E4 plateau and GPU budget allows |
 
+
+## Localization study (paper track) — reproducible pipeline
+```
+bash scripts/reproduce.sh      # tests -> data -> run -> sensitivity -> audit -> report
+```
+- `locstudy/` package: `data` (tasks, graphs, content manifest) · `gold` (strict labels from patches) · `signals` (identifier, BM25, embedding, graph, RRF) · `metrics` (Recall@k, MRR, reading-budget, bootstrap CIs, paired bootstrap, exact McNemar, Holm) · `study` (end-to-end + sensitivity) · `audit` (label quality) · `report` (tables, figures, template filling).
+- `paper/PAPER.template.md` holds the text; every number is a `{{source:path|fmt}}` slot filled from `results/*.json`, and a missing path fails the build — no hand-typed numbers.
+- `results/summary.json` records data hashes, git commit, library versions and parameters (provenance). Per-task rows stay in `results/private/` (gitignored).
+- Parameters pre-registered in `locstudy.study.Params`; robustness in `results/sensitivity.json`.
+
 ## Status
 - [x] Joined both competitions (rules accepted 2026-10-10)
 - [x] Read HARNESS_README (notes above)

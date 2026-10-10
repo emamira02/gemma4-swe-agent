@@ -1,0 +1,18 @@
+{
+ "counts": {
+  "unmapped": 235,
+  "mapped": 425,
+  "header_checked": 419,
+  "header_agree": 262
+ },
+ "kinds": {
+  "disagree: header names the preceding top-level def or class (git funcname heuristic)": 154,
+  "unmapped: edit: imports or comments": 62,
+  "unmapped: edit: module-level code outside any symbol": 57,
+  "unmapped: pure addition: other module-level code": 52,
+  "unmapped: pure addition: imports, comments or decorators": 31,
+  "unmapped: pure addition: new def or class": 17,
+  "unmapped: edit: lines not matched (whitespace or duplication)": 16,
+  "disagree: header names a symbol inside the hunk (git context = previous def)": 3
+ }
+}
