@@ -8,3 +8,4 @@ kaggle.json
 .env
 __pycache__/
 *.zip
+third_party/
