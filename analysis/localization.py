@@ -5,11 +5,12 @@ changed lines), then rank all graph nodes with each signal using ONLY the issue 
 Recall@k / MRR at symbol and file level. No GPU, no LLM: pure measurement of retrieval signals.
 
 Signals
-  ident  identifiers extracted from the issue, resolved like the harness (exact -> suffix -> case-insens. -> substring)
-  bm25   BM25 over node id + source text, query = issue text
-  emb    cosine neighbours (pre-computed node embeddings) of the top anchors (ident, else bm25)
-  graph  1-hop call-graph neighbours of the top anchors
-  rrf    reciprocal-rank fusion of the four lists
+  ident   identifiers extracted from the issue, resolved like the harness (exact -> suffix -> case-insens. -> substring)
+  ident+  ident plus traceback frames, imports and dotted calls inside code blocks
+  bm25    BM25 over node id + source text, query = issue text
+  emb     cosine neighbours (pre-computed node embeddings) of the top anchors (ident, else bm25)
+  graph   1-hop call-graph neighbours of the top anchors;  graph2: 2 hops from ident+ anchors
+  rrf     reciprocal-rank fusion of ident, bm25, emb, graph;  rrf+: of ident+, bm25, emb(ident+), graph2
 Run: python analysis/localization.py   (expects data/ from scripts/fetch_data.sh)
 """
 from __future__ import annotations
@@ -63,8 +64,6 @@ class BM25:
 
 
 # ---------------- gold symbols from the reference patch ----------------
-_HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
-
 
 def parse_patch(patch: str) -> dict[str, list[dict]]:
     files, cur, hunk = {}, None, None
@@ -121,6 +120,8 @@ def node_file(nid: str, file_modules: dict[str, str]) -> str | None:
 
 
 def gold_symbols(files: dict, nodes: dict[str, str]) -> tuple[set[str], set[str]]:
+    """Per hunk, the most specific node whose source contains the removed lines (or, for pure additions,
+    at least two context lines). Test, docs and docs_src files are excluded."""
     gold, gold_files = set(), set()
     for path, hunks in files.items():
         if not is_source(path):
@@ -140,8 +141,7 @@ def gold_symbols(files: dict, nodes: dict[str, str]) -> tuple[set[str], set[str]
                     hits.append((r, c, -len(txt), nid))
             if hits:
                 hits.sort(reverse=True)
-                top = hits[0]
-                gold.add(top[3])
+                gold.add(hits[0][3])
     return gold, gold_files
 
 
@@ -149,6 +149,10 @@ def gold_symbols(files: dict, nodes: dict[str, str]) -> tuple[set[str], set[str]
 _IDENT = [re.compile(p) for p in (r"`([^`\n]{2,80})`", r"\b([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+)\b",
                                   r"\b([A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+)\b", r"\b([a-z][a-z0-9]*_[a-z0-9_]+)\b",
                                   r"\b([A-Za-z_]\w{2,})\(")]
+_TRACE = re.compile(r'File "([^"]+?\.py)", line \d+, in (\w+)')
+_CODEBLOCK = re.compile(r"```.*?```", re.S)
+_IMPORT = re.compile(r"\bfrom\s+([\w.]+)\s+import\s+\(?([\w, \n]+)\)?")
+_CALL = re.compile(r"\b([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+)\s*\(")
 
 
 def extract_identifiers(text: str) -> list[str]:
@@ -161,6 +165,26 @@ def extract_identifiers(text: str) -> list[str]:
                 if len(t) >= 3 and t.lower() not in STOP and not t.isdigit():
                     seen[t] += 1
     return [t for t, _ in seen.most_common()]
+
+
+def extract_identifiers_plus(text: str) -> list[str]:
+    """Baseline extraction + traceback frames, imports and dotted calls inside code blocks (weighted)."""
+    score = Counter()
+    for path, fn in _TRACE.findall(text):
+        score[fn] += 3
+        mods = module_candidates(path.replace("\\", "/").split("site-packages/")[-1])
+        if mods:
+            score[f"{mods[0]}.{fn}"] += 3
+    for block in _CODEBLOCK.findall(text):
+        for mod, names in _IMPORT.findall(block):
+            for n in re.split(r"[,\s]+", names):
+                if n and n != "as":
+                    score[f"{mod}.{n}"] += 2
+        for call in _CALL.findall(block):
+            score[call] += 1
+    for i, tok in enumerate(extract_identifiers(text)):
+        score[tok] += 1 + 1.0 / (1 + i)
+    return [t for t, _ in score.most_common() if len(t) >= 3 and t.lower() not in STOP]
 
 
 def resolve(tok: str, ids: list[str], last: dict[str, list[str]]) -> list[tuple[int, str]]:
@@ -180,9 +204,9 @@ def resolve(tok: str, ids: list[str], last: dict[str, list[str]]) -> list[tuple[
     return [(3, nid) for nid in ids if low in nid.split(".")[-1].lower()][:50]
 
 
-def rank_ident(issue: str, ids: list[str], index: dict) -> list[str]:
+def rank_tokens(tokens: list[str], ids: list[str], index: dict) -> list[str]:
     scored = defaultdict(float)
-    for pos, tok in enumerate(extract_identifiers(issue)[:40]):
+    for pos, tok in enumerate(tokens[:40]):
         hits = resolve(tok, ids, index)
         if not hits:
             continue
@@ -200,42 +224,73 @@ def rrf(lists: list[list[str]], k: int = 60) -> list[str]:
     return [n for n, _ in sorted(s.items(), key=lambda x: -x[1])]
 
 
+def expand(anchors: list[str], adj: dict, hops: int) -> list[str]:
+    out, frontier = list(anchors), list(anchors)
+    for _ in range(hops):
+        nxt = []
+        for n in frontier:
+            for m in sorted(adj.get(n, ())):
+                if m not in out:
+                    out.append(m)
+                    nxt.append(m)
+        frontier = nxt
+    return out
+
+
+def hop_distance(anchors: list[str], gold: set[str], adj: dict, max_d: int = 4) -> int | None:
+    """Undirected call-graph distance from the nearest anchor to the nearest gold symbol (None = beyond max_d)."""
+    frontier, seen = set(anchors), set(anchors)
+    for d in range(max_d + 1):
+        if frontier & gold:
+            return d
+        nxt = {m for n in frontier for m in adj.get(n, ())} - seen
+        seen |= nxt
+        frontier = nxt
+        if not frontier:
+            break
+    return None
+
+
 def metrics(ranked: list[str], gold: set[str]) -> dict:
     out = {f"R@{k}": float(bool(gold & set(ranked[:k]))) for k in KS}
-    rr = next((1.0 / (i + 1) for i, n in enumerate(ranked) if n in gold), 0.0)
-    out["MRR"] = rr
+    out["MRR"] = next((1.0 / (i + 1) for i, n in enumerate(ranked) if n in gold), 0.0)
     return out
+
+
+def file_metrics(ranked: list[str], file_modules: dict) -> dict:
+    hit = next((i for i, n in enumerate(ranked) if node_file(n, file_modules)), None)
+    return {f"R@{k}": float(hit is not None and hit < k) for k in KS} | {"MRR": 1.0 / (hit + 1) if hit is not None else 0.0}
+
+
+def load_graph(key: str):
+    g = json.loads((DATA / "graphs" / f"{key}.json").read_text(encoding="utf-8"))
+    nodes = {n["id"]: n.get("text") or "" for n in g["nodes"]}
+    ids = list(nodes)
+    with np.load(DATA / "embeddings" / f"{key}.npz", allow_pickle=False) as z:
+        emb = np.stack([z[i] for i in ids]).astype(np.float32)
+    emb /= np.linalg.norm(emb, axis=1, keepdims=True) + 1e-9
+    adj = defaultdict(set)
+    for e in g["edges"]:
+        adj[e["source"]].add(e["target"])
+        adj[e["target"]].add(e["source"])
+    index = {"__all__": set(ids)}
+    for nid in ids:
+        tail = nid.split(".")[-1]
+        index.setdefault(tail, []).append(nid)
+        index.setdefault("__lower__" + tail.lower(), []).append(nid)
+    bm = BM25([toks(nid.replace(".", " ")) * 2 + toks(nodes[nid]) for nid in ids])
+    return nodes, ids, emb, adj, index, bm
 
 
 def run() -> dict:
     tasks = [json.loads(l) for l in (DATA / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l]
-    per_signal = defaultdict(list)
-    per_signal_file = defaultdict(list)
-    coverage = Counter()
-    cache = {}
-    t0 = time.perf_counter()
+    rows, coverage, cache, t0 = [], Counter(), {}, time.perf_counter()
     for ti, t in enumerate(tasks):
         if ti % 10 == 0:
             print(f"[{ti}/{len(tasks)}] {time.perf_counter() - t0:.0f}s", file=sys.stderr, flush=True)
-        short = t["repo"].split("/")[1].lower()
-        key = f"{short}_{t['base_commit']}"
+        key = f"{t['repo'].split('/')[1].lower()}_{t['base_commit']}"
         if key not in cache:
-            g = json.loads((DATA / "graphs" / f"{key}.json").read_text(encoding="utf-8"))
-            z = np.load(DATA / "embeddings" / f"{key}.npz", allow_pickle=False)
-            nodes = {n["id"]: n.get("text") or "" for n in g["nodes"]}
-            ids = list(nodes)
-            emb = np.stack([z[i] for i in ids]).astype(np.float32)
-            emb /= np.linalg.norm(emb, axis=1, keepdims=True) + 1e-9
-            adj = defaultdict(set)
-            for e in g["edges"]:
-                adj[e["source"]].add(e["target"]); adj[e["target"]].add(e["source"])
-            index = {"__all__": set(ids)}
-            for nid in ids:
-                tail = nid.split(".")[-1]
-                index.setdefault(tail, []).append(nid)
-                index.setdefault("__lower__" + tail.lower(), []).append(nid)
-            bm = BM25([toks(nid.replace(".", " ")) * 2 + toks(nodes[nid]) for nid in ids])
-            cache = {key: (nodes, ids, emb, adj, index, bm)}  # keep one graph in memory
+            cache = {key: load_graph(key)}  # one graph in memory at a time
         nodes, ids, emb, adj, index, bm = cache[key]
         gold, gold_files = gold_symbols(parse_patch(t["patch"]), nodes)
         coverage["tasks"] += 1
@@ -244,37 +299,56 @@ def run() -> dict:
         if not gold_files:
             continue
         issue = t["problem_statement"]
-        r_ident = rank_ident(issue, ids, index)
+        r_ident = rank_tokens(extract_identifiers(issue), ids, index)
+        r_identp = rank_tokens(extract_identifiers_plus(issue), ids, index)
         sc = bm.scores(toks(issue))
         r_bm25 = [ids[i] for i in np.argsort(-sc)[:500] if sc[i] > 0]
-        anchors = (r_ident or r_bm25)[:3]
-        if anchors:
-            idx = {n: i for i, n in enumerate(ids)}
+        idx = {n: i for i, n in enumerate(ids)}
+
+        def emb_from(anchors: list[str]) -> list[str]:
+            if not anchors:
+                return []
             sims = emb @ emb[[idx[a] for a in anchors]].T
-            r_emb = [ids[i] for i in np.argsort(-sims.max(axis=1))[:500]]
-            r_graph = [n for a in anchors for n in [a, *sorted(adj.get(a, ()))]]
-        else:
-            r_emb, r_graph = [], []
-        r_graph = list(dict.fromkeys(r_graph))
-        lists = {"ident": r_ident, "bm25": r_bm25, "emb": r_emb, "graph": r_graph,
-                 "rrf": rrf([r_ident, r_bm25, r_emb, r_graph])}
+            return [ids[i] for i in np.argsort(-sims.max(axis=1))[:500]]
+
+        anchors, anchors_p = (r_ident or r_bm25)[:3], (r_identp or r_bm25)[:3]
+        lists = {"ident": r_ident, "ident+": r_identp, "bm25": r_bm25, "emb": emb_from(anchors),
+                 "graph": expand(anchors, adj, 1), "graph2": expand(anchors_p, adj, 2)}
+        lists["rrf"] = rrf([lists["ident"], lists["bm25"], lists["emb"], lists["graph"]])
+        lists["rrf+"] = rrf([lists["ident+"], lists["bm25"], emb_from(anchors_p), lists["graph2"]])
         file_modules = {m: f for f in gold_files for m in module_candidates(f)}
-        coverage["issue_has_resolvable_identifier"] += bool(r_ident)
-        for name, ranked in lists.items():
-            if gold:
-                per_signal[name].append(metrics(ranked, gold))
-            # file-level: rank of the first node that lives in a gold file
-            hit_rank = next((i for i, n in enumerate(ranked) if node_file(n, file_modules)), None)
-            per_signal_file[name].append({f"R@{k}": float(hit_rank is not None and hit_rank < k) for k in KS}
-                                         | {"MRR": 1.0 / (hit_rank + 1) if hit_rank is not None else 0.0})
-    agg = lambda rows: {m: round(float(np.mean([r[m] for r in rows])), 3) for m in rows[0]} if rows else {}  # noqa: E731
+        rows.append({"repo": t["repo"], "has_ident": bool(r_ident), "has_ident+": bool(r_identp), "gold": bool(gold),
+                     "sym": {k: metrics(v, gold) for k, v in lists.items()} if gold else {},
+                     "file": {k: file_metrics(v, file_modules) for k, v in lists.items()},
+                     "hop": hop_distance(anchors_p, gold, adj) if gold else "n/a"})
+    coverage["issue_has_resolvable_identifier"] = sum(r["has_ident"] for r in rows)
+    coverage["issue_has_resolvable_identifier_plus"] = sum(r["has_ident+"] for r in rows)
+
+    def agg(sel: list[dict], level: str) -> dict:
+        sel = [r for r in sel if r[level]]
+        if not sel:
+            return {}
+        return {sig: {m: round(float(np.mean([r[level][sig][m] for r in sel])), 3) for m in sel[0][level][sig]} | {"n": len(sel)}
+                for sig in sel[0][level]}
+
+    focus = ("bm25", "rrf+")
+    by_repo = {}
+    for repo in sorted({r["repo"] for r in rows}):
+        sel = [r for r in rows if r["repo"] == repo]
+        by_repo[repo] = {"n_tasks": len(sel),
+                         "symbol": {s: v for s, v in agg(sel, "sym").items() if s in focus},
+                         "file": {s: v for s, v in agg(sel, "file").items() if s in focus}}
+    hops = Counter(str(r["hop"]) for r in rows if r["gold"])
     return {"coverage": dict(coverage),
-            "symbol_level": {k: agg(v) | {"n": len(v)} for k, v in per_signal.items()},
-            "file_level": {k: agg(v) | {"n": len(v)} for k, v in per_signal_file.items()}}
+            "symbol_level": agg(rows, "sym"), "file_level": agg(rows, "file"),
+            "symbol_level_by_identifier_presence": {"with_ident+": agg([r for r in rows if r["has_ident+"]], "sym"),
+                                                    "without_ident+": agg([r for r in rows if not r["has_ident+"]], "sym")},
+            "hop_distance_anchor_to_gold": dict(sorted(hops.items())),
+            "by_repo": by_repo}
 
 
 if __name__ == "__main__":
     res = run()
     out = ROOT / "analysis" / "localization_results.json"
     out.write_text(json.dumps(res, indent=1), encoding="utf-8")
-    print(json.dumps(res, indent=1))
+    print(json.dumps({k: res[k] for k in ("coverage", "hop_distance_anchor_to_gold")}, indent=1))
