@@ -44,19 +44,19 @@ The dev set has 129 tasks from fastapi, rich, requests and httpx; 126 change non
 
 **4.7 Robustness.** Results are stable to the pre-registered choices: RRF+ top-5 recall is 30.7% with k = 10 and 31.6% with k = 100, 29.8% with BM25 (0.9, 0.4), and 33.0% / 32.4% with lenient / maximal label strictness. Using a single anchor instead of three lowers it to 27.2%. Per repository (top-5), fusion helps on rich (RRF+ 30.2% [16.3, 44.2] vs BM25 16.3% [7.0, 27.9]) and requests (58.3% [33.3, 83.3] vs 33.3% [8.3, 58.3], only 12 tasks) but not on fastapi (27.6% [17.2, 39.7] vs 29.3% [17.2, 41.4]): repository style matters, another reason to prefer mode rules over tuned weights.
 
+
+
 ## 5. Implications for agent design
 1. **Detect the mode first.** Resolve identifiers from the issue in one cheap step; whether any resolve predicts localization difficulty better than any retrieval score.
 2. **Anchored mode:** fuse identifiers, BM25, embedding neighbours and graph expansion; read the top-5 symbols first.
 3. **Anchor-free mode:** do not fuse structure-based lists; walk BM25 deep, and spend model calls on *creating anchors* (re-ranking BM25 candidates by signatures, or hypothesising symbol names to resolve) before reading code.
 4. **Order reading by cost, not only by rank:** small structural hits first, large symbols last, within an explicit token budget.
 
-
-
 ## 6. Related work
 SWE-bench (Jimenez et al., 2024) introduced repository-level issue resolution and BM25 retrieval baselines; SWE-agent (Yang et al., 2024) showed that agent–computer interfaces drive performance. Agentless (Xia et al., 2024) localizes hierarchically from files to functions; AutoCodeRover (Zhang et al., 2024) exposes AST-level search APIs; RepoGraph (Ouyang et al., 2025) and LocAgent (Chen et al., 2025) build repository graphs for localization. We complement them with a budget-aware, statistically controlled measurement of the exact signals this harness exposes. Reciprocal-rank fusion follows Cormack et al. (2009); BM25 follows Robertson and Zaragoza (2009).
 
 ## 7. Limitations
-Four public repositories, dominated by fastapi and rich; the hidden set is private. Gold labels approximate edited regions and exclude module-level edits. Token costs approximate characters/4. No execution-derived signals (running tests, tracebacks) are measured. Model-in-the-loop results are reported separately.
+Four public repositories, dominated by fastapi and rich; the hidden set is private. Gold labels approximate edited regions and exclude module-level edits. Token costs approximate characters/4. No execution-derived signals (running tests, tracebacks) are measured.
 
 ## 8. Reproducibility
 `scripts/fetch_data.sh` downloads the dev subset (competition data is never redistributed); `python -m locstudy all` recomputes every table, figure and number in this paper from `data/`, recording data hashes, code commit and parameters in `results/summary.json`; `pytest` runs the unit tests on synthetic fixtures.

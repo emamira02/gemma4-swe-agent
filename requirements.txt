@@ -1,0 +1,5 @@
+# Pinned versions used to produce results/ (see results/summary.json provenance for the exact interpreter).
+numpy==2.3.5
+matplotlib==3.11.2
+pytest==9.1.1
+kaggle==2.2.4   # only for scripts/fetch_data.sh and kernel pushes

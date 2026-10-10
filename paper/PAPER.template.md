@@ -43,26 +43,25 @@ The dev set has {{s:coverage/tasks|int}} tasks from fastapi, rich, requests and 
 
 **4.7 Robustness.** Results are stable to the pre-registered choices: RRF+ top-5 recall is {{sens:rrf_k=10/rrf+/R@5|pct}} with k = 10 and {{sens:rrf_k=100/rrf+/R@5|pct}} with k = 100, {{sens:bm25=(0.9, 0.4)/rrf+/R@5|pct}} with BM25 (0.9, 0.4), and {{sens:gold_min_cov=0.01/rrf+/R@5|pct}} / {{sens:gold_min_cov=1.0/rrf+/R@5|pct}} with lenient / maximal label strictness. Using a single anchor instead of three lowers it to {{sens:n_anchors=1/rrf+/R@5|pct}}. Per repository (top-5), fusion helps on rich (RRF+ {{s:by_repo/Textualize~rich/rrf+/R@5|ci}} vs BM25 {{s:by_repo/Textualize~rich/bm25/R@5|ci}}) and requests ({{s:by_repo/psf~requests/rrf+/R@5|ci}} vs {{s:by_repo/psf~requests/bm25/R@5|ci}}, only {{s:by_repo/psf~requests/n|int}} tasks) but not on fastapi ({{s:by_repo/fastapi~fastapi/rrf+/R@5|ci}} vs {{s:by_repo/fastapi~fastapi/bm25/R@5|ci}}): repository style matters, another reason to prefer mode rules over tuned weights.
 
-## 5. Implications for agent design
-1. **Detect the mode first.** Resolve identifiers from the issue in one cheap step; whether any resolve predicts localization difficulty better than any retrieval score.
-2. **Anchored mode:** fuse identifiers, BM25, embedding neighbours and graph expansion; read the top-5 symbols first.
-3. **Anchor-free mode:** do not fuse structure-based lists; walk BM25 deep, and spend model calls on *creating anchors* (re-ranking BM25 candidates by signatures, or hypothesising symbol names to resolve) before reading code.
-4. **Order reading by cost, not only by rank:** small structural hits first, large symbols last, within an explicit token budget.
-
 <!-- if:llm -->
-## 6. Model in the loop
-We repeated the measurement with the competition model (Gemma 4 31B QAT, temperature 0, thinking disabled, prompts hashed `{{llm:meta/prompt_sha}}`) on {{llm:meta/n_ok|int}} of {{llm:meta/n_tasks|int}} tasks, under the same labels and parameters. The model returned valid JSON for {{llm:meta/hyp_parse_rate|pct}} of symbol-hypothesis prompts and {{llm:meta/rerank_parse_rate|pct}} of re-ranking prompts; at least one hypothesised symbol resolved in the graph for {{llm:meta/hyp_resolved_rate|pct}} of tasks. Mean model time was {{llm:meta/mean_latency_s|f2}} s per task (two calls).
+**4.8 Model in the loop.** We repeated the measurement with the competition model (Gemma 4 31B QAT, temperature 0, thinking disabled, prompts hashed `{{llm:meta/prompt_sha}}`) on {{llm:meta/n_ok|int}} of {{llm:meta/n_tasks|int}} tasks, under the same labels and parameters. The model returned valid JSON for {{llm:meta/hyp_parse_rate|pct}} of symbol-hypothesis prompts and {{llm:meta/rerank_parse_rate|pct}} of re-ranking prompts; at least one hypothesised symbol resolved in the graph for {{llm:meta/hyp_resolved_rate|pct}} of tasks. Mean model time was {{llm:meta/mean_latency_s|f2}} s per task (two calls).
 
 **Creating anchors (pre-specified test H2, anchor-free issues).** Re-ranking BM25's top-50 by signatures yields top-5 recall {{llm:no_named_symbol/rerank50/R@5|ci}} versus {{llm:no_named_symbol/bm25/R@5|ci}} for BM25 alone: a paired difference of {{llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25|pct}} (95 % CI {{llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/0|pct}} to {{llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/1|pct}}; Holm p = {{llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm|f3}}). Hypothesised symbols fused with the other signals reach {{llm:no_named_symbol/hyp_fused/R@5|ci}} (difference vs BM25 {{llm:tests/H2_anchorfree_R@5/hyp_fused/diff_new_minus_bm25|pct}}; Holm p = {{llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm|f3}}).
 
 **The two-mode policy (H1).** Using RRF+ when the issue names a resolvable symbol and the model re-rank otherwise gives top-5 recall {{llm:all/policy/R@5|ci}} over all tasks, versus {{llm:all/rrf+/R@5|ci}} for RRF+ (paired difference {{llm:tests/H1_policy_R@5/rrf+/diff|pct}}; Holm p = {{llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm|f3}}) and {{llm:all/bm25/R@5|ci}} for BM25 (difference {{llm:tests/H1_policy_R@5/bm25/diff|pct}}; Holm p = {{llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm|f3}}). Full tables: RESULTS_LLM.md.
 <!-- endif -->
 
+## 5. Implications for agent design
+1. **Detect the mode first.** Resolve identifiers from the issue in one cheap step; whether any resolve predicts localization difficulty better than any retrieval score.
+2. **Anchored mode:** fuse identifiers, BM25, embedding neighbours and graph expansion; read the top-5 symbols first.
+3. **Anchor-free mode:** do not fuse structure-based lists; walk BM25 deep, and spend model calls on *creating anchors* (re-ranking BM25 candidates by signatures, or hypothesising symbol names to resolve) before reading code.
+4. **Order reading by cost, not only by rank:** small structural hits first, large symbols last, within an explicit token budget.
+
 ## 6. Related work
 SWE-bench (Jimenez et al., 2024) introduced repository-level issue resolution and BM25 retrieval baselines; SWE-agent (Yang et al., 2024) showed that agent–computer interfaces drive performance. Agentless (Xia et al., 2024) localizes hierarchically from files to functions; AutoCodeRover (Zhang et al., 2024) exposes AST-level search APIs; RepoGraph (Ouyang et al., 2025) and LocAgent (Chen et al., 2025) build repository graphs for localization. We complement them with a budget-aware, statistically controlled measurement of the exact signals this harness exposes. Reciprocal-rank fusion follows Cormack et al. (2009); BM25 follows Robertson and Zaragoza (2009).
 
 ## 7. Limitations
-Four public repositories, dominated by fastapi and rich; the hidden set is private. Gold labels approximate edited regions and exclude module-level edits. Token costs approximate characters/4. No execution-derived signals (running tests, tracebacks) are measured. Model-in-the-loop results are reported separately.
+Four public repositories, dominated by fastapi and rich; the hidden set is private. Gold labels approximate edited regions and exclude module-level edits. Token costs approximate characters/4. No execution-derived signals (running tests, tracebacks) are measured.
 
 ## 8. Reproducibility
 `scripts/fetch_data.sh` downloads the dev subset (competition data is never redistributed); `python -m locstudy all` recomputes every table, figure and number in this paper from `data/`, recording data hashes, code commit and parameters in `results/summary.json`; `pytest` runs the unit tests on synthetic fixtures.
