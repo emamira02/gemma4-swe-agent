@@ -163,6 +163,25 @@ def test_template_filling_is_strict():
     assert report.fill_template(tpl, docs) == "AC"                                   # block dropped, slot not evaluated
     assert report.fill_template(tpl, {**docs, "llm": {"x": 1.5}}) == "A B=1.50C"
     assert report.fill_template("{{s:a~b|int}}", {"s": {"a/b": 7}}) == "7"         # "~" escapes "/" in keys
+    neg = "<!-- if:!llm -->no model<!-- endif --><!-- if:llm -->model<!-- endif -->"
+    assert report.fill_template(neg, docs) == "no model" and report.fill_template(neg, {**docs, "llm": {"x": 1}}) == "model"
+    assert report.fill_template("p {{s:p|p}}, q {{s:q|p}}, d {{s:d|dpct}}", {"s": {"p": 0.0004, "q": 0.0574, "d": -0.0526}}) == \
+        "p < 0.001, q = 0.057, d -5.3 pp"
+
+
+def test_claims_guard_the_prose():
+    from locstudy import report
+    docs = {"s": {"p": 0.03, "d": 0.1, "k=(1, 2)": {"v": 0.2}}, "llm": {"p": 0.2}}
+    ok = "Significant.<!-- claim: s:p < 0.05 --> Positive.<!-- claim: s:d > s:k=(1, 2)/v -->"
+    assert report.fill_template(ok.replace("> s:k", "< s:k"), docs) == "Significant. Positive."   # stripped once true
+    with pytest.raises(report.ClaimError, match="s:p >= 0.05"):
+        report.fill_template("Not significant.<!-- claim: s:p >= 0.05 -->", docs)
+    gated = "<!-- if:llm -->Model wins.<!-- claim: llm:p < 0.05 --><!-- endif -->"
+    assert report.fill_template(gated, {"s": docs["s"]}) == ""                       # dropped block: claim not checked
+    with pytest.raises(report.ClaimError):
+        report.fill_template(gated, docs)
+    with pytest.raises(KeyError):
+        report.fill_template("x<!-- claim: s:missing < 1 -->", docs)                  # a claim on a missing value never passes
 
 
 def test_llm_analysis_on_synthetic_rows(tmp_path):
@@ -184,6 +203,19 @@ def test_llm_analysis_on_synthetic_rows(tmp_path):
     assert res["no_named_symbol"]["rerank50"]["R@5"][0] == 1.0 and res["no_named_symbol"]["bm25"]["R@5"][0] == 0.0
     h2 = res["tests"]["H2_anchorfree_R@5"]["rerank50"]
     assert h2["diff_new_minus_bm25"] == 1.0 and h2["mcnemar_p"] < 0.001
+    assert set(res["tests"]) == set(llm_analysis.HYPOTHESES)
+    # ceiling: anchor-free BM25 rank 30 < 50 -> every task reachable, and the re-rank (rank 2) hits within 5
+    ce = res["ceiling"]["no_named_symbol"]
+    assert ce["n_reachable"] == 20 and ce["reachable"][0] == 1.0 and ce["R@5_given_reachable"][0] == 1.0
+    assert ce["pools"]["bm25@100"][0] == 1.0 and res["cost"] == {"n": 0}
+    ex = res["exploratory"]
+    assert set(ex) == {e[0] for e in llm_analysis.EXPLORATORY}
+    assert ex["rerank50_vs_rrf+_named_R@5"]["diff"] == 0.0                      # both rank within top-5 on named tasks
+    assert all(ex[k]["mcnemar_p_holm"] >= ex[k]["mcnemar_p"] for k in ex)       # Holm never lowers a p-value
+    from locstudy import report
+    report.render_llm(res, tmp_path / "R.md")
+    md = (tmp_path / "R.md").read_text(encoding="utf-8")
+    assert "rerank50 − bm25 = +100.0 pp" in md and "Exploratory paired tests" in md and "Re-rank ceiling" in md
 
 
 def test_task_type_heuristic():

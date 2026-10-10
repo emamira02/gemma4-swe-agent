@@ -650,7 +650,8 @@ def paired_family(sel: list[dict], p: Params, metric: str, primary: str = PRIMAR
 
 
 def comparisons(rows: list[dict], p: Params) -> dict:
-    """Pre-specified paired comparisons (symbol level). Each dict is one Holm family."""
+    """Paired comparisons (symbol level), each dict one Holm family. RRF+ vs others at R@5/R@20 was fixed in advance;
+    the Hit@8k_tok and anchor-free (no_anchor_*) families were added after inspecting descriptive results (post hoc)."""
     sel = [r for r in rows if r.get("sym")]
     no_anchor = [r for r in sel if not r.get("has_ident")]
     return {

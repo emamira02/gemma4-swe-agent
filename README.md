@@ -44,14 +44,17 @@ bash scripts/reproduce.sh      # tests -> data -> run -> sensitivity -> audit ->
 ```
 - `locstudy/` package: `data` (tasks, graphs, content manifest) · `gold` (strict labels from patches) · `signals` (identifier, BM25, embedding, graph, RRF) · `metrics` (Recall@k, MRR, reading-budget, bootstrap CIs, paired bootstrap, exact McNemar, Holm) · `study` (end-to-end + sensitivity) · `audit` (label quality) · `report` (tables, figures, template filling).
 - `paper/PAPER.template.md` holds the text; every number is a `{{source:path|fmt}}` slot filled from `results/*.json`, and a missing path fails the build — no hand-typed numbers.
+- Every sentence whose truth depends on a direction or significance level carries a `<!-- claim: lhs OP rhs -->` guard next to it; `report.build` raises `ClaimError` if the results contradict the prose.
 - `results/summary.json` records data hashes, git commit, library versions and parameters (provenance). Per-task rows stay in `results/private/` (gitignored).
-- Parameters pre-registered in `locstudy.study.Params`; robustness in `results/sensitivity.json`.
+- Parameters fixed in advance in `locstudy.study.Params`; robustness in `results/sensitivity.json`. Post-hoc comparisons are labelled as such in code and paper.
+- Model in the loop: `python kernels/build_v2.py` inlines `locstudy` into the Kaggle kernel `kernels/llm-localization` (Gemma 4 31B on 4×L4, offline vLLM); its outputs go to `results/kaggle_v2/` (gitignored) and `python -m locstudy llm` writes `results/llm_summary.json`, `paper/RESULTS_LLM.md`, Figure 4 and section 4.8. Pre-specified tests H1–H3 live in `locstudy.llm_analysis.HYPOTHESES` (committed before the outputs were downloaded); exploratory tests in `EXPLORATORY`.
 
 ## Status
 - [x] Joined both competitions (rules accepted 2026-10-10)
 - [x] Read HARNESS_README (notes above)
-- [ ] Get dev data locally: tasks.jsonl + graphs/ + embeddings/ (needs Kaggle API token); snapshots only when needed
+- [x] Dev data locally (tasks.jsonl + graphs/ + embeddings/; snapshots only when needed)
 - [ ] Local dev loop on the provided sample tasks
 - [ ] E0 baseline submission
-- [ ] Paper draft (from E0–E3 ablation) by 10 Nov, submit by 12 Nov
+- [x] Localization study + model-in-the-loop run (114/114 tasks) → paper draft complete (`paper/PAPER.md`)
+- [ ] Paper submission by 12 Nov
 - [ ] Final selection by 2 Dec
