@@ -50,6 +50,8 @@ The dev set has 129 tasks from fastapi, rich, requests and httpx; 126 change non
 3. **Anchor-free mode:** do not fuse structure-based lists; walk BM25 deep, and spend model calls on *creating anchors* (re-ranking BM25 candidates by signatures, or hypothesising symbol names to resolve) before reading code.
 4. **Order reading by cost, not only by rank:** small structural hits first, large symbols last, within an explicit token budget.
 
+
+
 ## 6. Related work
 SWE-bench (Jimenez et al., 2024) introduced repository-level issue resolution and BM25 retrieval baselines; SWE-agent (Yang et al., 2024) showed that agent–computer interfaces drive performance. Agentless (Xia et al., 2024) localizes hierarchically from files to functions; AutoCodeRover (Zhang et al., 2024) exposes AST-level search APIs; RepoGraph (Ouyang et al., 2025) and LocAgent (Chen et al., 2025) build repository graphs for localization. We complement them with a budget-aware, statistically controlled measurement of the exact signals this harness exposes. Reciprocal-rank fusion follows Cormack et al. (2009); BM25 follows Robertson and Zaragoza (2009).
 

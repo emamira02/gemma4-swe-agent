@@ -49,6 +49,15 @@ The dev set has {{s:coverage/tasks|int}} tasks from fastapi, rich, requests and 
 3. **Anchor-free mode:** do not fuse structure-based lists; walk BM25 deep, and spend model calls on *creating anchors* (re-ranking BM25 candidates by signatures, or hypothesising symbol names to resolve) before reading code.
 4. **Order reading by cost, not only by rank:** small structural hits first, large symbols last, within an explicit token budget.
 
+<!-- if:llm -->
+## 6. Model in the loop
+We repeated the measurement with the competition model (Gemma 4 31B QAT, temperature 0, thinking disabled, prompts hashed `{{llm:meta/prompt_sha}}`) on {{llm:meta/n_ok|int}} of {{llm:meta/n_tasks|int}} tasks, under the same labels and parameters. The model returned valid JSON for {{llm:meta/hyp_parse_rate|pct}} of symbol-hypothesis prompts and {{llm:meta/rerank_parse_rate|pct}} of re-ranking prompts; at least one hypothesised symbol resolved in the graph for {{llm:meta/hyp_resolved_rate|pct}} of tasks. Mean model time was {{llm:meta/mean_latency_s|f2}} s per task (two calls).
+
+**Creating anchors (pre-specified test H2, anchor-free issues).** Re-ranking BM25's top-50 by signatures yields top-5 recall {{llm:no_named_symbol/rerank50/R@5|ci}} versus {{llm:no_named_symbol/bm25/R@5|ci}} for BM25 alone: a paired difference of {{llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25|pct}} (95 % CI {{llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/0|pct}} to {{llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/1|pct}}; Holm p = {{llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm|f3}}). Hypothesised symbols fused with the other signals reach {{llm:no_named_symbol/hyp_fused/R@5|ci}} (difference vs BM25 {{llm:tests/H2_anchorfree_R@5/hyp_fused/diff_new_minus_bm25|pct}}; Holm p = {{llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm|f3}}).
+
+**The two-mode policy (H1).** Using RRF+ when the issue names a resolvable symbol and the model re-rank otherwise gives top-5 recall {{llm:all/policy/R@5|ci}} over all tasks, versus {{llm:all/rrf+/R@5|ci}} for RRF+ (paired difference {{llm:tests/H1_policy_R@5/rrf+/diff|pct}}; Holm p = {{llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm|f3}}) and {{llm:all/bm25/R@5|ci}} for BM25 (difference {{llm:tests/H1_policy_R@5/bm25/diff|pct}}; Holm p = {{llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm|f3}}). Full tables: RESULTS_LLM.md.
+<!-- endif -->
+
 ## 6. Related work
 SWE-bench (Jimenez et al., 2024) introduced repository-level issue resolution and BM25 retrieval baselines; SWE-agent (Yang et al., 2024) showed that agent–computer interfaces drive performance. Agentless (Xia et al., 2024) localizes hierarchically from files to functions; AutoCodeRover (Zhang et al., 2024) exposes AST-level search APIs; RepoGraph (Ouyang et al., 2025) and LocAgent (Chen et al., 2025) build repository graphs for localization. We complement them with a budget-aware, statistically controlled measurement of the exact signals this harness exposes. Reciprocal-rank fusion follows Cormack et al. (2009); BM25 follows Robertson and Zaragoza (2009).
 

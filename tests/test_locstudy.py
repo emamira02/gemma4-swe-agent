@@ -159,6 +159,31 @@ def test_template_filling_is_strict():
     assert out == "R=50.0% [40.0, 60.0] n=115 x=0.123 p=50.0%"
     with pytest.raises(KeyError):
         report.fill_template("{{s:missing/path}}", docs)
+    tpl = "A<!-- if:llm --> B={{llm:x|f2}}<!-- endif -->C"
+    assert report.fill_template(tpl, docs) == "AC"                                   # block dropped, slot not evaluated
+    assert report.fill_template(tpl, {**docs, "llm": {"x": 1.5}}) == "A B=1.50C"
+    assert report.fill_template("{{s:a~b|int}}", {"s": {"a/b": 7}}) == "7"         # "~" escapes "/" in keys
+
+
+def test_llm_analysis_on_synthetic_rows(tmp_path):
+    from locstudy import llm_analysis
+    def oc(rank):
+        return {"rank": rank, "tokens": None if rank is None else 100 * (rank + 1), "cov10": 0.0, "list_len": 50}
+    rows = []
+    for i in range(40):
+        named = i % 2 == 0
+        sym = {s: oc(None) for s in ("ident", "ident+", "emb", "graph", "graph2", "rrf")}
+        sym.update(bm25=oc(30 if not named else 3), **{"rrf+": oc(1 if named else None)},
+                   hyp=oc(0 if named else 8), hyp_fused=oc(0), rerank50=oc(2), policy=oc(1 if named else 2))
+        rows.append({"id": f"t{i}", "repo": "r/r", "has_ident": named, "n_gold": 1, "sym": sym, "llm": {}})
+    rows.append({"id": "broken", "error": "TimeoutError"})
+    rp = tmp_path / "rows.jsonl"
+    rp.write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+    res = llm_analysis.analyze(rp, tmp_path / "missing_meta.json", tmp_path / "out.json", study.Params(n_boot=200))
+    assert res["failed_tasks"] == ["broken"] and res["all"]["n"] == 40 and res["no_named_symbol"]["n"] == 20
+    assert res["no_named_symbol"]["rerank50"]["R@5"][0] == 1.0 and res["no_named_symbol"]["bm25"]["R@5"][0] == 0.0
+    h2 = res["tests"]["H2_anchorfree_R@5"]["rerank50"]
+    assert h2["diff_new_minus_bm25"] == 1.0 and h2["mcnemar_p"] < 0.001
 
 
 def test_task_type_heuristic():

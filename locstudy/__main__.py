@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="locstudy")
-    ap.add_argument("cmd", choices=["run", "sensitivity", "report", "all"])
+    ap.add_argument("cmd", choices=["run", "sensitivity", "report", "llm", "all"])
     ap.add_argument("--data", type=Path, default=ROOT / "data")
     ap.add_argument("--results", type=Path, default=ROOT / "results")
     ap.add_argument("--paper", type=Path, default=ROOT / "paper")
@@ -22,7 +22,12 @@ def main(argv: list[str] | None = None) -> int:
         study.run(a.data, a.results, log=log)
     if a.cmd in ("sensitivity", "all"):
         study.sensitivity(a.data, a.results, log=log)
-    if a.cmd in ("report", "all"):
+    if a.cmd == "llm":
+        from . import llm_analysis
+        src = a.results / "kaggle_v2"
+        llm_analysis.analyze(src / "llm_rows.jsonl", src / "llm_meta.json", a.results / "llm_summary.json")
+        log("wrote results/llm_summary.json")
+    if a.cmd in ("report", "all", "llm"):
         report.build(a.results, a.paper)
         log(f"wrote {a.paper / 'RESULTS.md'} and figures")
     return 0
