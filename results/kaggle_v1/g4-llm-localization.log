@@ -1,0 +1,45 @@
+[{"stream_name":"stdout","time":1265.061546023,"data":")\n"}
+,{"stream_name":"stdout","time":1265.061599183,"data":"(Worker_TP3 pid=551) ERROR 10-10 14:14:47 [multiproc_executor.py:949]            ^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1265.061603216,"data":"(Worker_TP3 pid=551) ERROR 10-10 14:14:47 [multiproc_executor.py:949]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_model_runner.py\", line 5601, in _dummy_sampler_run\n"}
+,{"stream_name":"stdout","time":1265.061606289,"data":"(Worker_TP3 pid=551) ERROR 10-10 14:14:47 [multiproc_executor.py:949]     raise RuntimeError(\n"}
+,{"stream_name":"stdout","time":1265.061608264,"data":"(Worker_TP3 pid=551) ERROR 10-10 14:14:47 [multiproc_executor.py:949] RuntimeError: CUDA out of memory occurred when warming up sampler with 256 dummy requests. Please try lowering `max_num_seqs` or `gpu_memory_utilization` when initializing the engine.\n"}
+,{"stream_name":"stdout","time":1265.061610468,"data":"(Worker_TP3 pid=551) ERROR 10-10 14:14:47 [multiproc_executor.py:949] \n"}
+,{"stream_name":"stdout","time":1265.061612326,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108] EngineCore failed to start.\n"}
+,{"stream_name":"stdout","time":1265.061614121,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108] Traceback (most recent call last):\n"}
+,{"stream_name":"stdout","time":1265.061615968,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 1082, in run_engine_core\n"}
+,{"stream_name":"stdout","time":1265.061618017,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)\n"}
+,{"stream_name":"stdout","time":1265.061620087,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1265.061621958,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 848, in __init__\n"}
+,{"stream_name":"stdout","time":1265.061623994,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     super().__init__(\n"}
+,{"stream_name":"stdout","time":1265.061625778,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 124, in __init__\n"}
+,{"stream_name":"stdout","time":1265.061627857,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     kv_cache_config = self._initialize_kv_caches(vllm_config)\n"}
+,{"stream_name":"stdout","time":1265.061629744,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1265.061632467,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 280, in _initialize_kv_caches\n"}
+,{"stream_name":"stdout","time":1265.061634501,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     self.model_executor.initialize_from_config(kv_cache_configs)\n"}
+,{"stream_name":"stdout","time":1265.061636571,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/abstract.py\", line 118, in initialize_from_config\n"}
+,{"stream_name":"stdout","time":1265.061638614,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     compilation_times: list[float] = self.collective_rpc(\"compile_or_warm_up_model\")\n"}
+,{"stream_name":"stdout","time":1265.061640602,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1265.061647522,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 397, in collective_rpc\n"}
+,{"stream_name":"stdout","time":1265.061649771,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     return aggregate(get_response())\n"}
+,{"stream_name":"stdout","time":1265.061652024,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]                      ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1265.061653868,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 380, in get_response\n"}
+,{"stream_name":"stdout","time":1265.061655881,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108]     raise RuntimeError(\n"}
+,{"stream_name":"stdout","time":1265.061657987,"data":"(EngineCore pid=387) ERROR 10-10 14:14:47 [core.py:1108] RuntimeError: Worker failed with error 'CUDA out of memory occurred when warming up sampler with 256 dummy requests. Please try lowering `max_num_seqs` or `gpu_memory_utilization` when initializing the engine.', please check the stack trace above for the root cause\n"}
+,{"stream_name":"stdout","time":1265.0616604,"data":"(Worker_TP0 pid=548) WARNING 10-10 14:14:47 [multiproc_executor.py:871] WorkerProc was terminated\n"}
+,{"stream_name":"stdout","time":1265.061662273,"data":"(Worker_TP1 pid=549) WARNING 10-10 14:14:47 [multiproc_executor.py:871] WorkerProc was terminated\n"}
+,{"stream_name":"stdout","time":1265.061664109,"data":"(Worker_TP3 pid=551) WARNING 10-10 14:14:47 [multiproc_executor.py:871] WorkerProc was terminated\n"}
+,{"stream_name":"stdout","time":1265.061666018,"data":"(Worker_TP2 pid=550) WARNING 10-10 14:14:47 [multiproc_executor.py:871] WorkerProc was terminated\n"}
+,{"stream_name":"stdout","time":1265.061667862,"data":"\n"}
+,{"stream_name":"stderr","time":1265.061690621,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":1265.061705851,"data":"  File \"/kaggle/src/script.py\", line 529, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":1265.061926363,"data":"    start_vllm()\n"}
+,{"stream_name":"stderr","time":1265.061944733,"data":"  File \"/kaggle/src/script.py\", line 525, in start_vllm\n"}
+,{"stream_name":"stderr","time":1265.062127707,"data":"    raise RuntimeError(\"vLLM did not start; see /kaggle/working/vllm.log\")\n"}
+,{"stream_name":"stderr","time":1265.062132049,"data":"RuntimeError: vLLM did not start; see /kaggle/working/vllm.log\n"}
+,{"stream_name":"stderr","time":1267.600274194,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1267.600302088,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1267.820396614,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1267.820419888,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1268.554605105,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1269.946917827,"data":"[NbConvertApp] Writing 423914 bytes to __results__.html\n"}
+]
