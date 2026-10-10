@@ -10,3 +10,4 @@ __pycache__/
 *.zip
 third_party/
 results/private/
+results/kaggle_*/
