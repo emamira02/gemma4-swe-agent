@@ -11,7 +11,20 @@ Entry for **Google – The Gemma 4 Developer Agent Competition** (Kaggle, host G
 - Winners: Apache-2.0 / OSI license + reproducible code & write-up. Competition data must **not** be redistributed → never commit it.
 - No private code sharing outside the team. AI coding assistants are not prohibited by the rules.
 
+## Harness facts that shape the design (own notes from HARNESS_README, read 2026-10-10)
+- Dev set: 129 public tasks from 4 repos (fastapi, rich, requests, httpx) with reference patch + test_patch, repo snapshots (.tgz), NetworkX call/dependency graphs (node = fully-qualified symbol with source text), 256-d node embeddings (.npz). Test set ≈ 120 tasks from **private repos**, split public/private LB.
+- `search_similar_code(query)` resolves `query` against **node keys/suffixes** and then ranks by cosine — no live embedder offline, so free-text issue queries don't work: retrieval must be **anchored on symbol names** (from the issue text, grep, tracebacks).
+- `get_code_neighbors` resolves short names (exact → suffix → case-insensitive → substring); optional edge filter (CALLS / DEFINED_IN / IMPORTS).
+- 12 h for all tasks ⇒ **≈ 6 min per task** on the hidden set; set `eval_config.yaml` budgets accordingly (default 60 min/task would starve later tasks). Context 32,768 tokens with auto-compaction; read_file ≤150 lines/10k chars; command output ≤5k chars; sandbox 4 GiB RAM / 2 vCPU, offline.
+- Instruction templating: `{problem_description}`, `{hints}` from session state. Agent types: LlmAgent, SequentialAgent, ParallelAgent, LoopAgent; tools by name; AgentTool sub-agents; skills = dirs with SKILL.md (+ .py scripts).
+- Verification: patch applied in a fresh container; edits to tests/conftest/pytest.ini/pyproject are reset → fix library code only. Resolved iff targeted pytest passes with valid JUnit XML.
+- Local CLI: `swegemma eval --tasks tasks.jsonl --snapshots-dir snapshots --submission-dir ... --sandbox docker` (needs a served Gemma 4 model; registry also lists smaller Gemma 4 variants for local runs).
+
 ## Thesis (paper + agent)
+**Revised (2026-10-10):** because embedding lookup is symbol-anchored, the localization pipeline is *lexical anchors → embedding neighbours → graph expansion → re-rank*, tuned for a ~6-minute budget.
+**GPU-free paper contribution (feasible by 12 Nov):** measure on the 129 dev tasks how well each signal recovers the gold-edited symbols (from `patch`): identifier extraction from the issue, BM25 over node text, embedding neighbours of anchors, k-hop graph expansion, and their combination (Recall@k / MRR, hops needed, failure taxonomy). Ship the analysis + a reusable localization skill (candidate for *Best New Resource*).
+
+### Original thesis
 **Hybrid graph-retrieval localization**: dense `search_similar_code` → graph expansion via `get_code_neighbors`/`get_code_subgraph` → lexical confirmation (`grep`) → re-rank → patch/test/repair loop. Hypothesis: better file/function localization at fixed budget raises pass rate for a 31B quantized model more than prompt tweaks do.
 
 ## Experiments (each measured, nothing reported without a run)
@@ -25,8 +38,9 @@ Entry for **Google – The Gemma 4 Developer Agent Competition** (Kaggle, host G
 | E5 (optional) | LoRA on tool-use traces | only if E0–E4 plateau and GPU budget allows |
 
 ## Status
-- [ ] Join competition + accept rules (Emanuele, Kaggle UI)
-- [ ] Read `HARNESS_README.md` from the dataset; pin the exact ADK config schema
+- [x] Joined both competitions (rules accepted 2026-10-10)
+- [x] Read HARNESS_README (notes above)
+- [ ] Get dev data locally: tasks.jsonl + graphs/ + embeddings/ (needs Kaggle API token); snapshots only when needed
 - [ ] Local dev loop on the provided sample tasks
 - [ ] E0 baseline submission
 - [ ] Paper draft (from E0–E3 ablation) by 10 Nov, submit by 12 Nov
