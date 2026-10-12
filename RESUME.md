@@ -3,6 +3,12 @@
 Everything long-running happens on Kaggle's servers (eval kernels, scored submissions): a reboot of this PC stops
 nothing. State lives in git (`runs.csv`, `results/agent_runs/*.json`, this file) and in `STATE.json` (local).
 
+## Automation (local scheduled tasks, Claude desktop app; run when the app is open, catch up on next launch)
+- kaggle-loop (every 4 h): status sync, READY/BLOCKED decisions after a panel, submits the first READY entry.
+- kaggle-improve (every 2 days, 10:20): traces -> one targeted change -> tests -> new tag -> GPU dev panel.
+- kaggle-paper-final (once, 5 Nov 10:00): agent results into the paper, clean-commit rebuild, submission
+  (asks Emanuele only for the final click if the website is required).
+
 ## Resume in one command
     python tools/status.py
 It is idempotent: refreshes submission scores into runs.csv, downloads a finished dev-panel eval, aggregates its
