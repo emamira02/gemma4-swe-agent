@@ -69,7 +69,10 @@ def main() -> None:
                "tasks_with_arg_errors": sum(bool(v.get("arg_errors")) for v in per.values()),
                "first_edit_s_median": st.median([v["first_edit_s"] for v in per.values() if v.get("first_edit_s") is not None] or [0]),
                "no_edit": sum(v.get("first_edit_s") is None for v in per.values()), "totals": dict(tot)}
-    out = {"summary": summary, "per_task": per}
+    sp = ev / "summary.json"  # kernel summary: bundle sha and the eval_config budgets the panel ran with
+    ks = json.loads(sp.read_text(encoding="utf-8")) if sp.exists() else {}
+    config = {k: ks[k] for k in ("tag", "sha256", "eval_config") if k in ks}
+    out = {"summary": summary, "config": config, "per_task": per}
     if a.out:
         a.out.parent.mkdir(parents=True, exist_ok=True)
         a.out.write_text(json.dumps(out, indent=1), encoding="utf-8")

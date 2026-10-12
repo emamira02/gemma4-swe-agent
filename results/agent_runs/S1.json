@@ -16,6 +16,16 @@
    "after_submit": 8
   }
  },
+ "config": {
+  "tag": "S1",
+  "sha256": "4e14db4d5e2fa1cd77437ee59420c65056cee610dbe3f941f034ca9cf843ec88",
+  "eval_config": {
+   "max_time_minutes": 5.0,
+   "timeout_seconds": 100,
+   "max_tool_calls": 40,
+   "max_turns": 60
+  }
+ },
  "per_task": {
   "rich_3006": {
    "resolved": true,

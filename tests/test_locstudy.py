@@ -244,3 +244,23 @@ def test_end_to_end_on_synthetic_dataset(tmp_path):
     assert s["symbol_level"]["ident"]["R@1"][0] == 1.0     # the issue names the edited function
     assert (out / "summary.json").exists() and (out / "private" / "rows.jsonl").exists()
     assert s["provenance"]["data"]["tasks.jsonl"] and s["provenance"]["params"]["rrf_k"] == 60
+
+
+def test_agent_summary_and_table(tmp_path):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import agent_summary
+    from locstudy.report import agent_table
+    runs = tmp_path / "agent_runs"
+    runs.mkdir()
+    s = {"n": 3, "gold_solvable": 2, "resolved_on_solvable": 1, "timeouts": 1, "empty_patch": 0, "no_edit": 0,
+         "tasks_with_arg_errors": 1, "first_edit_s_median": 50.0, "totals": {"calls": 9, "arg_errors": 1}}
+    (runs / "S1.json").write_text(json.dumps({"summary": s, "config": {"eval_config": {"max_time_minutes": 5.0}},
+                                              "per_task": {"rich_1": {}, "rich_2": {}, "httpx_3": {}}}))
+    csv_ = tmp_path / "runs.csv"
+    csv_.write_text("date,experiment_id,config_hash,public_score,status,notes\nd,S1,h1,0.125,COMPLETE,x\nd,S2,h2,,PENDING,y\n")
+    doc = agent_summary.build(runs, csv_)
+    assert doc["tags"] == ["S1", "S2"] and doc["scored"] == {"S1": 0.125} and doc["baseline"] == "S1"
+    p = doc["runs"]["S1"]["panel"]
+    assert p["repos"] == ["httpx", "rich"] and p["resolve_rate"] == 0.5 and p["backtick_args"] == 0 and p["max_time_minutes"] == 5.0
+    tbl = agent_table(doc)
+    assert "| S1 | 3 (2) | 1 | 1 | 1 | 50 | 0.125 |" in tbl and "| S2 | – | – | – | – | – | pending |" in tbl

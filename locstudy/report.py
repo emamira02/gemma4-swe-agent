@@ -279,6 +279,19 @@ def fill_template(template: str, docs: dict[str, dict]) -> str:
     return _SLOT.sub(sub, template)
 
 
+def agent_table(doc: dict) -> str:
+    """Dev-panel and leaderboard row per agent tag, from results/agent_summary.json (tools/agent_summary.py)."""
+    head = ("| Tag | Panel tasks (solvable) | Resolved | Timeouts | Tasks with malformed calls | Median s to first edit "
+            "| Public score |\n|---|---|---|---|---|---|---|")
+    rows = []
+    for t in doc["tags"]:
+        r, p = doc["runs"][t], doc["runs"][t].get("panel")
+        score = f"{r['public_score']:.4g}" if "public_score" in r else r["status"].lower().replace("_", " ")
+        rows.append(f"| {t} | {p['n']} ({p['gold_solvable']}) | {p['resolved']} | {p['timeouts']} | {p['tasks_with_arg_errors']} | "
+                    f"{p['first_edit_s_median']:.0f} | {score} |" if p else f"| {t} | – | – | – | – | – | {score} |")
+    return head + "\n" + "\n".join(rows)
+
+
 def build(results_dir: Path, paper_dir: Path) -> None:
     summary = json.loads((results_dir / "summary.json").read_text(encoding="utf-8"))
     sp = results_dir / "sensitivity.json"
@@ -296,6 +309,11 @@ def build(results_dir: Path, paper_dir: Path) -> None:
         audit = results_dir / "label_audit.json"
         if audit.exists():
             docs["audit"] = json.loads(audit.read_text(encoding="utf-8"))
+        agent = results_dir / "agent_summary.json"
+        if agent.exists():
+            docs["agent"] = json.loads(agent.read_text(encoding="utf-8"))
+            docs["lb"] = docs["agent"]["scored"]  # empty until Kaggle returns a public score: gates leaderboard prose
+            docs["agentmd"] = {"table": agent_table(docs["agent"])}
         text = fill_template(tpl.read_text(encoding="utf-8"), docs)
         (paper_dir / "PAPER.md").write_text("<!-- AUTO-GENERATED from PAPER.template.md + results/*.json -->\n" + text,
                                             encoding="utf-8")

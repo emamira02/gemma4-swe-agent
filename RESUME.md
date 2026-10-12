@@ -28,7 +28,7 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 | S1 (4e14db4d5e2f) | submitted 2026-10-12 16:50 UTC, PENDING (queue ~33 h + run ~11 h) |
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | built; dev panel eval running (kernel g4-agent-eval v2) |
-| Paper | draft complete, 91 claims, 2,864 words; agent results to be added |
+| Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
 ## Submission queue (the scheduled task submits the first READY entry when nothing is pending)
 | Tag | Status | Change vs previous | Hypothesis |
