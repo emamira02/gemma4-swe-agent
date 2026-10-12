@@ -1,2 +1,2 @@
-date,experiment_id,config_hash,public_score,notes
-2026-10-12 16:50,S1,4e14db4d5e2f,,"kernel v1; single agent + in-container lexical localization skill (paper mode rule, model re-ranks) + early-edit prompt + finalize hygiene; 5.0 min/task, thinking 2048, temp 1.0; baseline for all later ablations"
+date,experiment_id,config_hash,public_score,status,notes
+2026-10-12 16:50,S1,4e14db4d5e2f,,PENDING,"kernel v1; single agent + in-container lexical localization skill (paper mode rule, model re-ranks) + early-edit prompt + finalize hygiene; 5.0 min/task, thinking 2048, temp 1.0; baseline for all later ablations"

@@ -16,3 +16,6 @@ build/
 kernels/submit/submit.ipynb
 kernels/agent_eval/run_agent_eval.py
 results/*.log
+STATE.json
+.status.lock
+*.tmp
