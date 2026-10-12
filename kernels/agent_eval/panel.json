@@ -1,6 +1,6 @@
 {
- "tag": "S2",
- "sha256": "fbfe865bd9684ace43550079b1b7949a2f5e703c90290580945590cde19c5c82",
+ "tag": "S3",
+ "sha256": "e1af59a2b337744bbebc800961e36fa10f6f5be2f23d4590ce98c63cf6456cc9",
  "seed": 0,
  "repos": [
   "Textualize/rich"

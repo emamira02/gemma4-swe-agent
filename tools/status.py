@@ -30,7 +30,10 @@ LOCK = ROOT / ".status.lock"
 
 
 def kaggle(*args: str, timeout: int = 600) -> str:
-    r = subprocess.run([sys.executable, "-m", "kaggle", *args], capture_output=True, text=True, timeout=timeout)
+    # UTF-8 both ways: the CLI prints emoji (kernel logs) that crash a cp1252 console on Windows
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
+    r = subprocess.run([sys.executable, "-m", "kaggle", *args], capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", timeout=timeout, env=env)
     if r.returncode != 0:
         raise RuntimeError(f"kaggle {' '.join(args)}: {(r.stderr or r.stdout).strip()[-400:]}")
     return r.stdout

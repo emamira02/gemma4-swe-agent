@@ -27,15 +27,19 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 |---|---|
 | S1 (4e14db4d5e2f) | submitted 2026-10-12 16:50 UTC, PENDING (queue ~33 h + run ~11 h) |
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
-| S2 (fbfe865bd968) | built; dev panel eval running (kernel g4-agent-eval v2) |
+| S2 (fbfe865bd968) | READY (panel done 2026-10-13); submitted when S1 has scored |
+| S3 (e1af59a2b337) | dev panel running (kernel g4-agent-eval v3) |
 | Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
-## Submission queue (the scheduled task submits the first READY entry when nothing is pending)
+## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
+Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always use the frozen copy (tools/kaggle_submit.py).
 | Tag | Status | Change vs previous | Hypothesis |
 |---|---|---|---|
-| S2 | WAIT_PANEL | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
+| S2 | READY (panel: resolved 4/21 = S1; tasks with malformed calls 14 -> 5; timeouts 16 -> 14; empty patches 7 -> 9; no_edit 5 = 5) | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
+| S3 | WAIT_PANEL | S2 + localize shows rank-1 source in anchored mode (edit without a read), write_file /tmp misuse explained, finalize deletes /workspace/tmp | S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts |
 
-Decision rule for S2 after its panel: READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
+Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and timeouts + no_edit do not grow vs S2.
+Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
 
 ## Timeline

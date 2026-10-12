@@ -29,7 +29,8 @@ T0 = time.monotonic()
 TIME_BUDGET_S = 30.0         # stop indexing new files after this; ranking still runs on what was indexed
 MAX_FILES = 6000
 MAX_FILE_BYTES = 800_000
-MAX_OUT_CHARS = 6500
+MAX_OUT_CHARS = 6500          # ranked list, files, literals, tests
+SOURCE_MAX_LINES, SOURCE_MAX_CHARS = 80, 4500  # rank-1 source shown in anchored mode
 SKIP_DIRS = frozenset({".git", ".hg", ".svn", "node_modules", ".venv", "venv", "env", ".env", "build", "dist",
                        "site-packages", "__pycache__", ".tox", ".nox", ".eggs", ".mypy_cache", ".pytest_cache",
                        ".ruff_cache", "htmlcov", ".idea", ".vscode"})
@@ -394,8 +395,24 @@ def main(argv: list[str] | None = None) -> int:
     text = "\n".join(out)
     if len(text) > MAX_OUT_CHARS:
         text = text[:MAX_OUT_CHARS - 20] + "\n...[truncated]"
-    print(text)
+    print(text + source_block(top, mode, src_texts))
     return 0
+
+
+def source_block(top: list[Sym], mode: str, src_texts: dict[str, list[str]]) -> str:
+    """When the issue names a symbol (anchored mode, where rank 1 is most precise), show rank 1's source so the
+    model can edit without a read_file round trip. Raw lines, no numbers: edit_file old_string is copied from it."""
+    if mode != "anchored" or not top:
+        return ""
+    s = top[0]
+    n = s.end - s.start + 1
+    if s.short == "<module>" or n > SOURCE_MAX_LINES:
+        return ""
+    body = "\n".join(src_texts.get(s.path, [])[s.start - 1:s.end])
+    if not body.strip() or len(body) > SOURCE_MAX_CHARS:
+        return ""
+    return (f"\nSOURCE OF #1 {s.path} lines {s.start}-{s.end} (exact text; if this is the place to fix, copy old_string "
+            f"from it and edit without reading the file again):\n----- begin -----\n{body}\n----- end -----")
 
 
 if __name__ == "__main__":

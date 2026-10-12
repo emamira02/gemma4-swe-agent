@@ -21,9 +21,10 @@ import sys
 PROTECTED = re.compile(r"(^|/)(tests?|testing)/.*\.py$|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)(conftest\.py|pytest\.ini|"
                        r"\.pytest\.ini|pyproject\.toml|setup\.cfg|tox\.ini|sitecustomize\.py|usercustomize\.py|"
                        r"_swegemma_stubs\.py)$|\.pth$")
-# generic scratch names only at the repository root (a new module inside a package is never deleted)
+# generic scratch names only at the repository root (a new module inside a package is never deleted), plus
+# anything under a new top-level tmp/ (write_file("/tmp/x.py") lands in /workspace/tmp/x.py)
 SCRATCH = re.compile(r"^(repro\w*|reproduce\w*|debug\w*|scratch\w*|tmp\w*|temp\w*|check_\w+|verify\w*|try_\w+|nohup)"
-                     r"\.(py|sh|txt|log|out)$|\.(orig|rej|bak|swp)$")
+                     r"\.(py|sh|txt|log|out)$|\.(orig|rej|bak|swp)$|^tmp/")
 
 
 def find_root() -> str:

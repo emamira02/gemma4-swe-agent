@@ -221,3 +221,29 @@ def test_no_backticks_reach_the_model(repo):
     r = subprocess.run([sys.executable, str(SCRIPTS / "finalize.py"), "--root", str(repo), "--dry-run"],
                        capture_output=True, text=True)
     assert "`" not in r.stdout
+
+
+def test_localize_shows_rank1_source_only_when_anchored(repo):
+    out = run_localize(repo, "parse_header returns wrong part for custom sep")
+    assert "SOURCE OF #1 pkg/core.py lines 6-11" in out
+    assert "def parse_header(value, sep=DEFAULT_SEP):\n" in out and "----- end -----" in out
+    assert "SOURCE OF #1" not in run_localize(repo, 'header value is empty, error "empty header value"')  # lexical mode
+
+
+def test_finalize_removes_workspace_tmp_dir(repo):
+    (repo / "tmp").mkdir()
+    (repo / "tmp" / "check.py").write_text("print(1)\n")
+    assert finalize.main(["--root", str(repo)]) == 0
+    assert not (repo / "tmp" / "check.py").exists()
+
+
+def test_frozen_candidates_rebuild_to_their_recorded_sha(tmp_path):
+    """What was evaluated on the dev panel must be what gets submitted: every frozen tag rebuilds byte-identically."""
+    from tools import build_submission as bs
+    for man in sorted((ROOT / "candidates").glob("*/MANIFEST.json")):
+        rec = json.loads(man.read_text(encoding="utf-8"))
+        staged = bs.stage(man.parent / "bundle", tmp_path / rec["tag"])
+        bs.validate(staged)
+        assert __import__("hashlib").sha256(bs.build_zip(staged)).hexdigest() == rec["zip_sha256"], rec["tag"]
+    with pytest.raises(bs.BundleError, match="frozen"):
+        bs.freeze("S1", bs.stage(ROOT / "agent", tmp_path / "cur"), {"zip_sha256": "0" * 64})

@@ -17,6 +17,7 @@ import csv
 import datetime as dt
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -30,7 +31,10 @@ RUNS = ROOT / "runs.csv"
 
 
 def kaggle(*args: str, timeout: int = 300) -> str:
-    r = subprocess.run([sys.executable, "-m", "kaggle", *args], capture_output=True, text=True, timeout=timeout)
+    # UTF-8 both ways: the CLI prints emoji (kernel logs) that crash a cp1252 console on Windows
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
+    r = subprocess.run([sys.executable, "-m", "kaggle", *args], capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", timeout=timeout, env=env)
     if r.returncode != 0:
         raise RuntimeError(f"kaggle {' '.join(args)} failed: {(r.stderr or r.stdout).strip()[-800:]}")
     return r.stdout
@@ -51,7 +55,7 @@ def main() -> int:
     a = ap.parse_args()
     if RUNS.exists() and any(r.get("experiment_id") == a.tag for r in csv.DictReader(RUNS.open(encoding="utf-8"))):
         raise SystemExit(f"tag {a.tag} already in runs.csv")
-    subprocess.run([sys.executable, str(ROOT / "tools" / "build_submission.py"), "--tag", a.tag], check=True)
+    subprocess.run([sys.executable, str(ROOT / "tools" / "build_submission.py"), "--tag", a.tag, "--from-candidate"], check=True)
     manifest = json.loads((ROOT / "build" / "MANIFEST.json").read_text(encoding="utf-8"))
     sha = manifest["zip_sha256"]
     pend = pending_submissions()

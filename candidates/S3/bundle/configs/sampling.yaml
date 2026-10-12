@@ -1,0 +1,10 @@
+# Thinking on with summaries (disabling either costs 16-28 of 129 tasks in public ablations); temperature 1.0
+# tied for best there. 2,048-token thinking budget so a ~5-minute session fits more turns (2,048 vs 4,096 was
+# within noise at 60 min). No thinking_level (maps to reasoning_effort on vLLM) and no top_k (dropped by LiteLLM
+# for OpenAI-compatible endpoints, so it would only look configured).
+temperature: 1.0
+top_p: 0.95
+max_output_tokens: 8192
+thinking_config:
+  thinking_budget: 2048
+  include_thoughts: true

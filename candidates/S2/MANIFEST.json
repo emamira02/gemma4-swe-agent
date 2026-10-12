@@ -1,0 +1,15 @@
+{
+ "tag": "S2",
+ "zip_sha256": "fbfe865bd9684ace43550079b1b7949a2f5e703c90290580945590cde19c5c82",
+ "git_head_at_freeze": "3b64da33b706ebf05109f1af26040f60341964a8",
+ "files": {
+  "agent.yaml": "60c4e322d551",
+  "configs/sampling.yaml": "eb34fcc5cac9",
+  "eval_config.yaml": "e98492e19da5",
+  "prompts/system.md": "acb6b950ec56",
+  "skills/swe/scripts/finalize.py": "4fe08607aecb",
+  "skills/swe/scripts/localize.py": "1a1ecbc69e11",
+  "skills/swe/SKILL.md": "2cfc0655ed06"
+ },
+ "source": "fa65300"
+}

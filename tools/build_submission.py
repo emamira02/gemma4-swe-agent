@@ -32,6 +32,7 @@ SAMPLING_KEYS = {"temperature", "top_p", "top_k", "max_output_tokens", "presence
 EVAL_KEYS = {"timeout_seconds", "max_tool_calls", "max_time_minutes", "max_turns"}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 TEXT_EXT = {".yaml", ".yml", ".md", ".txt", ".py", ".json"}
+CANDIDATES = ROOT / "candidates"
 HIDDEN_TASKS, SETUP_MIN_PER_TASK, FIXED_SETUP_MIN, LIMIT_H = 120, 0.5, 15, 12.0
 
 
@@ -221,6 +222,26 @@ print("wrote", out, len(data), "bytes;", names)
             "nbformat": 4, "nbformat_minor": 5}
 
 
+def freeze(tag: str, staged: Path, info: dict) -> None:
+    """Candidates are immutable: candidates/<tag>/ holds the exact bundle and its sha; rebuilding a tag must
+    reproduce the same bytes, so what was evaluated on the dev panel is what gets submitted."""
+    import shutil
+    import subprocess
+    if tag == "dev":
+        return
+    cand = CANDIDATES / tag
+    man = cand / "MANIFEST.json"
+    if man.exists():
+        old = json.loads(man.read_text(encoding="utf-8"))["zip_sha256"]
+        if old != info["zip_sha256"]:
+            raise BundleError(f"tag {tag} is frozen with sha {old[:12]}; this build is {info['zip_sha256'][:12]} - use a new tag")
+        return
+    shutil.copytree(staged, cand / "bundle")
+    commit = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    man.write_text(json.dumps({"tag": tag, "zip_sha256": info["zip_sha256"], "git_head_at_freeze": commit,
+                               "files": info.get("zip_files")}, indent=1), encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--agent", type=Path, default=ROOT / "agent")
@@ -228,7 +249,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--kernel", type=Path, default=ROOT / "kernels" / "submit")
     ap.add_argument("--kernel-id", default="emanuelemiranda/g4-agent-submit")
     ap.add_argument("--tag", default="dev")
+    ap.add_argument("--from-candidate", action="store_true",
+                    help="build from the frozen candidates/<tag>/bundle and require its recorded sha (used for submitting)")
     a = ap.parse_args(argv)
+    cand = CANDIDATES / a.tag
+    if a.from_candidate:
+        if not (cand / "MANIFEST.json").exists():
+            raise BundleError(f"no frozen candidate {a.tag}: build it from agent/ first")
+        a.agent = cand / "bundle"
     staged = stage(a.agent, a.out / "submission")
     info = validate(staged)
     info["official"] = official_check(staged)
@@ -240,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
         info["zip_files"] = {n: hashlib.sha256(z.read(n)).hexdigest()[:12] for n in z.namelist()}
     info.update(tag=a.tag, zip_sha256=sha, zip_bytes=len(data))
     (a.out / "MANIFEST.json").write_text(json.dumps(info, indent=1), encoding="utf-8")
+    freeze(a.tag, staged, info)
     a.kernel.mkdir(parents=True, exist_ok=True)
     (a.kernel / "submit.ipynb").write_text(json.dumps(kernel_notebook(data, sha, a.tag), indent=1), encoding="utf-8")
     meta = {"id": a.kernel_id, "title": "g4-agent-submit", "code_file": "submit.ipynb", "language": "python",

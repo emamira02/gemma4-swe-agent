@@ -1,0 +1,15 @@
+{
+ "tag": "S3",
+ "zip_sha256": "e1af59a2b337744bbebc800961e36fa10f6f5be2f23d4590ce98c63cf6456cc9",
+ "git_head_at_freeze": "3b64da33b706ebf05109f1af26040f60341964a8",
+ "files": {
+  "agent.yaml": "60c4e322d551",
+  "configs/sampling.yaml": "eb34fcc5cac9",
+  "eval_config.yaml": "e98492e19da5",
+  "prompts/system.md": "eb6a88205c47",
+  "skills/swe/scripts/finalize.py": "528ee4512e7b",
+  "skills/swe/scripts/localize.py": "f706a62eff8f",
+  "skills/swe/SKILL.md": "2cfc0655ed06"
+ },
+ "source": "working tree after 3b64da3 (S3 changes)"
+}
