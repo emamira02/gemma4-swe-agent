@@ -31,6 +31,7 @@ SAMPLING_KEYS = {"temperature", "top_p", "top_k", "max_output_tokens", "presence
                  "stop_sequences", "response_mime_type", "seed", "thinking_config"}
 EVAL_KEYS = {"timeout_seconds", "max_tool_calls", "max_time_minutes", "max_turns"}
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
+TEXT_EXT = {".yaml", ".yml", ".md", ".txt", ".py", ".json"}
 HIDDEN_TASKS, SETUP_MIN_PER_TASK, FIXED_SETUP_MIN, LIMIT_H = 120, 0.5, 15, 12.0
 
 
@@ -190,7 +191,10 @@ def build_zip(bundle: Path) -> bytes:
                 info = zipfile.ZipInfo(p.relative_to(bundle).as_posix(), date_time=ZIP_TIME)
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.external_attr = 0o644 << 16
-                z.writestr(info, p.read_bytes())
+                data = p.read_bytes()
+                if p.suffix.lower() in TEXT_EXT:  # LF everywhere: same bytes from a Windows or Linux checkout
+                    data = data.replace(b"\r\n", b"\n")
+                z.writestr(info, data)
     return buf.getvalue()
 
 

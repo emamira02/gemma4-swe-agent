@@ -110,7 +110,9 @@ def test_localize_lexical_mode_literal_and_aux_penalty(repo):
 
 
 def test_localize_methods_properties_classes_and_module_level(repo):
-    out = run_localize(repo, "Client.is_closed property wrong after close; DEFAULT_SEP constant", "--k", "40")
+    # ALL_CAPS names tokenize to nothing (paper tokenizer kept: the camel/acronym-aware variant was not better on the
+    # 114 dev tasks, results/container_policy.json), so the module-level symbol is reached through other words here
+    out = run_localize(repo, "Client.is_closed property wrong after close; import re module", "--k", "40")
     assert "pkg/core.py:22-24  Client.is_closed" in out       # decorator line included in the range
     assert "Client.close" in out and "<module>" in out
     assert len(out) <= localize.MAX_OUT_CHARS

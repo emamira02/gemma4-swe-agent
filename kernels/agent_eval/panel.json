@@ -1,6 +1,6 @@
 {
- "tag": "S1-draft",
- "sha256": "c409d23d2b57dc34f1fb11994e13539784719efd015746e89e5e2500b050db19",
+ "tag": "S1",
+ "sha256": "4e14db4d5e2fa1cd77437ee59420c65056cee610dbe3f941f034ca9cf843ec88",
  "seed": 0,
  "repos": [
   "Textualize/rich"
