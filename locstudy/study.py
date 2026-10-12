@@ -18,7 +18,7 @@ from .data import Task, load_graph, load_tasks, manifest
 from .gold import gold_for, module_candidates, node_file
 from .metrics import (BUDGETS_TOKENS, KS, bootstrap_ci, hits_at, hits_within_budget, holm, mcnemar_exact,
                       outcome, paired_bootstrap, rr)
-from .signals import expand, extract_identifiers, extract_identifiers_plus, hop_distance, rrf, toks
+from .signals import _TRACE, expand, extract_identifiers, extract_identifiers_plus, hop_distance, rrf, toks
 
 
 @dataclass(frozen=True)
@@ -33,7 +33,9 @@ class Params:
     seed: int = 0
 
 
-SIGNALS = ("ident", "ident+", "bm25", "emb", "graph", "graph2", "rrf", "rrf+")
+# pre-specified comparison set (frozen); "lex" is the graph-free policy the agent runs in-container (post hoc)
+PRESPECIFIED = ("ident", "ident+", "bm25", "emb", "graph", "graph2", "rrf", "rrf+")
+SIGNALS = PRESPECIFIED + ("lex",)
 PRIMARY = "rrf+"
 _FEATURE = re.compile(r"^\W*(✨|➕|🎉|add\b|adds\b|added\b|support\b|introduce|implement|allow|new\b|feature)", re.I)
 _BUG = re.compile(r"^\W*(🐛|fix|fixes|fixed|bug|error|crash|regression|incorrect|wrong|broken|fail)", re.I)
@@ -62,6 +64,10 @@ def rankings(task: Task, data_dir: str, p: Params) -> tuple[dict[str, list[str]]
              "graph2": expand(anchors_p, g.adj, 2)}
     lists["rrf"] = rrf([lists["ident"], lists["bm25"], lists["emb"], lists["graph"]], k=p.rrf_k)
     lists["rrf+"] = rrf([lists["ident+"], lists["bm25"], g.neighbors_by_embedding(anchors_p), lists["graph2"]], k=p.rrf_k)
+    # graph-free policy of agent/skills/swe/scripts/localize.py: traceback frames + identifiers fused with BM25 when
+    # they resolve, BM25 alone otherwise (the paper's mode rule without embeddings or call graph)
+    ident_c = g.index.rank([fn for _, fn in _TRACE.findall(issue)] + extract_identifiers(issue))
+    lists["lex"] = rrf([ident_c, lists["bm25"]], k=p.rrf_k) if ident_c else lists["bm25"]
     return lists, g, {"anchors_from_ident": bool(r_identp), "anchors": anchors_p}
 
 
@@ -129,7 +135,7 @@ def paired_family(sel: list[dict], p: Params, metric: str, primary: str = PRIMAR
     fn = _metric_fn(metric)
     a = fn([r["sym"][primary] for r in sel])
     res, ps = {}, {}
-    for s in (others or tuple(x for x in SIGNALS if x != primary)):
+    for s in (others or tuple(x for x in PRESPECIFIED if x != primary)):
         b = fn([r["sym"][s] for r in sel])
         pb = paired_bootstrap(a, b, p.n_boot, p.seed)
         mc = mcnemar_exact(a, b)
@@ -154,6 +160,9 @@ def comparisons(rows: list[dict], p: Params) -> dict:
         # anchor-free mode: does fusion dilute the lexical signal?
         "no_anchor_bm25_vs_fusion_R@50": paired_family(no_anchor, p, "R@50", primary="bm25", others=("rrf", "rrf+")),
         "no_anchor_bm25_vs_fusion_R@20": paired_family(no_anchor, p, "R@20", primary="bm25", others=("rrf", "rrf+")),
+        # post hoc: the agent's graph-free policy against the paper's primary method and BM25
+        "lex_vs_fusion_R@5": paired_family(sel, p, "R@5", primary="lex", others=("rrf+", "bm25")),
+        "lex_vs_fusion_R@50": paired_family(sel, p, "R@50", primary="lex", others=("rrf+", "bm25")),
     }
 
 

@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 LABEL = {"ident": "Identifiers", "ident+": "Identifiers+", "bm25": "BM25", "emb": "Embedding nbrs",
-         "graph": "Graph 1-hop", "graph2": "Graph 2-hop", "rrf": "RRF", "rrf+": "RRF+"}
+         "graph": "Graph 1-hop", "graph2": "Graph 2-hop", "rrf": "RRF", "rrf+": "RRF+", "lex": "Lexical policy (no graph)"}
 
 
 def _fmt(ci: list[float]) -> str:
