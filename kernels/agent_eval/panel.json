@@ -1,0 +1,34 @@
+{
+ "tag": "S1-draft",
+ "sha256": "c409d23d2b57dc34f1fb11994e13539784719efd015746e89e5e2500b050db19",
+ "seed": 0,
+ "repos": [
+  "Textualize/rich"
+ ],
+ "panel": [
+  "rich_3006",
+  "rich_3063",
+  "rich_3067",
+  "rich_3296",
+  "rich_3469",
+  "rich_3470",
+  "rich_3471",
+  "rich_3472",
+  "rich_3506",
+  "rich_3521",
+  "rich_3535",
+  "rich_3675",
+  "rich_3772",
+  "rich_3777",
+  "rich_3782",
+  "rich_3882",
+  "rich_3905",
+  "rich_3930",
+  "rich_3935",
+  "rich_3938",
+  "rich_3942",
+  "rich_3944",
+  "rich_3953",
+  "rich_4070"
+ ]
+}

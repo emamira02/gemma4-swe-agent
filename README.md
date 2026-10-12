@@ -27,16 +27,23 @@ Entry for **Google – The Gemma 4 Developer Agent Competition** (Kaggle, host G
 ### Original thesis
 **Hybrid graph-retrieval localization**: dense `search_similar_code` → graph expansion via `get_code_neighbors`/`get_code_subgraph` → lexical confirmation (`grep`) → re-rank → patch/test/repair loop. Hypothesis: better file/function localization at fixed budget raises pass rate for a 31B quantized model more than prompt tweaks do.
 
-## Experiments (each measured, nothing reported without a run)
-| ID | Variant | Metrics |
-|---|---|---|
-| E0 | single agent, harness defaults, no retrieval guidance | pass rate, budget used |
-| E1 | + dense retrieval skill | + Recall@k / MRR of gold-edited files |
-| E2 | + graph expansion | same |
-| E3 | + lexical confirmation & re-rank | same |
-| E4 | + test-driven repair sub-agent | pass rate, retries, time/issue |
-| E5 (optional) | LoRA on tool-use traces | only if E0–E4 plateau and GPU budget allows |
+## Agent (main competition) — `agent/`
+Single `LlmAgent` (no sub-agents, no graph tools: public ablations show no gain from either, and the scorer's
+~5 min/task budget rewards fewer, better turns). What is different is the localization step, taken from the paper:
+- `skills/swe/scripts/localize.py` (stdlib, runs inside the task container in ~1 s): parses the repo with `ast`,
+  ranks symbols by identifier resolution (harness-style tiers), BM25 and quoted-literal matches, fused only when
+  the issue names a resolvable symbol (the paper's mode rule), and prints `path:first-last symbol signature # doc`
+  plus related test files. The model then re-ranks this list itself — the paper's strongest result (re-ranking
+  BM25's top 50: top-5 recall 25% → 61%).
+- `skills/swe/scripts/finalize.py`: reverts protected test/config edits, deletes scratch files, compiles changed
+  files, prints the diff stat — before `submit_patch`.
+- `prompts/system.md`: localize → choose → read ranges → edit early → one targeted check → finalize → submit.
+- `eval_config.yaml`: 5.0 min/task, 100 s per command, 40 tool calls, 60 turns (120 tasks fit 12 h with margin).
 
+Workflow: `python tools/build_submission.py --tag Sx` (full validation, official compile, reproducible zip,
+CPU notebook) → `python kernels/agent_eval/build.py --tag Sx` (GPU dev-panel eval with gold-solvability check) →
+`python tools/kaggle_submit.py --tag Sx --hypothesis "..."` (one pending submission, sha-checked, logged in
+`runs.csv`). Tests: `pytest tests/test_agent.py`.
 
 ## Localization study (paper track) — reproducible pipeline
 ```

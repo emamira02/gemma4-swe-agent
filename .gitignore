@@ -11,3 +11,8 @@ __pycache__/
 third_party/
 results/private/
 results/kaggle_*/
+# generated build artefacts (rebuilt by tools/build_submission.py and kernels/agent_eval/build.py)
+build/
+kernels/submit/submit.ipynb
+kernels/agent_eval/run_agent_eval.py
+results/*.log
