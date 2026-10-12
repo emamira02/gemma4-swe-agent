@@ -124,5 +124,5 @@ if __name__ == "__main__":
     except SystemExit:
         raise
     except Exception as e:
-        print(f"finalize failed ({type(e).__name__}: {e}); check `git status` and `git diff --stat` manually, then submit_patch.")
+        print(f"finalize failed ({type(e).__name__}: {e}); check git status and git diff --stat with run_command, then submit_patch.")
         sys.exit(0)

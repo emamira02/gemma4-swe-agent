@@ -208,3 +208,16 @@ def test_bundle_rejects_bad_configs(tmp_path):
     (b / "notes.pkl").write_bytes(b"x")
     with pytest.raises(bs.BundleError, match="disallowed extension"):
         bs.validate(b)
+
+
+def test_no_backticks_reach_the_model(repo):
+    """Gemma copied backticked call examples into tool arguments in the S1 dev run (48 calls, 14/24 tasks broken):
+    the prompt, the skill file and every script output the model reads must be backtick-free."""
+    for f in (ROOT / "agent" / "prompts" / "system.md", ROOT / "agent" / "skills" / "swe" / "SKILL.md"):
+        assert "`" not in f.read_text(encoding="utf-8"), f
+    out = run_localize(repo, "parse_header returns wrong part; error says \"empty header value\"")
+    assert "`" not in out
+    (repo / "pkg" / "render.py").write_text("def render_table(rows:\n")
+    r = subprocess.run([sys.executable, str(SCRIPTS / "finalize.py"), "--root", str(repo), "--dry-run"],
+                       capture_output=True, text=True)
+    assert "`" not in r.stdout

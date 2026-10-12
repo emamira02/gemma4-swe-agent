@@ -351,7 +351,7 @@ def main(argv: list[str] | None = None) -> int:
         src_texts[f] = src.splitlines()
         syms.extend(symbols_of(f, src))
     if not syms:
-        print(f"No Python source found under {root}. Use `grep -rn` with words from the issue instead.")
+        print(f"No Python source found under {root}. Search with run_command instead: grep -rn -i \"term\" . | head -40")
         return 1
     idx = Index(syms)
     bm = BM25([toks(s.qual) * 2 + toks(s.text) for s in syms])
@@ -389,7 +389,8 @@ def main(argv: list[str] | None = None) -> int:
         out.append("LITERAL MATCHES: " + "; ".join(lit_found))
     rt = related_tests(top, test_texts)
     if rt:
-        out.append("RELATED TESTS (run one with `timeout 120 python -m pytest -x -q <file> -k <name>`): " + ", ".join(rt))
+        out.append("RELATED TESTS (check one with: cd /workspace && timeout 100 python -m pytest -x -q FILE -k NAME 2>&1 | tail -25): "
+                   + ", ".join(rt))
     text = "\n".join(out)
     if len(text) > MAX_OUT_CHARS:
         text = text[:MAX_OUT_CHARS - 20] + "\n...[truncated]"
