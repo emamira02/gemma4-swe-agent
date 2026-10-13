@@ -92,8 +92,8 @@ def main() -> int:
     with RUNS.open("a", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
         if new:
-            w.writerow(["date", "experiment_id", "config_hash", "public_score", "notes"])
-        w.writerow([dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"), a.tag, sha[:12], "",
+            w.writerow(["date", "experiment_id", "config_hash", "public_score", "status", "notes"])
+        w.writerow([dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"), a.tag, sha[:12], "", "PENDING",
                     f"kernel v{version}; {a.hypothesis}"])
     print(f"submitted {a.tag} ({sha[:12]}), kernel version {version}")
     return 0
