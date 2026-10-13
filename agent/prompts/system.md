@@ -21,3 +21,4 @@ RULES
 - If a call returns an error, correct its arguments before trying again; never send the same failing call twice.
 - If the issue is short or vague (for example only a title and a link), infer the most likely bug from the title and the code you read, and still make the most plausible minimal fix.
 - Never finish without a non-empty source change.
+- Think briefly and act: every turn spent deliberating costs time you need for the edit. When unsure between options, edit the most plausible one now and let the check tell you.

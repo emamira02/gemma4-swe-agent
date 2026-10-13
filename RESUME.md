@@ -29,6 +29,7 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | SKIPPED 2026-10-13 (superseded by S3: same panel resolves, fewer timeouts) |
 | S3 (e1af59a2b337) | panel done 2026-10-13 (4/22 resolved, 12 timeouts, no_edit 5); submitted 2026-10-13 ~21:46 UTC, PENDING |
+| S4 (16a19a7ecd46) | dev panel running (kernel g4-agent-eval v4, pushed 2026-10-14) |
 | Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
@@ -37,10 +38,27 @@ Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always us
 |---|---|---|---|
 | S2 | SKIPPED (superseded by S3 on 2026-10-13: tie on resolves, newest wins; S3 fewer timeouts) (panel: resolved 4/21 = S1; tasks with malformed calls 14 -> 5; timeouts 16 -> 14; empty patches 7 -> 9; no_edit 5 = 5) | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
 | S3 | SUBMITTED 2026-10-13 (panel: resolved_on_solvable 4/22; timeouts 12; empty_patch 7; tasks_with_arg_errors 3; no_edit 5; timeouts+no_edit 17 vs S2 19 -> READY) | S2 + localize shows rank-1 source in anchored mode (edit without a read), write_file /tmp misuse explained, finalize deletes /workspace/tmp | S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts |
+| S4 | WAIT_PANEL | S3 + thinking_budget 2048 -> 1024, prompt rule: think briefly, edit the most plausible option and let the check decide | capped 2,048-token thinking turns (~60 s each, 28-29% of agent time in S1-S3) cause the late/no edits behind 7 empty patches and 12 timeouts |
 
+Decision rule for S4 after its panel: READY if resolved_on_solvable >= 4 (best so far: S1/S2/S3 = 4), empty_patch + no_edit do not grow vs S3 (7 + 5)
+and no new failure mode appears (e.g. more arg errors or truncated-thought turns with no tool call); otherwise BLOCKED.
 Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and timeouts + no_edit do not grow vs S2.
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
+
+## Findings S3 (dev panel, 2026-10-14; 18 unresolved solvable tasks, traces + gold comparison)
+- Same 4 tasks resolved in S1, S2, S3 (rich_3006/3067/3882/3905); S1 public score 0.15 matches the panel (~4/24).
+- Timeouts are graded on the working tree, so timeouts are not lost per se; the outcome classes are:
+  empty/effectively empty 7 (3063, 3472, 3506, 3521 scratch file only, 3935, 3938 raw tool-call text, 3942),
+  right site wrong logic 5 (3471, 3675, 3777, 3782, 3953), wrong site 2 (3772 hang exit 124 in all runs, 3944 vague
+  issue), broken/not feasible in 5 min 2 (3930 needs a 12.7k-line data module, 4070 128-line refactor),
+  right logic incomplete 1 (3535), right fix plus harmful extra edit 1 (3470).
+- Localization is not the bottleneck: gold file in localize top-5 for 15/18, gold file read in 15/18.
+- Time: thinking turns hitting the 2,048 cap (~2,100 completion tokens, ~35 tok/s, ~60 s each): 20/18/20 per panel
+  in S1/S2/S3; turns >=1,500 tokens = 28-29% of all agent time in every run. Median first source edit ~200 s on the
+  18 failures; 6 tasks first edit >=260 s or never; pytest run only 3 times on the 18.
+- Change chosen (S4): thinking budget 1024 + brief-thinking rule (targets the largest measured time sink; prompt/
+  localize rules for the right-site-wrong-logic class are the next candidate once time is freed).
 
 ## Timeline
 - S1 score: ~14 Oct (±12 h). Each further submission: ~2 days from submit to score.

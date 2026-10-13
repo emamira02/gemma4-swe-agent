@@ -1,0 +1,14 @@
+{
+ "tag": "S4",
+ "zip_sha256": "16a19a7ecd46f543bbf3825748de2a9c363fdfb36d225367cff63851e61a6c9f",
+ "git_head_at_freeze": "c91e91f95da0395066af20c2aab7864202ba666d",
+ "files": {
+  "agent.yaml": "60c4e322d551",
+  "configs/sampling.yaml": "8b6cb9548c35",
+  "eval_config.yaml": "e98492e19da5",
+  "prompts/system.md": "5e0a99f4aba2",
+  "skills/swe/scripts/finalize.py": "528ee4512e7b",
+  "skills/swe/scripts/localize.py": "f706a62eff8f",
+  "skills/swe/SKILL.md": "2cfc0655ed06"
+ }
+}

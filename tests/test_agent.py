@@ -247,3 +247,13 @@ def test_frozen_candidates_rebuild_to_their_recorded_sha(tmp_path):
         assert __import__("hashlib").sha256(bs.build_zip(staged)).hexdigest() == rec["zip_sha256"], rec["tag"]
     with pytest.raises(bs.BundleError, match="frozen"):
         bs.freeze("S1", bs.stage(ROOT / "agent", tmp_path / "cur"), {"zip_sha256": "0" * 64})
+
+
+def test_sampling_keeps_thinking_on_with_bounded_budget():
+    """Thinking off costs 16-28 of 129 public tasks; but under the 5-minute limit every capped thinking turn costs
+    ~budget/35 s (S1-S3: turns >=1,500 tokens took 28-29% of agent time), so the budget stays at or below 2,048."""
+    import yaml
+    cfg = yaml.safe_load((ROOT / "agent" / "configs" / "sampling.yaml").read_text(encoding="utf-8"))
+    tc = cfg["thinking_config"]
+    assert tc["include_thoughts"] is True and 512 <= tc["thinking_budget"] <= 2048
+    assert tc["thinking_budget"] < cfg["max_output_tokens"]
