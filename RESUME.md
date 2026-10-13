@@ -29,7 +29,7 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | SKIPPED 2026-10-13 (superseded by S3: same panel resolves, fewer timeouts) |
 | S3 (e1af59a2b337) | panel done 2026-10-13 (4/22 resolved, 12 timeouts, no_edit 5); submitted 2026-10-13 ~21:46 UTC, PENDING |
-| S4 (16a19a7ecd46) | dev panel running (kernel g4-agent-eval v4, pushed 2026-10-14) |
+| S4 (16a19a7ecd46) | dev panel running (kernel g4-agent-eval v4, pushed 2026-10-14; still RUNNING at 2026-10-13 22:21 UTC check) |
 | Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
