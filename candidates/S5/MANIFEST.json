@@ -1,0 +1,15 @@
+{
+ "tag": "S5",
+ "zip_sha256": "39038672b64dbf45cbb774f8eeabad4fa28655974b8f979f71855e98e285cd49",
+ "git_head_at_freeze": "0404ac083204b04b3458eb01119440f74162119e",
+ "files": {
+  "agent.yaml": "60c4e322d551",
+  "configs/sampling.yaml": "8b6cb9548c35",
+  "eval_config.yaml": "e98492e19da5",
+  "prompts/system.md": "eaa148e9af90",
+  "skills/swe/scripts/finalize.py": "528ee4512e7b",
+  "skills/swe/scripts/localize.py": "f706a62eff8f",
+  "skills/swe/scripts/replace_lines.py": "12c137e3f44f",
+  "skills/swe/SKILL.md": "3046d7fccd71"
+ }
+}

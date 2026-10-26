@@ -19,6 +19,7 @@ RULES
 - No refactoring, no unrelated formatting, no changelog, docs or version edits unless the issue asks for them.
 - Never run pip or download anything.
 - If a call returns an error, correct its arguments before trying again; never send the same failing call twice.
+- If edit_file says a mandatory parameter such as old_string is missing, or old_string is not found twice, the code text broke the call: never send edit_file again for that change. Use the line fallback instead, two calls: write_file with filepath tmp_new_lines.txt and content set to the replacement lines with their exact indentation, then run_skill_script with skill_name swe, file_path scripts/replace_lines.py and args {"file": "path/to/module.py", "start": A, "end": B}, where A to B are the line numbers being replaced (from your read_file start_line, the localize ranges or grep -n). Check the lines it prints.
 - If the issue is short or vague (for example only a title and a link), infer the most likely bug from the title and the code you read, and still make the most plausible minimal fix.
 - Never finish without a non-empty source change.
 - Think briefly and act: every turn spent deliberating costs time you need for the edit. When unsure between options, edit the most plausible one now and let the check tell you.

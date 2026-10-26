@@ -29,8 +29,9 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | SKIPPED 2026-10-13 (superseded by S3: same panel resolves, fewer timeouts) |
 | S3 (e1af59a2b337) | panel done 2026-10-13 (4/22 resolved, 12 timeouts, no_edit 5); submitted 2026-10-13 21:47 UTC, COMPLETE, public score 0.12 (seen 2026-10-16 11:14 UTC; below S1 0.15) |
-| Queue | 2026-10-26 18:31 UTC: no pending submission, no READY entry (S4 BLOCKED); no new tag since S4 (2026-10-14), waiting for kaggle-improve |
+| Queue | 2026-10-26 18:50 UTC: no pending submission, no READY entry (S4 BLOCKED); S5 dev panel running (kernel v5, pushed 2026-10-26 ~18:48 UTC) |
 | S4 (16a19a7ecd46) | panel done 2026-10-14 07:15 UTC: 5/22 resolved (best so far), 9 timeouts, empty 3, no_edit 2, BUT tasks_with_arg_errors 3 -> 8 (arg_errors 5 -> 43, 42 backtick) -> BLOCKED by rule; needs fix (new tag) |
+| S5 (39038672b64d) | built 2026-10-26 from S4 + edit fallback; dev panel (kernel v5) RUNNING -> WAIT_PANEL |
 | Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
@@ -39,13 +40,32 @@ Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always us
 |---|---|---|---|
 | S2 | SKIPPED (superseded by S3 on 2026-10-13: tie on resolves, newest wins; S3 fewer timeouts) (panel: resolved 4/21 = S1; tasks with malformed calls 14 -> 5; timeouts 16 -> 14; empty patches 7 -> 9; no_edit 5 = 5) | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
 | S3 | SUBMITTED 2026-10-13 (panel: resolved_on_solvable 4/22; timeouts 12; empty_patch 7; tasks_with_arg_errors 3; no_edit 5; timeouts+no_edit 17 vs S2 19 -> READY) | S2 + localize shows rank-1 source in anchored mode (edit without a read), write_file /tmp misuse explained, finalize deletes /workspace/tmp | S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts |
+| S5 | WAIT_PANEL (kernel v5 pushed 2026-10-26) | S4 + skill script replace_lines.py (write_file the new lines to tmp_new_lines.txt, then replace lines A-B by number; refuses a result that does not compile) + prompt rule: after a missing-parameter or twice-not-found edit_file error never resend edit_file for that change, use the line fallback | S4 traces: 41/78 edit_file calls lost old_string in the call serialization (7 tasks), resent unchanged up to 13 times (identical_repeat 29); write_file (one code value) lost a field only 4 times in 76 across S1-S4 |
 | S4 | BLOCKED 2026-10-14 (panel: resolved_on_solvable 5/22; timeouts 9; empty_patch 3; tasks_with_arg_errors 8 vs S3 3 (arg_errors 43, backtick 42 vs 5); no_edit 2; empty+no_edit 5 vs 12 ok, but more arg errors = new failure mode per rule) | S3 + thinking_budget 2048 -> 1024, prompt rule: think briefly, edit the most plausible option and let the check decide | capped 2,048-token thinking turns (~60 s each, 28-29% of agent time in S1-S3) cause the late/no edits behind 7 empty patches and 12 timeouts |
 
+Decision rule for S5 after its panel: READY if resolved_on_solvable >= 5 (best so far: S4 = 5), tasks_with_arg_errors < 8 (S4)
+and arg_errors < 43, and no new failure mode appears (e.g. replace_lines misuse: wrong line ranges, NOT APPLIED loops, scratch
+file left in the patch; more empty patches + no_edit than S4's 3 + 2 by more than 2); otherwise BLOCKED.
 Decision rule for S4 after its panel: READY if resolved_on_solvable >= 4 (best so far: S1/S2/S3 = 4), empty_patch + no_edit do not grow vs S3 (7 + 5)
 and no new failure mode appears (e.g. more arg errors or truncated-thought turns with no tool call); otherwise BLOCKED.
 Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and timeouts + no_edit do not grow vs S2.
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
+
+## Findings S4 (dev panel 2026-10-14, analysed 2026-10-26; 22 gold-solvable, 5 resolved)
+- Largest measured failure mode: broken edit_file calls. 41 of 78 edit_file calls (S1 17/52, S2 15/44, S3 0/34) came
+  back "mandatory input parameters are not present: old_string": the model closed the first code value with a
+  backtick or plain quote instead of its string delimiter, so the rest of the call (old_string) was swallowed into it.
+  7 tasks hit it (3063 x13, 3882 x10, 3296 x5, 3472 x5, 3067 x4, 3521 x1, 3470 read_file path x1); the model then
+  resent the identical call (identical_repeat 29 of 554 calls), ignoring the generic never-repeat rule.
+  Outcome: 3063 timeout on a known fix, 3472 empty patch at timeout, 3882/3067 resolved only after 10/4 wasted calls.
+- Triggers: values with quotes, backslashes, regex or triple quotes (3063, 3067, 3472, 3521), but also plain code
+  (3882, 3296): not avoidable by content rules alone. write_file (one code value) lost a field 4 times in 76 calls.
+- Other classes unchanged vs S3: timeouts 9 (3063, 3469, 3472, 3506, 3782, 3930, 3935, 3942, 3953), empty 3 + no_edit 2
+  (3782, 3942), first edit median 115 s (S3 ~200 s on failures): the S4 thinking cut worked on time.
+- Confound: S3 (2,048 thinking) had 0 broken edits, S4 (1,024) 41; S1/S2 (2,048) 17/15, so not clearly the budget;
+  kept 1,024 (best resolves). If S5 still shows many broken calls, test 2,048 + fallback next.
+- Change chosen (S5): line-range fallback script + explicit recovery rule (see queue).
 
 ## Findings S3 (dev panel, 2026-10-14; 18 unresolved solvable tasks, traces + gold comparison)
 - Same 4 tasks resolved in S1, S2, S3 (rich_3006/3067/3882/3905); S1 public score 0.15 matches the panel (~4/24).

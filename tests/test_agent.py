@@ -187,7 +187,7 @@ def test_bundle_validates_and_builds_reproducibly(tmp_path):
     assert z1 == z2
     names = set(zipfile.ZipFile(__import__("io").BytesIO(z1)).namelist())
     assert {"agent.yaml", "eval_config.yaml", "configs/sampling.yaml", "prompts/system.md", "skills/swe/SKILL.md",
-            "skills/swe/scripts/localize.py", "skills/swe/scripts/finalize.py"} == names
+            "skills/swe/scripts/localize.py", "skills/swe/scripts/finalize.py", "skills/swe/scripts/replace_lines.py"} == names
     nb = bs.kernel_notebook(z1, "x" * 64, "t")
     assert "/kaggle/working/submission.zip" in "".join(nb["cells"][0]["source"])
 
@@ -221,6 +221,10 @@ def test_no_backticks_reach_the_model(repo):
     r = subprocess.run([sys.executable, str(SCRIPTS / "finalize.py"), "--root", str(repo), "--dry-run"],
                        capture_output=True, text=True)
     assert "`" not in r.stdout
+    (repo / "tmp_new_lines.txt").write_text("    return parts[0]\n", encoding="utf-8")
+    r = subprocess.run([sys.executable, str(SCRIPTS / "replace_lines.py"), "--root", str(repo), "--file", "pkg/core.py",
+                        "--start", "11", "--end", "11"], capture_output=True, text=True)
+    assert r.stdout.startswith("OK") and "`" not in r.stdout
 
 
 def test_localize_shows_rank1_source_only_when_anchored(repo):
@@ -257,3 +261,60 @@ def test_sampling_keeps_thinking_on_with_bounded_budget():
     tc = cfg["thinking_config"]
     assert tc["include_thoughts"] is True and 512 <= tc["thinking_budget"] <= 2048
     assert tc["thinking_budget"] < cfg["max_output_tokens"]
+
+
+# ---------- replace_lines (edit_file fallback) ----------
+def run_replace(repo: Path, content: str | None, *args: str) -> subprocess.CompletedProcess:
+    if content is not None:
+        (repo / "tmp_new_lines.txt").write_text(content, encoding="utf-8")
+    return subprocess.run([sys.executable, str(SCRIPTS / "replace_lines.py"), "--root", str(repo), *args],
+                          capture_output=True, text=True, timeout=60)
+
+
+def test_replace_lines_replaces_inserts_and_cleans_up(repo):
+    """S4: 41 edit_file calls lost old_string (7 tasks); the fallback takes one code value via write_file."""
+    r = run_replace(repo, '    return parts[0].strip()\n<|"|>', "--file", "pkg/core.py", "--start", "11", "--end", "11")
+    assert r.returncode == 0 and "OK: pkg/core.py lines 11-11" in r.stdout and "`" not in r.stdout, r.stdout
+    text = (repo / "pkg" / "core.py").read_text(encoding="utf-8")
+    assert "    return parts[0].strip()\n\n\nclass Client:" in text and '<|"|>' not in text
+    assert not (repo / "tmp_new_lines.txt").exists()
+    r = run_replace(repo, "    # checked\n", "--file", "/workspace/pkg/core.py", "--start", "8", "--end", "7")
+    assert r.returncode == 0 and "(nothing, insertion)" in r.stdout
+    lines = (repo / "pkg" / "core.py").read_text(encoding="utf-8").splitlines()
+    assert lines[7] == "    # checked" and lines[8] == "    parts = value.split(sep)"
+    assert git(repo, "diff", "--stat").count("|") == 1
+
+
+def test_replace_lines_refuses_bad_input_without_touching_files(repo):
+    before = (repo / "pkg" / "core.py").read_text(encoding="utf-8")
+    r = run_replace(repo, "def parse_header(value:\n", "--file", "pkg/core.py", "--start", "6", "--end", "6")
+    assert r.returncode == 1 and "NOT APPLIED" in r.stdout and (repo / "tmp_new_lines.txt").exists()
+    for args in (("--file", "pkg/core.py", "--start", "x", "--end", "2"),
+                 ("--file", "pkg/core.py", "--start", "40", "--end", "41"),
+                 ("--file", "pkg/core.py", "--start", "5", "--end", "3"),
+                 ("--file", "../outside.py", "--start", "1", "--end", "1"),
+                 ("--file", "pkg/missing.py", "--start", "1", "--end", "1")):
+        r = run_replace(repo, None, *args)
+        assert r.returncode == 2 and r.stdout.startswith("ERROR"), (args, r.stdout)
+    (repo / "tmp_new_lines.txt").unlink()
+    r = run_replace(repo, None, "--file", "pkg/core.py", "--start", "1", "--end", "1")
+    assert r.returncode == 2 and "write_file" in r.stdout
+    assert (repo / "pkg" / "core.py").read_text(encoding="utf-8") == before
+    (repo / "tmp_new_lines.txt").write_text("x\n")
+    assert finalize.main(["--root", str(repo)]) == 0 and not (repo / "tmp_new_lines.txt").exists()
+
+
+def test_replace_lines_runs_through_adk_skill_wrapper_with_int_args(repo, tmp_path):
+    pytest.importorskip("google.adk")
+    from google.adk.tools.skill_toolset import _SkillScriptCodeExecutor
+    from google.adk.skills._utils import _load_skill_from_dir
+    skill = _load_skill_from_dir(ROOT / "agent" / "skills" / "swe")
+    ex = _SkillScriptCodeExecutor(base_executor=None, script_timeout=60)
+    (repo / "tmp_new_lines.txt").write_text("    return parts[-1]\n", encoding="utf-8")
+    code = ex._build_wrapper_code(skill, "scripts/replace_lines.py", {"file": "pkg/core.py", "start": 11, "end": 11})
+    w = tmp_path / "wrapper.py"
+    w.write_text(code, encoding="utf-8")
+    env = {"PATH": __import__("os").environ["PATH"], "PYTHONPATH": str(repo), "SYSTEMROOT": __import__("os").environ.get("SYSTEMROOT", "")}
+    r = subprocess.run([sys.executable, str(w)], cwd=repo, env=env, capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0 and "OK: pkg/core.py lines 11-11" in r.stdout, r.stdout + r.stderr
+    assert "    return parts[-1]\n" in (repo / "pkg" / "core.py").read_text(encoding="utf-8")

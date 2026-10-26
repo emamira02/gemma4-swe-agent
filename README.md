@@ -35,6 +35,9 @@ Single `LlmAgent` (no sub-agents, no graph tools: public ablations show no gain 
   the issue names a resolvable symbol (the paper's mode rule), and prints `path:first-last symbol signature # doc`
   plus related test files. The model then re-ranks this list itself — the paper's strongest result (re-ranking
   BM25's top 50: top-5 recall 25% → 61%).
+- `skills/swe/scripts/replace_lines.py`: line-range edit from a write_file scratch file, the fallback when an
+  `edit_file` call loses `old_string` in the tool-call serialization (S4: 41 broken calls in 7 tasks); refuses a
+  result that does not compile.
 - `skills/swe/scripts/finalize.py`: reverts protected test/config edits, deletes scratch files, compiles changed
   files, prints the diff stat — before `submit_patch`.
 - `prompts/system.md`: localize → choose → read ranges → edit early → one targeted check → finalize → submit.
