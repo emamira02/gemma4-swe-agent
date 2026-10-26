@@ -3,7 +3,8 @@
   "S1",
   "S2",
   "S3",
-  "S4"
+  "S4",
+  "S5"
  ],
  "runs": {
   "S1": {
@@ -99,6 +100,29 @@
     "max_time_minutes": 5.0,
     "max_tool_calls": 32
    }
+  },
+  "S5": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "rich"
+    ],
+    "gold_solvable": 21,
+    "resolved": 5,
+    "resolve_rate": 0.238095,
+    "timeouts": 12,
+    "empty_patch": 10,
+    "no_edit": 8,
+    "tasks_with_arg_errors": 1,
+    "first_edit_s_median": 69.7,
+    "calls": 529,
+    "arg_errors": 4,
+    "backtick_args": 10,
+    "max_time_minutes": 5.0,
+    "max_tool_calls": 32
+   }
   }
  },
  "scored": {
@@ -106,70 +130,72 @@
   "S3": 0.12
  },
  "n_scored": 2,
- "n_panels": 4,
+ "n_panels": 5,
  "baseline": "S1",
  "failure": {
   "tags": [
    "S1",
    "S2",
    "S3",
-   "S4"
+   "S4",
+   "S5"
   ],
-  "n_tags": 4,
-  "task_runs": 96,
-  "solvable_runs": 86,
-  "resolved_runs": 17,
+  "n_tags": 5,
+  "task_runs": 120,
+  "solvable_runs": 107,
+  "resolved_runs": 22,
   "resolved_min": 4,
   "resolved_max": 5,
-  "rank1_runs": 51,
-  "rank1_rate": 0.593023,
-  "unresolved_runs": 69,
+  "rank1_runs": 62,
+  "rank1_rate": 0.579439,
+  "unresolved_runs": 85,
   "unresolved": {
    "NO_EDIT_TOOL": 4,
-   "NO_EDIT": 21,
-   "WRONG_FILE": 9,
+   "NO_EDIT": 31,
+   "WRONG_FILE": 10,
    "RIGHT_FILE_TOOL": 0,
-   "RIGHT_FILE_TIMEOUT": 18,
-   "RIGHT_FILE_WRONG_FIX": 17
+   "RIGHT_FILE_TIMEOUT": 20,
+   "RIGHT_FILE_WRONG_FIX": 20
   },
-  "unresolved_right_file": 35,
-  "unresolved_no_edit": 25,
-  "right_file_share": 0.507246,
+  "unresolved_right_file": 40,
+  "unresolved_no_edit": 35,
+  "wrong_file_share": 0.117647,
+  "right_file_share": 0.470588,
   "tools": {
    "edit_file": {
-    "calls": 208,
-    "malformed": 73,
-    "rate": 0.350962
+    "calls": 248,
+    "malformed": 77,
+    "rate": 0.310484
    },
    "get_status": {
-    "calls": 4,
+    "calls": 5,
     "malformed": 0,
     "rate": 0.0
    },
    "read_file": {
-    "calls": 825,
-    "malformed": 3,
-    "rate": 0.003636
+    "calls": 1011,
+    "malformed": 5,
+    "rate": 0.004946
    },
    "run_command": {
-    "calls": 807,
+    "calls": 1047,
     "malformed": 0,
     "rate": 0.0
    },
    "run_skill_script": {
-    "calls": 159,
+    "calls": 191,
     "malformed": 33,
-    "rate": 0.207547
+    "rate": 0.172775
    },
    "submit_patch": {
-    "calls": 47,
+    "calls": 59,
     "malformed": 0,
     "rate": 0.0
    },
    "write_file": {
-    "calls": 76,
+    "calls": 94,
     "malformed": 4,
-    "rate": 0.052632
+    "rate": 0.042553
    }
   }
  }

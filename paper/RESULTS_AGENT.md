@@ -8,24 +8,25 @@ Rebuild: python -m analysis.failure_audit && python tools/agent_summary.py && py
 | S2 | 24 (21) | 4 | 14 | 5 | 122 | not submitted |
 | S3 | 24 (22) | 4 | 12 | 3 | 135 | 0.12 |
 | S4 | 24 (22) | 5 | 9 | 8 | 115 | not submitted |
+| S5 | 24 (21) | 5 | 12 | 1 | 70 | not submitted |
 
-Pooled over S1, S2, S3, S4: 86 solvable of 96 task runs, 17 resolved; localize ranks an edited file first in 51 (59.3%).
+Pooled over S1, S2, S3, S4, S5: 107 solvable of 120 task runs, 22 resolved; localize ranks an edited file first in 62 (57.9%).
 
 | Unresolved category | Runs |
 |---|---|
 | NO_EDIT_TOOL | 4 |
-| NO_EDIT | 21 |
-| WRONG_FILE | 9 |
+| NO_EDIT | 31 |
+| WRONG_FILE | 10 |
 | RIGHT_FILE_TOOL | 0 |
-| RIGHT_FILE_TIMEOUT | 18 |
-| RIGHT_FILE_WRONG_FIX | 17 |
+| RIGHT_FILE_TIMEOUT | 20 |
+| RIGHT_FILE_WRONG_FIX | 20 |
 
 | Tool | Calls | Malformed | Rate |
 |---|---|---|---|
-| edit_file | 208 | 73 | 35.1% |
-| get_status | 4 | 0 | 0.0% |
-| read_file | 825 | 3 | 0.4% |
-| run_command | 807 | 0 | 0.0% |
-| run_skill_script | 159 | 33 | 20.8% |
-| submit_patch | 47 | 0 | 0.0% |
-| write_file | 76 | 4 | 5.3% |
+| edit_file | 248 | 77 | 31.0% |
+| get_status | 5 | 0 | 0.0% |
+| read_file | 1011 | 5 | 0.5% |
+| run_command | 1047 | 0 | 0.0% |
+| run_skill_script | 191 | 33 | 17.3% |
+| submit_patch | 59 | 0 | 0.0% |
+| write_file | 94 | 4 | 4.3% |

@@ -149,8 +149,7 @@ def aggregate(by_tag: dict) -> dict:
             "unresolved_runs": len(unres), "unresolved": {c: cats.get(c, 0) for c in CATEGORIES[2:]},
             "unresolved_right_file": sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE")),
             "unresolved_no_edit": cats.get("NO_EDIT", 0) + cats.get("NO_EDIT_TOOL", 0),
-            "right_file_share": round(sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE"))
-                                      / max(1, len(unres)), 6),
+            "wrong_file_share": round(cats.get("WRONG_FILE", 0) / max(1, len(unres)), 6),
             "right_file_share": round(sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE"))
                                       / max(1, len(unres)), 6),
             "tools": {n: {"calls": c, "malformed": b, "rate": round(b / c, 6) if c else 0.0}
