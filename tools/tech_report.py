@@ -5,7 +5,9 @@
 Narrative sections live in this file; everything else is copied verbatim from the repository: the frozen bundles in
 candidates/<TAG>/bundle (prompts, configs, scripts), unified diffs between consecutive versions, dev-panel metrics
 (results/agent_runs/*.json), leaderboard scores (runs.csv), the LLM prompts (analysis/llm_v2.py), the paper
-(paper/PAPER.md) and its generated tables (paper/RESULTS.md, paper/RESULTS_LLM.md). No competition data is included.
+(paper/PAPER.md) and its generated tables (paper/RESULTS.md, paper/RESULTS_LLM.md, paper/RESULTS_AGENT.md), the
+failure audit (results/failure_audit.json) and the Linux editor check (results/editor_check/). No competition data
+is included.
 """
 from __future__ import annotations
 
@@ -21,8 +23,9 @@ ROOT = Path(__file__).resolve().parent.parent
 CAND = ROOT / "candidates"
 LANG = {".py": "python", ".yaml": "yaml", ".yml": "yaml", ".md": "markdown", ".json": "json"}
 
-INTRO = """# DEEP DIVE TECNICO — Agente Kaggle (versioni S1–S5) e paper "Anchors Decide"
-Generato automaticamente il {date} da `tools/tech_report.py` nel repository privato emamira02/gemma4-swe-agent.
+INTRO = """# DEEP DIVE TECNICO — Agente Kaggle (versioni {first}–{last}) e paper "Anchors Decide"
+Generato automaticamente il {date} da `tools/tech_report.py` nel repository pubblico
+https://github.com/emamira02/gemma4-swe-agent (pubblico dal 26/10/2026).
 Le parti narrative sono scritte a mano; prompt, configurazioni, codice, differenze tra versioni, metriche e paper
 sono copiati alla lettera dai file reali (versioni congelate in `candidates/<TAG>/bundle`). Nessun dato della
 competizione (testi delle issue, patch) è incluso. Da leggere insieme a HANDOFF_2026-10-26.md.
@@ -33,7 +36,7 @@ Indice
 3. Architettura dell'agente e perché è fatta così
 4. I componenti, uno per uno
 5. Come si sviluppa, si valuta e si invia una versione (metodo)
-6. Versione per versione: S1, S2, S3, S4, S5 (motivazione, modifiche, risultati, decisione)
+6. Versione per versione: {tags} (motivazione, modifiche, risultati, decisione) + S6 in dettaglio
 7. Il paper: domanda, dati, metodo, statistica, risultati, garanzie di rigore
 8. Appendice A — bundle completo dell'ultima versione (testo esatto)
 9. Appendice B — differenze esatte tra versioni consecutive
@@ -84,8 +87,10 @@ SEC2 = """## 2. Come gira un task (ciclo di vita reale, letto nel codice dell'ha
 """
 
 SEC3 = """## 3. Architettura dell'agente e perché è fatta così
-Scelta: UN solo LlmAgent, strumenti dell'harness essenziali (run_command, read_file, edit_file, write_file,
-get_status, submit_patch) + una skill "swe" con script deterministici. Niente sub-agent, niente tool di grafo.
+Scelta: UN solo LlmAgent, strumenti dell'harness essenziali + una skill "swe" con script deterministici. Niente
+sub-agent, niente tool di grafo. S1–S5 usano run_command, read_file, edit_file, write_file, get_status,
+submit_patch; da S6 edit_file e write_file sono tolti: le modifiche passano da run_command con l'editor della skill
+(sezione 6.1), perché le chiamate con due argomenti di codice si rompono nel formato di chiamata del modello.
 Motivazioni (con evidenza):
 - Tempo: ogni chiamata al modello costa ~4–10 s (fino a ~60 s se il thinking arriva al limite). In 5 minuti ci
   stanno ~20–30 passi. Un sub-agent aggiunge passi e contesto; ablation pubbliche: +1 task su 129 (rumore).
@@ -135,16 +140,23 @@ SEC4 = """## 4. I componenti, uno per uno (il testo esatto è nell'Appendice A)
   temporanei alla radice (repro*, debug*, tmp*, ...), *.orig/*.rej e (da S3) tutto ciò che sta in /workspace/tmp;
   compila in memoria ogni .py modificato e segnala errori di sintassi (exit 1); avvisa se la patch è vuota;
   stampa git diff --stat e "OK: call submit_patch now".
-- skills/swe/scripts/replace_lines.py (S5): alternativa a edit_file quando le chiamate si rompono: il modello
+- skills/swe/scripts/replace_lines.py (solo S5): alternativa a edit_file quando le chiamate si rompono: il modello
   scrive le righe nuove con write_file in tmp_new_lines.txt e poi sostituisce le righe A–B per numero; il
   risultato viene applicato solo se il file compila; stampa le righe rimosse e la nuova regione numerata.
+  Rimosso in S6 (sostituito da edit.py, che ha anche la modalità per intervallo di righe).
+- skills/swe/scripts/edit.py (da S6): l'editor dei file, chiamato con run_command e un heredoc; descritto per
+  intero nella sezione 6.1. localize.py lo copia in /tmp/swe/edit.py (finalize.py lo reinstalla se la patch è
+  vuota), perché la cartella in cui run_skill_script materializza gli script viene cancellata a fine chiamata.
 - prompts/system.md: sezioni HOW TO CALL TOOLS (argomenti come campi separati con valori semplici, mai backtick),
   STEPS con limiti duri (1 localizza; 2 scegli/riordina; 3 al massimo 3 letture prima della modifica; 4 modifica
   entro la 6ª chiamata con old_string di 2–8 righe esatte, mai triple virgolette; 5 al massimo 2 verifiche
   mirate solo se restano ≥ 90 s; 6 finalize poi submit_patch e una frase), RULES (mai test/config, write_file
   scrive sempre in /workspace, niente refactoring, niente pip, mai ripetere una chiamata fallita identica, issue
   vaghe: correzione minima più plausibile, mai finire senza modifica; da S4 "pensa poco e agisci"; da S5 regola
-  di recupero per edit_file rotti).
+  di recupero per edit_file rotti). In S6 il passo 4 insegna l'editor con un esempio completo di heredoc, la regola
+  sui valori diventa "mai racchiudere un valore tra backtick o virgolette" (il comando dell'editor contiene
+  legittimamente 'EOF'), la regola write_file diventa "file temporanei solo in /tmp o python -c" e la regola di
+  recupero dice cosa fare se l'editor stampa EDIT NOT APPLIED o "No such file".
 """
 
 SEC5 = """## 5. Metodo: sviluppo, valutazione, invio
@@ -167,9 +179,111 @@ SEC5 = """## 5. Metodo: sviluppo, valutazione, invio
 - Regola di decisione scritta PRIMA della prova (RESUME.md): una versione diventa READY solo se risolve almeno
   quanto la migliore finora e non introduce un nuovo tipo di errore; altrimenti BLOCKED. Le READY vengono inviate
   dall'attività kaggle-loop (la migliore sul pannello, la più recente a parità) quando non c'è nulla in sospeso.
+- Audit dei fallimenti (analysis/failure_audit.py, da S6): per ogni task e versione una categoria, la prima che si
+  applica: GOLD_UNSOLVABLE (la patch di riferimento non passa), RESOLVED, NO_EDIT_TOOL (nessuna scrittura riuscita
+  su un sorgente e ≥ 2 tentativi di modifica falliti a livello di tool), NO_EDIT, WRONG_FILE (scritto solo su file
+  che la patch di riferimento non tocca), RIGHT_FILE_TIMEOUT, RIGHT_FILE_WRONG_FIX; più il rango del file giusto
+  nell'output di localize e, per ogni tool, chiamate totali e malformate (chiavi inattese o obbligatorie mancanti).
+  Output senza testo dei task: solo id, booleani e conteggi.
+- Verifica Linux dell'editor (kernels/editor_check, da S6): kernel Kaggle solo CPU, gratuito, che riproduce la
+  catena di esecuzione dell'harness e i casi limite dell'editor (sezione 6.1).
+- Il kernel del pannello ricostruisce sempre lo zip dalla copia congelata del tag e ne verifica lo sha; rifiuta di
+  sostituire panel.json finché i risultati del pannello precedente non sono stati scaricati (status.py attribuisce
+  l'output del kernel al tag scritto in panel.json).
 - Limiti noti del metodo: il pannello è piccolo (21–22 risolvibili), di un solo repository e con un solo run a
   temperatura 1.0 (differenze di 1–2 task sono rumore); il punteggio pubblico è un singolo run su ~58 task
   (± ~0,08). I task nascosti sono di repository privati diversi.
+"""
+
+SEC6_S6 = """### 6.1 S6 in dettaglio
+**Diagnosi (verificata su codice e tracce).** In S1–S4 i tool con un solo argomento di testo non si rompono quasi
+mai, quelli con due argomenti di codice sì (tabella sotto, calcolata da results/failure_audit.json). La causa è nel
+formato di chiamata di Gemma 4 e nel parser "gemma4" di vLLM 0.19.1 (vllm/tool_parsers/gemma4_tool_parser.py,
+letto nel sorgente): una chiamata ha la forma call:nome{{chiave:<|"|>valore<|"|>,...}}; il parser chiude una stringa
+SOLO al token <|"|>; il modello emette le chiavi in ordine alfabetico (osservato nelle tracce: edit_file 133 volte
+su 134 come filepath, new_string, old_string; write_file come content, filepath; run_skill_script come args,
+file_path, skill_name; coerente con un template che ordina le proprietà, non verificato nel template). Quando il modello chiude il codice di new_string con un backtick
+invece del token, tutto ciò che segue (",old_string:" e il vecchio testo) finisce dentro new_string e old_string
+risulta mancante: errore "mandatory input parameters are not present: old_string", e il modello rimanda la stessa
+chiamata (fino a 13 volte in un task). Se invece apre un valore senza il token, il parser lo legge come valore
+"nudo" fino alla prima virgola e il resto del codice diventa nomi di chiavi spazzatura. run_command ha un solo
+argomento: anche se chiuso male, non c'è nulla dopo da inghiottire. Sul timeout l'harness valuta comunque il
+working tree (agent_runner: fallback git diff), quindi una modifica mai applicata è una perdita secca.
+
+{tool_table}
+
+Perdite per categoria (run di S1–S4 sommati; gli stessi 24 task ripetuti, quindi non indipendenti):
+
+{loss_table}
+
+**Intervento (una sola variabile: il canale con cui il codice arriva al file).**
+1. agent.yaml: tool = run_command, read_file, get_status, submit_patch (+ skill). Tolti edit_file e write_file;
+   tolto replace_lines.py. Il resto (sampling, thinking 1.024, budget 5 min/32 chiamate, localize, finalize) è
+   identico a S5.
+2. Nuovo script skills/swe/scripts/edit.py, invocato così (un solo argomento, il codice in un heredoc tra apici,
+   quindi bash non tocca $, backtick e backslash):
+       python3 /tmp/swe/edit.py percorso/modulo.py <<'EOF'
+       <<<<<<< SEARCH
+       righe attuali esatte
+       =======
+       righe nuove
+       >>>>>>> REPLACE
+       EOF
+   Altre forme: "percorso A-B" + heredoc con le sole righe nuove sostituisce le righe A..B ("A-(A-1)" inserisce
+   prima di A); un percorso che non esiste crea il file con il contenuto del heredoc.
+3. Comportamento di edit.py (stdlib, compatibile Python ≥ 3.8):
+   - percorso risolto con realpath dentro la root del repository (rifiuta ../ e symlink che escono); rifiuta test e
+     file di configurazione dei test (stessa regex di finalize.py, test di parità);
+   - più blocchi nello stesso comando, applicati in ordine su una copia in memoria: tutto o niente;
+   - ricerca di SEARCH a livelli: esatta; ignorando spazi finali e righe vuote ai bordi; ignorando un rientro
+     uniforme (la sostituzione viene re-indentata dello stesso scarto); righe copiate con i numeri che l'editor
+     stesso stampa; deve essere UNICA (se compare più volte elenca le righe e non scrive);
+   - più righe "=======" tra i marcatori (es. sottolineature RST nelle docstring): prova ogni divisione e sceglie,
+     tra quelle con corrispondenza unica, il SEARCH più lungo;
+   - se SEARCH non c'è: mostra la regione più simile con i numeri di riga (prefiltro fuzzy su 3 righe sonda, poi
+     difflib) e suggerisce la forma per intervallo; se lo stesso blocco era già stato applicato da questo editor
+     (registro in .git/swe_edit_journal, che git diff ignora) risponde "already applied" invece di errore;
+   - controllo di compilazione: se il file compilava prima e non compilerebbe dopo, non scrive e mostra l'errore
+     con le righe intorno (un file già rotto si può modificare, con avviso);
+   - scrittura atomica (file temporaneo nella stessa cartella + os.replace), mantiene CRLF se tutto il file è
+     CRLF, lascia byte per byte le righe non toccate dei file misti, mantiene newline finale e permessi;
+   - robustezza alla chiamata rotta: ignora una riga finale "EOF" con backtick o virgolette rimasta nel testo,
+     elimina il token <|"|> se trapelato; se il heredoc non è tra apici (bash avrebbe già espanso $, backtick e
+     backslash) recupera il testo grezzo dalla riga di comando della shell in /proc (solo se nel comando c'è una
+     sola invocazione dell'editor);
+   - output sempre stampabile (stdout con errors=replace), ≤ 3.800 caratteri, exit 0 se applicato, 1 se non
+     scritto (l'harness lo marca come errore e il modello vede il messaggio).
+4. Installazione: localize.py (passo 1, sempre eseguito) copia edit.py in /tmp/swe/edit.py (fuori dal workspace,
+   quindi mai nella patch) e stampa "EDITOR READY: python3 /tmp/swe/edit.py"; se /tmp non è scrivibile usa
+   /workspace/.git/swe/edit.py e lo dice. finalize.py lo reinstalla quando la patch è vuota.
+5. Prompt: passo 4 con l'esempio di heredoc; nuove regole di recupero (sezione 4).
+6. Metriche: analysis/agent_traces.py e failure_audit.py contano come modifica anche run_command con edit.py
+   (editor_calls, editor_not_applied, editor_unquoted); su S1–S4 i numeri restano identici (verificato).
+
+**Verifiche fatte prima del pannello.**
+- 31 test del bundle (tests/test_agent.py), anche con il Python 3.13 del venv dell'harness: blocchi in ordine,
+  tutto-o-niente, livelli di ricerca, ambiguità, SEARCH vuoto, guardia di compilazione, idempotenza, "mai dire già
+  applicato per una modifica non fatta", intervalli di righe, file nuovi, percorsi rifiutati, CRLF/misti/Unicode/
+  permessi, "=======" dentro il codice, recupero del heredoc senza apici, un vero bash con heredoc tra apici,
+  installazione tramite il wrapper ADK reale di run_skill_script, parità tra le copie, metriche sulle tracce.
+- Compilazione ufficiale (adk_submission + google-adk dell'harness): tool compilati run_command, read_file,
+  get_status, submit_patch, list_skills, load_skill, load_skill_resource, run_skill_script; caso peggiore 11,25 h.
+- Kernel Linux (Python {ec_python}, {ec_bash}): {ec_passed}/{ec_total} casi superati, eseguiti con la stessa catena
+  dell'harness (bash -c "timeout -k 5s N /bin/bash -c <comando>"): {ec_cases}. La prima versione ne aveva fallito
+  uno: con un SEARCH sbagliato e la riga di REPLACE già presente altrove, l'editor diceva "già applicato";
+  corretto con il registro dei blocchi applicati.
+
+**Ipotesi e regola di decisione (scritte prima del pannello, RESUME.md).** Ipotesi: un solo valore di codice per
+chiamata elimina la classe di errori (edit_file 73/208 malformate, run_command 0/807). READY se: risolti tra i
+risolvibili ≥ migliore finora (S4 = 5, o S5 se più alto); task con un tentativo di modifica malformato ≤ 1;
+editor_not_applied / editor_calls ≤ 0,35; NO_EDIT_TOOL = 0; nessun nuovo tipo di errore (editor mai installato,
+heredoc senza apici che corrompono il codice, file temporanei nella patch, patch vuote + nessuna modifica oltre
+3 + 2 di S4 di più di 2). Altrimenti BLOCKED.
+
+**Stato.** S6 congelata (sha {s6_sha}), in coda: il suo pannello parte quando finisce quello di S5. Il prossimo
+passo previsto (S7, non ancora costruito): dopo la prima modifica eseguire una volta il file di test correlato,
+perché i fix sbagliati venivano controllati quasi solo con python -c scritti dal modello (14/17 controllati,
+1/17 con pytest; nei risolti 6/17).
 """
 
 SEC7 = """## 7. Il paper "Anchors Decide" — come è fatto
@@ -196,16 +310,19 @@ max_model_len 16384, gpu_memory_utilization 0,80, max_num_seqs 16), temperatura 
 task, 862 s totali. Tre usi: ipotesi di nomi di simboli (prompt P_HYP), ipotesi fuse con gli altri segnali, e
 riordino dei primi 50 di BM25 mostrati come id + firma + docstring (prompt P_RERANK); più la "policy a due
 modalità" (RRF+ se ci sono ancore, riordino altrimenti). Ipotesi H1–H3 e codice di analisi committati PRIMA di
-scaricare i risultati (commit 136a864); tutto il resto è marcato post hoc. Prompt esatti:
+scaricare i risultati (commit 6a28d29; prima delle riscritture della storia del 26/10 era 136a864, mappa in
+results/commit_id_map.md); tutto il resto è marcato post hoc. Prompt esatti:
 {prompts}
 Garanzie di rigore: il testo è un template (paper/PAPER.template.md) con slot {{{{fonte:percorso|formato}}}} riempiti
-dai file di risultati (nessun numero scritto a mano) e 91 "claim" del tipo <!-- claim: a < 0.05 --> accanto alle
+dai file di risultati (nessun numero scritto a mano) e "claim" del tipo <!-- claim: a < 0.05 --> accanto alle
 frasi: se i risultati contraddicono una frase la build fallisce; blocchi condizionali per sezioni che dipendono da
 risultati opzionali; provenienza (hash dei dati, commit, versioni) in results/summary.json; test su dati
 sintetici; CI su GitHub. Limiti dichiarati nel paper: 4 repository pubblici, etichette approssimate, un solo
 prompt e un solo run per il modello, possibile memorizzazione dei repository pubblici da parte del modello.
-Stato: 2.833 parole (limite 3.000), sezione 4.10 sull'agente riempita da results/agent_summary.json; chiusura
-programmata il 5/11, scadenza 12/11 23:59 UTC.
+Stato: {words} parole (la build fallisce oltre 3.000, contando tabelle e riferimenti), {claims} claim verificati;
+sezione 4.10 riscritta il 26/10 dall'audit dei fallimenti (almeno metà delle perdite avviene dopo la
+localizzazione; edit_file 73/208 malformate contro run_command 0/807); SweRank (ICLR 2026) aggiunto ai lavori
+correlati; codice pubblico su GitHub e citato nel paper. Chiusura programmata il 5/11, scadenza 12/11 23:59 UTC.
 """
 
 WHY = {
@@ -226,6 +343,10 @@ WHY = {
            "ripetute fino a 13 volte. Modifiche: script replace_lines.py (sostituzione per numero di riga, applicata solo "
            "se il file compila) e regola di recupero: dopo un errore di parametro mancante o due 'not found' non "
            "rimandare edit_file per quella modifica, usare il fallback."),
+    "S6": ("Audit dei fallimenti S1–S4 e lettura del parser di vLLM: il codice arriva male al file quando una chiamata "
+           "ha due argomenti di codice (le chiavi escono in ordine alfabetico e un backtick al posto del token di "
+           "chiusura inghiotte quelle successive). Modifiche: edit_file, write_file e replace_lines tolti; editor "
+           "edit.py chiamato con run_command e un heredoc tra apici (un solo argomento). Dettagli completi in 6.1."),
 }
 
 
@@ -245,8 +366,11 @@ def fence(text: str, lang: str = "") -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", type=Path, default=ROOT.parent / f"TECH_DEEP_DIVE_{dt.date.today().isoformat()}.md")
+    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--focus", default=None, help="only this tag: its detailed section, diff vs the previous tag, its files")
     a = ap.parse_args()
+    a.out = a.out or ROOT.parent / (f"TECH_{a.focus}_{dt.date.today().isoformat()}.md" if a.focus
+                                    else f"TECH_DEEP_DIVE_{dt.date.today().isoformat()}.md")
     tags = sorted((p.name for p in CAND.iterdir() if (p / "MANIFEST.json").exists()), key=lambda t: int(t[1:]))
     sha = {t: json.loads(read(CAND / t / "MANIFEST.json"))["zip_sha256"][:12] for t in tags}
     panels = {p.stem: json.loads(read(p)) for p in (ROOT / "results" / "agent_runs").glob("*.json")}
@@ -254,7 +378,8 @@ def main() -> int:
     panel = json.loads(read(ROOT / "kernels" / "agent_eval" / "panel.json"))["panel"]
     src = read(ROOT / "analysis" / "llm_v2.py")
     prompts = "\n".join(m.group(0) for m in re.finditer(r"^(SYSTEM|P_HYP|P_RERANK) = .*?(?=^\S)", src, re.M | re.S))
-    out = [INTRO.format(date=dt.date.today().isoformat()), SEC1, SEC2, SEC3, SEC4, SEC5.format(panel=", ".join(panel))]
+    out = [INTRO.format(date=dt.date.today().isoformat(), first=tags[0], last=tags[-1], tags=", ".join(tags)),
+           SEC1, SEC2, SEC3, SEC4, SEC5.format(panel=", ".join(panel))]
 
     out.append("## 6. Versione per versione\n")
     out.append("| Versione | sha256 (12) | Risolti/risolvibili (pannello) | Timeout | Patch vuote | Nessuna modifica | "
@@ -269,12 +394,55 @@ def main() -> int:
         out.append(row)
     out.append("\nDecisioni: S1 inviata (0,15). S2 non inviata (pari a S1 sul pannello, superata da S3). S3 inviata (0,12, "
                "differenza con S1 di ~2 task, nel rumore). S4 migliore sul pannello (5/22) ma BLOCCATA per la ricomparsa "
-               "delle chiamate malformate. S5 in prova (regola: READY se ≥ 5 risolti, meno errori di S4, nessun nuovo "
-               "tipo di errore).\n")
+               "delle chiamate malformate. S5 e S6: stato e regole nella coda di RESUME.md (sotto lo stato al momento "
+               "della generazione).\n")
+    queue = [l for l in read(ROOT / "RESUME.md").splitlines() if re.match(r"\| S\d+ \| ", l)]
+    queue_md = ("## 2. Coda in RESUME.md al momento della generazione\n\n| Tag | Stato | Modifica | Ipotesi |\n|---|---|---|---|\n"
+                + "\n".join(queue) + "\n")
+    out.append(queue_md.replace("## 2. Coda", "Coda"))
     for t in tags:
         out.append(f"### {t}\n{WHY.get(t, '')}\n")
+    audit = json.loads(read(ROOT / "results" / "failure_audit.json"))["aggregate"]
+    tool_table = "| Tool | Chiamate | Malformate | Tasso |\n|---|---|---|---|\n" + "\n".join(
+        f"| {k} | {v['calls']} | {v['malformed']} | {100 * v['rate']:.1f}% |" for k, v in audit["tools"].items())
+    loss_table = (f"Run risolvibili {audit['solvable_runs']} su {audit['task_runs']}; risolti {audit['resolved_runs']}; "
+                  f"file giusto al rango 1 di localize in {audit['rank1_runs']} ({100 * audit['rank1_rate']:.1f}%).\n\n"
+                  "| Categoria (run non risolti) | Run |\n|---|---|\n"
+                  + "\n".join(f"| {k} | {v} |" for k, v in audit["unresolved"].items()))
+    ec = json.loads(read(ROOT / "results" / "editor_check" / "editor_check.json"))
+    s6 = "S6" if "S6" in sha else tags[-1]
+    out.append(SEC6_S6.format(tool_table=tool_table, loss_table=loss_table, ec_python=ec["python"], ec_bash=ec["bash"],
+                              ec_passed=ec["passed"], ec_total=ec["total"], s6_sha=sha[s6],
+                              ec_cases="; ".join(r["case"] for r in ec["results"])))
 
-    out.append(SEC7.format(prompts=fence(prompts, "python")))
+    if a.focus:
+        prev = tags[tags.index(a.focus) - 1]
+        fa, fb = bundle_files(prev), bundle_files(a.focus)
+        changed = [n for n in sorted(fb) if fa.get(n) != fb[n]]
+        focus = [f"# {a.focus} — come è fatto (generato il {dt.date.today().isoformat()} da tools/tech_report.py --focus {a.focus})",
+                 "Codice: https://github.com/emamira02/gemma4-swe-agent (cartella candidates/" + a.focus + "/bundle = "
+                 "esattamente ciò che viene valutato e inviato). Contesto completo in TECH_DEEP_DIVE_<data>.md e "
+                 "HANDOFF_2026-10-26.md.\n", out[-1].replace("### 6.1", "## 1."), queue_md,
+                 f"## 3. Differenze esatte {prev} → {a.focus} (unified diff)\n"]
+        removed = [n for n in sorted(fa) if n not in fb]
+        for name in [n for n in changed if n in fa] + removed:  # new files appear in full in section 4 instead
+            d = "".join(difflib.unified_diff(fa.get(name, "").splitlines(True), fb.get(name, "").splitlines(True),
+                                             f"{prev}/{name}", f"{a.focus}/{name}", n=2))
+            focus.append(fence(d, "diff") + "\n")
+        full = [n for n in changed if n not in fa or len(fb[n]) < 12000]  # big modified files: the diff is enough
+        focus.append(f"## 4. Testo completo dei file nuovi o brevi di {a.focus} ({', '.join(full)})\n")
+        for name in full:
+            focus.append(f"### {name}\n{fence(fb[name], LANG.get(Path(name).suffix, ''))}\n")
+        text = "\n".join(focus)
+        a.out.write_text(text, encoding="utf-8")
+        print(f"wrote {a.out} ({len(text):,} chars, {len(text.split()):,} words)")
+        return 0
+
+    paper_md = read(ROOT / "paper" / "PAPER.md")
+    tpl = read(ROOT / "paper" / "PAPER.template.md")
+    words = len(re.sub(r"<!--.*?-->", " ", paper_md, flags=re.S).split())
+    out.append(SEC7.format(prompts=fence(prompts, "python"), words=f"{words:,}".replace(",", "."),
+                           claims=len(re.findall(r"<!-- claim:", tpl))))
 
     last = tags[-1]
     out.append(f"## 8. Appendice A — bundle completo di {last} (sha256 {sha[last]}), testo esatto\n")
@@ -292,7 +460,7 @@ def main() -> int:
                 out.append(fence(d, "diff") + "\n")
 
     out.append("## 10. Appendice C — paper completo (paper/PAPER.md) e tabelle generate\n")
-    for f in ("PAPER.md", "RESULTS.md", "RESULTS_LLM.md"):
+    for f in ("PAPER.md", "RESULTS.md", "RESULTS_LLM.md", "RESULTS_AGENT.md"):
         out.append(f"### paper/{f}\n" + read(ROOT / "paper" / f).strip() + "\n")
     text = "\n".join(out)
     a.out.write_text(text, encoding="utf-8")
