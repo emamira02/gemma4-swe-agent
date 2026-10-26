@@ -1,4 +1,4 @@
-# Plan (≈ 8 h/week alongside PRAXI + university)
+# Plan (≈ 8 h/week alongside work + university)
 
 | Week | Dates (2026) | Goal | Exit criterion |
 |---|---|---|---|
