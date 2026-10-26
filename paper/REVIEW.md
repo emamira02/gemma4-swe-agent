@@ -34,8 +34,10 @@ is still open. Criteria of the paper track: novelty, quality, relevance, verifia
 ## D. Methodological limitations (3.5/5)
 - Reference patches are one valid fix among many; module-level edits are excluded from symbol labels (counted).
 - Pre-training contamination of the four public repositories: stated; the private hidden set is the real test.
-- Agent panel: one repository (rich), solvability 21 or 22 of 24 depending on the run (environment flakiness in the
-  gold check; the denominators are reported per tag).
+- Agent panel: one repository (rich), solvability 21 or 22 of 24 depending on the run. The difference is one task:
+  the same reference patch of rich_3782 (3,475 chars) failed its tests in the S1/S2 panels and passed in S3/S4 with
+  unchanged kernel code; its hidden test is a width-dependent rendering test (tests/test_syntax.py). Cause not
+  established (gold test outputs were not kept); denominators are reported per tag, never pooled across them silently.
 - File-level rank 1 in rich is easier than in larger repositories (few, large modules); 4.10 avoids generalising it.
 
 ## E. Clarity (3.5/5)
