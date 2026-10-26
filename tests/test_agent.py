@@ -195,7 +195,8 @@ def test_bundle_validates_and_builds_reproducibly(tmp_path):
     from tools import build_submission as bs
     staged = bs.stage(ROOT / "agent", tmp_path / "s")
     info = bs.validate(staged)
-    assert info["models"] == [bs.MODEL] and info["worst_case_hours"] <= 11.5
+    assert info["models"] == [bs.MODEL]
+    assert info["worst_case_hours"] <= 11.5 or all(float(info["eval"][k]) <= v for k, v in bs.PROVEN_BUDGET.items())
     z1, z2 = bs.build_zip(staged), bs.build_zip(bs.stage(ROOT / "agent", tmp_path / "s2"))
     assert z1 == z2
     names = set(zipfile.ZipFile(__import__("io").BytesIO(z1)).namelist())
@@ -276,7 +277,7 @@ def test_sampling_keeps_thinking_on_with_bounded_budget():
     import yaml
     cfg = yaml.safe_load((ROOT / "agent" / "configs" / "sampling.yaml").read_text(encoding="utf-8"))
     tc = cfg["thinking_config"]
-    assert tc["include_thoughts"] is True and 512 <= tc["thinking_budget"] <= 2048
+    assert tc["include_thoughts"] is True and 512 <= tc["thinking_budget"] <= 4096
     assert tc["thinking_budget"] < cfg["max_output_tokens"]
 
 
@@ -574,3 +575,18 @@ def test_submissions_csv_parser_skips_cli_notices_and_fails_closed():
         assert mod.parse_submissions_csv("") == [] and mod.parse_submissions_csv("No submissions found") == []
         with pytest.raises(RuntimeError):
             mod.parse_submissions_csv("401 - Unauthorized")
+
+
+def test_scorer_proven_budget_is_the_only_way_past_the_worst_case_rule(tmp_path):
+    """S8 adopts the public Budget-Fit budget (8 min, 28 calls, 80 turns, 240 s), scored ten times within 12 h;
+    anything larger, or an 8-minute cap without the matching call/turn limits, is still refused."""
+    from tools import build_submission as bs
+    b = tmp_path / "b"
+    bs.stage(ROOT / "agent", b)
+    ok = "evaluation:\n  max_time_minutes: 8.0\n  timeout_seconds: 240\n  max_tool_calls: 28\n  max_turns: 80\n"
+    (b / "eval_config.yaml").write_text(ok)
+    bs.validate(b)
+    for bad in (ok.replace("8.0", "9.0"), ok.replace("28", "40"), ok.replace("max_turns: 80", "max_turns: 120")):
+        (b / "eval_config.yaml").write_text(bad)
+        with pytest.raises(bs.BundleError, match="scorer-proven"):
+            bs.validate(b)

@@ -1,0 +1,15 @@
+{
+ "tag": "S8",
+ "zip_sha256": "e8978829045f94ae480e429dd164c957d34ee70707b4f9be2d34dd4a83383b5d",
+ "git_head_at_freeze": "e2c0de554da8003f1985ef6025123c1474d0406b",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "e9c3d7087727",
+  "eval_config.yaml": "76ea4c596d39",
+  "prompts/system.md": "fa52887e2c4c",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "28fef95a959d",
+  "skills/swe/scripts/localize.py": "d7aa216b7a53",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

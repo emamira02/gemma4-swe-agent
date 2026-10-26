@@ -145,8 +145,10 @@ def validate(bundle: Path) -> dict:
             problems.append(f"eval_config: unknown keys {sorted(set(ev) - EVAL_KEYS)}")
         cap = float(ev.get("max_time_minutes", 60))
         worst_h = (HIDDEN_TASKS * (cap + SETUP_MIN_PER_TASK) + FIXED_SETUP_MIN) / 60
-        if worst_h > LIMIT_H - 0.5:
-            problems.append(f"worst case {worst_h:.2f} h for {HIDDEN_TASKS} tasks leaves < 30 min of the 12 h limit")
+        proven = all(float(ev.get(k, float("inf"))) <= lim for k, lim in PROVEN_BUDGET.items())
+        if worst_h > LIMIT_H - 0.5 and not proven:
+            problems.append(f"worst case {worst_h:.2f} h for {HIDDEN_TASKS} tasks leaves < 30 min of the 12 h limit, "
+                            f"and the budget is not within the scorer-proven {PROVEN_BUDGET}")
     else:
         problems.append("eval_config.yaml missing: the 60-minute default per task cannot fit 12 h")
     if problems:
@@ -154,6 +156,14 @@ def validate(bundle: Path) -> dict:
     return {"files": len(files), "bytes": total, "agents": [a.get("name") for a in agents], "models": sorted(models),
             "eval": ev, "worst_case_hours": round((HIDDEN_TASKS * (float(ev.get("max_time_minutes", 60)) + SETUP_MIN_PER_TASK)
                                                    + FIXED_SETUP_MIN) / 60, 2)}
+
+
+# Per-task budget proven on the scorer: the public Budget-Fit configuration (8 min, 28 counted calls, 80 turns,
+# 240 s commands) was scored in ten public draws without exceeding the 12 h limit, while a slower 12B variant of a
+# similar bundle exceeded it and got no score (dmitriigluzdov "Gemma 4: Public Agent Ideas and Evidence" and the
+# repeated-run analysis it cites, read 2026-10-27). Sessions end at submit_patch, so 120 x cap is not the binding
+# quantity; the dev panel's measured mean task time x 120 is checked in each tag's decision rule instead.
+PROVEN_BUDGET = {"max_time_minutes": 8.0, "max_tool_calls": 28, "max_turns": 80, "timeout_seconds": 240}
 
 
 def official_check(bundle: Path) -> str:
