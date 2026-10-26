@@ -1,23 +1,33 @@
-[{"stream_name":"stdout","time":0.943431935,"data":"PASS A install via materialized localize\n"}
-,{"stream_name":"stdout","time":1.101629849,"data":"PASS A quoted heredoc applies verbatim\n"}
-,{"stream_name":"stdout","time":1.219751457,"data":"PASS A unquoted heredoc recovered from /proc\n"}
-,{"stream_name":"stdout","time":1.337190727,"data":"PASS A unterminated heredoc still applies, no EOF left\n"}
-,{"stream_name":"stdout","time":1.451656518,"data":"PASS A range edit, unterminated\n"}
-,{"stream_name":"stdout","time":1.574594248,"data":"PASS A not found: exit 1, closest region, unchanged\n"}
-,{"stream_name":"stdout","time":1.686208112,"data":"PASS A compile guard\n"}
-,{"stream_name":"stdout","time":1.8142202570000001,"data":"PASS A tests refused\n"}
-,{"stream_name":"stdout","time":1.9481178209999999,"data":"PASS A outside workspace refused\n"}
-,{"stream_name":"stdout","time":2.119231707,"data":"PASS A new file\n"}
-,{"stream_name":"stdout","time":2.241382559,"data":"PASS A CRLF preserved\n"}
-,{"stream_name":"stdout","time":2.244696198,"data":"PASS A only intended files changed (.git/swe never)\n"}
-,{"stream_name":"stdout","time":3.538660195,"data":"FAIL B harness wheelhouse installed\n"}
-,{"stream_name":"stdout","time":3.5386935790000003,"data":"ERROR: apache_tvm_ffi-0.1.13.post3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl is not a supported wheel on this platform.\n"}
-,{"stream_name":"stdout","time":3.538697728,"data":"\n"}
-,{"stream_name":"stdout","time":3.540995016,"data":"{\"python\": \"3.13.15\", \"bash\": \"GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)\", \"passed\": 12, \"total\": 13}\n"}
-,{"stream_name":"stderr","time":6.091296226,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
-,{"stream_name":"stderr","time":6.091330921,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
-,{"stream_name":"stderr","time":6.478686485,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
-,{"stream_name":"stderr","time":6.478712959,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
-,{"stream_name":"stderr","time":8.333042089,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
-,{"stream_name":"stderr","time":9.565654982,"data":"[NbConvertApp] Writing 414246 bytes to __results__.html\n"}
+[{"stream_name":"stdout","time":1.450830834,"data":"PASS A install via materialized localize\n"}
+,{"stream_name":"stdout","time":1.6435697230000001,"data":"PASS A quoted heredoc applies verbatim\n"}
+,{"stream_name":"stdout","time":1.795859272,"data":"PASS A unquoted heredoc recovered from /proc\n"}
+,{"stream_name":"stdout","time":1.9414720330000002,"data":"PASS A unterminated heredoc still applies, no EOF left\n"}
+,{"stream_name":"stdout","time":2.085030665,"data":"PASS A range edit, unterminated\n"}
+,{"stream_name":"stdout","time":2.231060754,"data":"PASS A not found: exit 1, closest region, unchanged\n"}
+,{"stream_name":"stdout","time":2.377904257,"data":"PASS A compile guard\n"}
+,{"stream_name":"stdout","time":2.51983214,"data":"PASS A tests refused\n"}
+,{"stream_name":"stdout","time":2.661618699,"data":"PASS A outside workspace refused\n"}
+,{"stream_name":"stdout","time":2.806805012,"data":"PASS A new file\n"}
+,{"stream_name":"stdout","time":2.962896916,"data":"PASS A CRLF preserved\n"}
+,{"stream_name":"stdout","time":2.968808461,"data":"PASS A only intended files changed (.git/swe never)\n"}
+,{"stream_name":"stdout","time":83.359305513,"data":"PASS B harness wheelhouse installed\n"}
+,{"stream_name":"stderr","time":152.975853089,"data":"\u001b[92m23:39:53 - LiteLLM:WARNING\u001b[0m: get_model_cost_map.py:271 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno -3] Temporary failure in name resolution. Falling back to local backup.\n"}
+,{"stream_name":"stdout","time":158.365148533,"data":"PASS B harness classes import\n"}
+,{"stream_name":"stderr","time":158.527869795,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox a02ebe7c-0cd, creating venv without pip: Command '['/tmp/swegemma_sandbox_a02ebe7c-0cd_a1_7b79a/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":159.042537206,"data":"PASS B localize through run_skill_script installs the editor in the sandbox workspace\n"}
+,{"stream_name":"stdout","time":159.176953531,"data":"PASS B run_command finds the editor and applies verbatim\n"}
+,{"stream_name":"stdout","time":159.31595805,"data":"PASS B absolute /workspace paths\n"}
+,{"stream_name":"stdout","time":159.452098003,"data":"PASS B unquoted heredoc recovered\n"}
+,{"stream_name":"stdout","time":159.601560901,"data":"PASS B code naming /tmp, /workspace, /usr/local/bin reaches the file as written\n"}
+,{"stream_name":"stdout","time":159.739571635,"data":"PASS B failure message names the /workspace spelling\n"}
+,{"stream_name":"stdout","time":159.743503686,"data":"PASS B .git/swe never in the patch\n"}
+,{"stream_name":"stdout","time":159.887825573,"data":"PASS B finalize reinstalls on an empty patch\n"}
+,{"stream_name":"stdout","time":160.000849951,"data":"PASS B (control) the S6 path is not reachable from run_command\n"}
+,{"stream_name":"stdout","time":160.003709679,"data":"{\"python\": \"3.12.13\", \"bash\": \"GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)\", \"passed\": 23, \"total\": 23}\n"}
+,{"stream_name":"stderr","time":165.167255464,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":165.167332603,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":165.525115625,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":165.525154164,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":166.733892471,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":168.048136622,"data":"[NbConvertApp] Writing 417865 bytes to __results__.html\n"}
 ]

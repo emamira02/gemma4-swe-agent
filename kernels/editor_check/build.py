@@ -179,6 +179,8 @@ if err is None:
         sid = mgr._default_sandbox_id
         sws = mgr.work_dir
         make_repo(sws)
+        from swegemma.harness.container_setup import setup_git_exclude
+        setup_git_exclude(mgr, sid)  # the harness hides its .adk_exec_*.py skill runner from git (and finalize)
         skd = tempfile.mkdtemp(prefix="skilldef_")
         materialize(os.path.join(skd, "swe"))
         skill = _load_skill_from_dir(Path(skd) / "swe")
@@ -199,7 +201,7 @@ if err is None:
         case("B run_command finds the editor and applies verbatim", code == 0 and NEW.encode() in read("pkg/markup.py", sws),
              out)
         subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
-        code, out = run("cd /workspace && python3 /workspace/.git/swe/edit.py /workspace/pkg/markup.py 12-12 <<'EOF'\n"
+        code, out = run("cd /workspace && python3 /workspace/.git/swe/edit.py /workspace/pkg/markup.py 11-11 <<'EOF'\n"
                         "    return 3\nEOF")
         case("B absolute /workspace paths", code == 0 and b"    return 3\n" in read("pkg/markup.py", sws), out)
         subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
