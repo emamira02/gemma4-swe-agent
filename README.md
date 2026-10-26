@@ -68,3 +68,6 @@ bash scripts/reproduce.sh      # tests -> data -> run -> sensitivity -> audit ->
 - [x] Localization study + model-in-the-loop run (114/114 tasks) → paper draft complete (`paper/PAPER.md`)
 - [ ] Paper submission by 12 Nov
 - [ ] Final selection by 2 Dec
+
+## License
+Apache License 2.0 (`LICENSE`, `NOTICE`). Competition data is not included and is not covered by the license.
