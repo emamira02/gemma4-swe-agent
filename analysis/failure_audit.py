@@ -4,6 +4,7 @@
 
 Inputs: results/kaggle_eval_<tag>/agent_eval/{per_task.jsonl, results/traces/*.json} and the gold patches in
 data/tasks.jsonl (read locally, never copied: the output keeps task ids, file-level booleans and counts only).
+Output: {"by_tag": {tag: {"counts", "per_task"}}, "aggregate": pooled task runs of all tags (paper 4.10)}.
 
 Categories, first match wins (denominator = all panel tasks; "solvable" = the gold patch resolves the task):
   GOLD_UNSOLVABLE      the reference patch itself fails in the panel environment
@@ -61,6 +62,7 @@ def _status(obs: str) -> str | None:
 
 def trace_facts(trace: dict, gold: set[str]) -> dict:
     written, read, bad, edits, bad_edits, rank = set(), set(), 0, 0, 0, None
+    tools: dict[str, list[int]] = {}  # name -> [calls, malformed calls]
     for s in trace["steps"]:
         obs = (s.get("observation") or {}).get("content", "")
         for tc in s.get("tool_calls") or []:
@@ -68,7 +70,10 @@ def trace_facts(trace: dict, gold: set[str]) -> dict:
             editor = name == "run_command" and EDITOR_CMD.search(str(a.get("command", "")))
             is_edit = name in ("edit_file", "write_file") or bool(editor)
             edits += is_edit
+            t = tools.setdefault(name, [0, 0])
+            t[0] += 1
             if malformed(name, a):
+                t[1] += 1
                 bad += 1
                 bad_edits += is_edit
                 continue
@@ -92,7 +97,7 @@ def trace_facts(trace: dict, gold: set[str]) -> dict:
     src = {p for p in written if not TEST_PATH.search(p) and p.endswith(".py") and "/" in p}
     return {"wrote_source": bool(src), "wrote_gold": bool(src & gold), "read_gold": bool(read & gold),
             "malformed_calls": bad, "edit_attempts": edits, "malformed_edits": bad_edits,
-            "localize_gold_file_rank": rank}
+            "localize_gold_file_rank": rank, "calls_by_tool": tools}
 
 
 def classify(r: dict, f: dict) -> str:
@@ -119,10 +124,37 @@ def audit(tag: str, golds: dict[str, set[str]]) -> dict:
         tp = ev / "results" / "traces" / f"trace_{r['id']}.json"
         f = trace_facts(json.loads(tp.read_text(encoding="utf-8")), golds[r["id"]]) if tp.exists() else {
             "wrote_source": False, "wrote_gold": False, "read_gold": False, "malformed_calls": 0, "edit_attempts": 0,
-            "malformed_edits": 0, "localize_gold_file_rank": None}
+            "malformed_edits": 0, "localize_gold_file_rank": None, "calls_by_tool": {}}
         per[r["id"]] = {"category": classify(r, f), **f}
     counts = Counter(v["category"] for v in per.values())
     return {"counts": {c: counts.get(c, 0) for c in CATEGORIES}, "per_task": per}
+
+
+def aggregate(by_tag: dict) -> dict:
+    """Pooled over every task run of every tag; rates are over gold-solvable runs unless named otherwise."""
+    runs = [v for t in by_tag.values() for v in t["per_task"].values()]
+    solv = [v for v in runs if v["category"] != "GOLD_UNSOLVABLE"]
+    unres = [v for v in solv if v["category"] != "RESOLVED"]
+    tools: dict[str, list[int]] = {}
+    for v in runs:
+        for name, (n, bad) in v["calls_by_tool"].items():
+            t = tools.setdefault(name, [0, 0])
+            t[0], t[1] = t[0] + n, t[1] + bad
+    resolved = [t["counts"]["RESOLVED"] for t in by_tag.values()]
+    rank1 = sum(v["localize_gold_file_rank"] == 1 for v in solv)
+    cats = Counter(v["category"] for v in unres)
+    return {"tags": list(by_tag), "n_tags": len(by_tag), "task_runs": len(runs), "solvable_runs": len(solv),
+            "resolved_runs": len(solv) - len(unres), "resolved_min": min(resolved), "resolved_max": max(resolved),
+            "rank1_runs": rank1, "rank1_rate": round(rank1 / len(solv), 6),
+            "unresolved_runs": len(unres), "unresolved": {c: cats.get(c, 0) for c in CATEGORIES[2:]},
+            "unresolved_right_file": sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE")),
+            "unresolved_no_edit": cats.get("NO_EDIT", 0) + cats.get("NO_EDIT_TOOL", 0),
+            "right_file_share": round(sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE"))
+                                      / max(1, len(unres)), 6),
+            "right_file_share": round(sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE"))
+                                      / max(1, len(unres)), 6),
+            "tools": {n: {"calls": c, "malformed": b, "rate": round(b / c, 6) if c else 0.0}
+                      for n, (c, b) in sorted(tools.items())}}
 
 
 def main() -> None:
@@ -135,7 +167,7 @@ def main() -> None:
     golds = {t["instance_id"]: gold_files(t["patch"]) for t in
              map(json.loads, (ROOT / "data" / "tasks.jsonl").read_text(encoding="utf-8").splitlines())}
     out = {t: audit(t, golds) for t in tags}
-    a.out.write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
+    a.out.write_bytes((json.dumps({"by_tag": out, "aggregate": aggregate(out)}, indent=1) + "\n").encode("utf-8"))
     ids = sorted(next(iter(out.values()))["per_task"])
     short = {"GOLD_UNSOLVABLE": "--", "RESOLVED": "OK", "NO_EDIT_TOOL": "NT", "NO_EDIT": "NE", "WRONG_FILE": "WF", "RIGHT_FILE_TOOL": "RT",
              "RIGHT_FILE_TIMEOUT": "TO", "RIGHT_FILE_WRONG_FIX": "WX"}

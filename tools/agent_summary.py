@@ -2,8 +2,10 @@
 
     python tools/agent_summary.py
 
-Inputs: results/agent_runs/<tag>.json (dev-panel aggregates from analysis.agent_traces) and runs.csv (public
-leaderboard scores, one scored run per tag). A tag appears under "scored" only once Kaggle has returned a score.
+Inputs: results/agent_runs/<tag>.json (dev-panel aggregates from analysis.agent_traces), runs.csv (public
+leaderboard scores, one scored run per tag) and results/failure_audit.json (analysis.failure_audit: pooled loss
+categories and malformed calls per tool, under "failure"). A tag appears under "scored" only once Kaggle has returned
+a score.
 """
 from __future__ import annotations
 
@@ -19,7 +21,7 @@ def _tag_key(tag: str) -> tuple:
     return (tag[:1], int(tag[1:])) if tag[1:].isdigit() else (tag, 0)
 
 
-def build(runs_dir: Path, runs_csv: Path) -> dict:
+def build(runs_dir: Path, runs_csv: Path, audit: Path | None = None) -> dict:
     board = {}
     if runs_csv.exists():
         with runs_csv.open(newline="", encoding="utf-8") as f:
@@ -46,12 +48,15 @@ def build(runs_dir: Path, runs_csv: Path) -> dict:
                             **{k: v for k, v in cfg.get("eval_config", {}).items() if k in ("max_time_minutes", "max_tool_calls")}}
         runs[t] = row
     with_panel = [t for t in tags if "panel" in runs[t]]
-    return {"tags": tags, "runs": runs, "scored": scored, "n_scored": len(scored),
-            "n_panels": len(with_panel), "baseline": with_panel[0] if with_panel else None}
+    doc = {"tags": tags, "runs": runs, "scored": scored, "n_scored": len(scored),
+           "n_panels": len(with_panel), "baseline": with_panel[0] if with_panel else None}
+    if audit is not None and audit.exists():
+        doc["failure"] = json.loads(audit.read_text(encoding="utf-8"))["aggregate"]
+    return doc
 
 
 def main() -> int:
-    doc = build(ROOT / "results" / "agent_runs", ROOT / "runs.csv")
+    doc = build(ROOT / "results" / "agent_runs", ROOT / "runs.csv", ROOT / "results" / "failure_audit.json")
     out = ROOT / "results" / "agent_summary.json"
     out.write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({k: doc[k] for k in ("tags", "scored", "n_panels", "baseline")}), file=sys.stderr)

@@ -279,6 +279,13 @@ def fill_template(template: str, docs: dict[str, dict]) -> str:
     return _SLOT.sub(sub, template)
 
 
+MAX_WORDS = 3000  # paper-track limit; counted on the rendered paper, references and tables included
+
+
+def word_count(text: str) -> int:
+    return len(re.sub(r"<!--.*?-->", " ", text, flags=re.S).split())
+
+
 def agent_table(doc: dict) -> str:
     """Dev-panel and leaderboard row per agent tag, from results/agent_summary.json (tools/agent_summary.py)."""
     head = ("| Tag | Panel tasks (solvable) | Resolved | Timeouts | Tasks with malformed calls | Median s to first edit "
@@ -290,6 +297,35 @@ def agent_table(doc: dict) -> str:
         rows.append(f"| {t} | {p['n']} ({p['gold_solvable']}) | {p['resolved']} | {p['timeouts']} | {p['tasks_with_arg_errors']} | "
                     f"{p['first_edit_s_median']:.0f} | {score} |" if p else f"| {t} | – | – | – | – | – | {score} |")
     return head + "\n" + "\n".join(rows)
+
+
+def agent_table_compact(doc: dict) -> str:
+    """The paper's per-tag table (word budget): resolved of solvable, timeouts, malformed-call tasks, public score."""
+    head = "| Tag | Resolved (of solvable) | Timeouts | Tasks with malformed calls | Public score |\n|---|---|---|---|---|"
+    rows = []
+    for t in doc["tags"]:
+        r, p = doc["runs"][t], doc["runs"][t].get("panel")
+        score = f"{r['public_score']:.4g}" if "public_score" in r else r["status"].lower().replace("_", " ")
+        rows.append(f"| {t} | {p['resolved']}/{p['gold_solvable']} | {p['timeouts']} | {p['tasks_with_arg_errors']} | {score} |"
+                    if p else f"| {t} | – | – | – | {score} |")
+    return head + "\n" + "\n".join(rows)
+
+
+def render_agent(doc: dict, out_md: Path) -> None:
+    """RESULTS_AGENT.md: the full per-tag panel table and the pooled loss decomposition behind paper 4.10."""
+    parts = ["# Agent dev-panel results (auto-generated from results/agent_summary.json)", "",
+             "Rebuild: python -m analysis.failure_audit && python tools/agent_summary.py && python -m locstudy report. "
+             "The per-task traces stay private (they contain task text); results/failure_audit.json keeps ids and counts.",
+             "", agent_table(doc)]
+    f = doc.get("failure")
+    if f:
+        parts += ["", f"Pooled over {', '.join(f['tags'])}: {f['solvable_runs']} solvable of {f['task_runs']} task runs, "
+                  f"{f['resolved_runs']} resolved; localize ranks an edited file first in {f['rank1_runs']} "
+                  f"({100 * f['rank1_rate']:.1f}%).", "", "| Unresolved category | Runs |", "|---|---|"]
+        parts += [f"| {k} | {v} |" for k, v in f["unresolved"].items()]
+        parts += ["", "| Tool | Calls | Malformed | Rate |", "|---|---|---|---|"]
+        parts += [f"| {k} | {v['calls']} | {v['malformed']} | {100 * v['rate']:.1f}% |" for k, v in f["tools"].items()]
+    out_md.write_bytes(("\n".join(parts) + "\n").encode("utf-8"))
 
 
 def build(results_dir: Path, paper_dir: Path) -> None:
@@ -313,7 +349,10 @@ def build(results_dir: Path, paper_dir: Path) -> None:
         if agent.exists():
             docs["agent"] = json.loads(agent.read_text(encoding="utf-8"))
             docs["lb"] = docs["agent"]["scored"]  # empty until Kaggle returns a public score: gates leaderboard prose
-            docs["agentmd"] = {"table": agent_table(docs["agent"])}
+            docs["agentmd"] = {"table": agent_table_compact(docs["agent"])}
+            render_agent(docs["agent"], paper_dir / "RESULTS_AGENT.md")
         text = fill_template(tpl.read_text(encoding="utf-8"), docs)
+        if word_count(text) > MAX_WORDS:
+            raise ClaimError(f"paper has {word_count(text)} words; the limit is {MAX_WORDS}")
         (paper_dir / "PAPER.md").write_text("<!-- AUTO-GENERATED from PAPER.template.md + results/*.json -->\n" + text,
                                             encoding="utf-8")

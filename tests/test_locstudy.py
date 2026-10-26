@@ -264,3 +264,22 @@ def test_agent_summary_and_table(tmp_path):
     assert p["repos"] == ["httpx", "rich"] and p["resolve_rate"] == 0.5 and p["backtick_args"] == 0 and p["max_time_minutes"] == 5.0
     tbl = agent_table(doc)
     assert "| S1 | 3 (2) | 1 | 1 | 1 | 50 | 0.125 |" in tbl and "| S2 | – | – | – | – | – | pending |" in tbl
+    from locstudy.report import agent_table_compact
+    tbl = agent_table_compact(doc)
+    assert "| S1 | 1/2 | 1 | 1 | 0.125 |" in tbl and "| S2 | – | – | – | pending |" in tbl
+
+
+def test_paper_word_limit_counts_rendered_text_only(tmp_path):
+    from locstudy.report import MAX_WORDS, word_count
+    assert MAX_WORDS == 3000 and word_count("one two <!-- claim: a > b -->\nthree <!-- x\ny -->") == 3
+
+
+def test_agent_summary_carries_failure_aggregate(tmp_path):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import agent_summary
+    runs = tmp_path / "agent_runs"
+    runs.mkdir()
+    audit = tmp_path / "failure_audit.json"
+    audit.write_text(json.dumps({"by_tag": {}, "aggregate": {"right_file_share": 0.5}}))
+    assert agent_summary.build(runs, tmp_path / "none.csv", audit)["failure"] == {"right_file_share": 0.5}
+    assert "failure" not in agent_summary.build(runs, tmp_path / "none.csv")
