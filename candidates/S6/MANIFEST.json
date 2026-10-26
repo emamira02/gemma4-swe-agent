@@ -1,0 +1,15 @@
+{
+ "tag": "S6",
+ "zip_sha256": "291a2befe7e9badc4b915766069bff1554cc78fc90493ab47dc41c03d53f78b3",
+ "git_head_at_freeze": "4988a94b691b5c79335ba644374aaef8a711e367",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "8b6cb9548c35",
+  "eval_config.yaml": "e98492e19da5",
+  "prompts/system.md": "5e02a92ec050",
+  "skills/swe/scripts/edit.py": "2eb4123f5c93",
+  "skills/swe/scripts/finalize.py": "392b0b7e82e7",
+  "skills/swe/scripts/localize.py": "fe02c6965420",
+  "skills/swe/SKILL.md": "14f866f3f0a1"
+ }
+}

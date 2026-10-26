@@ -36,6 +36,35 @@ SKIP_DIRS = frozenset({".git", ".hg", ".svn", "node_modules", ".venv", "venv", "
                        ".ruff_cache", "htmlcov", ".idea", ".vscode"})
 TEST_RX = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 AUX_RX = re.compile(r"(^|/)(docs?|docs_src|examples?|benchmarks?|scripts|tools|tutorials?)/")
+# ---- editor install (kept identical in localize.py and finalize.py; a test checks parity) ----
+TOOLS_DIR = os.environ.get("SWE_TOOLS_DIR", "/tmp/swe")  # outside the workspace: never part of the patch
+
+
+def install_editor(root: str) -> str:
+    """Copy the sibling edit.py (materialized next to this script by run_skill_script) to a directory that outlives
+    this call, so run_command can call it: TOOLS_DIR, else the workspace's .git directory (ignored by git diff).
+    Returns the one status line to print."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "edit.py"), "rb") as fh:
+            data = fh.read()
+    except OSError as e:
+        return f"EDITOR NOT INSTALLED ({type(e).__name__}); run this script once more."
+    for d in (TOOLS_DIR, os.path.join(root, ".git", "swe")):
+        dst = os.path.join(d, "edit.py")
+        try:
+            os.makedirs(d, exist_ok=True)
+            if not os.path.isfile(dst) or open(dst, "rb").read() != data:
+                tmp = f"{dst}.{os.getpid()}.tmp"
+                with open(tmp, "wb") as fh:
+                    fh.write(data)
+                os.replace(tmp, dst)
+            dst = dst.replace(os.sep, "/")
+            return (f"EDITOR READY: python3 {dst}" if d == TOOLS_DIR else
+                    f"EDITOR READY at python3 {dst} (use this path instead of /tmp/swe/edit.py)")
+        except OSError:
+            continue
+    return "EDITOR NOT INSTALLED (no writable directory); run this script once more."
+
 
 # ---- shared with locstudy.signals (kept identical; tests/test_agent.py checks parity) ----
 STOP = frozenset("""a an the and or of to in on for with is are be was were it this that as by at from not no can
@@ -395,13 +424,13 @@ def main(argv: list[str] | None = None) -> int:
     text = "\n".join(out)
     if len(text) > MAX_OUT_CHARS:
         text = text[:MAX_OUT_CHARS - 20] + "\n...[truncated]"
-    print(text + source_block(top, mode, src_texts))
+    print(text + source_block(top, mode, src_texts) + "\n" + install_editor(root))
     return 0
 
 
 def source_block(top: list[Sym], mode: str, src_texts: dict[str, list[str]]) -> str:
     """When the issue names a symbol (anchored mode, where rank 1 is most precise), show rank 1's source so the
-    model can edit without a read_file round trip. Raw lines, no numbers: edit_file old_string is copied from it."""
+    model can edit without a read_file round trip. Raw lines, no numbers: the editor's SEARCH text is copied from it."""
     if mode != "anchored" or not top:
         return ""
     s = top[0]
@@ -411,8 +440,8 @@ def source_block(top: list[Sym], mode: str, src_texts: dict[str, list[str]]) -> 
     body = "\n".join(src_texts.get(s.path, [])[s.start - 1:s.end])
     if not body.strip() or len(body) > SOURCE_MAX_CHARS:
         return ""
-    return (f"\nSOURCE OF #1 {s.path} lines {s.start}-{s.end} (exact text; if this is the place to fix, copy old_string "
-            f"from it and edit without reading the file again):\n----- begin -----\n{body}\n----- end -----")
+    return (f"\nSOURCE OF #1 {s.path} lines {s.start}-{s.end} (exact text; if this is the place to fix, copy the SEARCH "
+            f"lines from it and edit without reading the file again):\n----- begin -----\n{body}\n----- end -----")
 
 
 if __name__ == "__main__":

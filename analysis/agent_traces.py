@@ -4,17 +4,26 @@
 
 Per task: resolved / gold-solvable, tool calls by name, argument errors (INVALID_ARGUMENTS, unreadable paths,
 missing mandatory params), calls with backticks in arguments, identical consecutive calls, time of the first edit,
-completion tokens and latency per step, session timeout, calls after submit_patch.
+completion tokens and latency per step, session timeout, calls after submit_patch. From S6 on, edits also arrive as
+run_command calls of the heredoc editor (edit.py): they count as edits, plus how often the editor refused a block and
+how often the heredoc was left unquoted.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import statistics as st
 from collections import Counter
 from pathlib import Path
 
 ARG_ERRORS = ("INVALID_ARGUMENTS", "FileReadError", "mandatory input")
+EDITOR_RX = re.compile(r"\bedit\.py\s+[^\s<]")
+UNQUOTED_RX = re.compile(r"edit\.py[^\n]*<<-?\s*[A-Za-z_]")
+
+
+def is_edit(name: str, args: dict) -> bool:
+    return name in ("edit_file", "write_file") or (name == "run_command" and bool(EDITOR_RX.search(str(args.get("command", "")))))
 
 
 def task_metrics(trace: dict) -> dict:
@@ -40,7 +49,11 @@ def task_metrics(trace: dict) -> dict:
             c["arg_errors"] += any(x in obs for x in ARG_ERRORS)
             c["identical_repeat"] += (name, args) == prev
             prev = (name, args)
-            if name in ("edit_file", "write_file") and first_edit is None:
+            if name == "run_command" and EDITOR_RX.search(str(tc["arguments"].get("command", ""))):
+                c["editor_calls"] += 1
+                c["editor_not_applied"] += "EDIT NOT APPLIED" in obs
+                c["editor_unquoted"] += bool(UNQUOTED_RX.search(tc["arguments"]["command"]))
+            if is_edit(name, tc["arguments"]) and first_edit is None:
                 first_edit = round(tc["extra"]["elapsed_s"], 1)
     return {**c, "first_edit_s": first_edit, "steps": len(comp),
             "completion_tokens_median": st.median(comp) if comp else 0, "latency_median_s": round(st.median(lat), 2) if lat else 0}
@@ -63,7 +76,8 @@ def main() -> None:
     solv = [v for v in per.values() if v["gold"]]
     tot = Counter()
     for v in per.values():
-        tot.update({k: v[k] for k in ("calls", "arg_errors", "backtick_args", "identical_repeat", "after_submit") if k in v})
+        tot.update({k: v[k] for k in ("calls", "arg_errors", "backtick_args", "identical_repeat", "after_submit",
+                                      "editor_calls", "editor_not_applied", "editor_unquoted") if k in v})
     summary = {"n": len(per), "gold_solvable": len(solv), "resolved_on_solvable": sum(bool(v["resolved"]) for v in solv),
                "timeouts": sum(v["timeout"] for v in per.values()), "empty_patch": sum(not v["patch_chars"] for v in per.values()),
                "tasks_with_arg_errors": sum(bool(v.get("arg_errors")) for v in per.values()),

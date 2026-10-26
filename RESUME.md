@@ -32,6 +32,7 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 | Queue | 2026-10-26 19:21 UTC: no pending submission, no READY entry (S4 BLOCKED); S5 dev panel still RUNNING (kernel v5, pushed 2026-10-26 ~18:48 UTC) |
 | S4 (16a19a7ecd46) | panel done 2026-10-14 07:15 UTC: 5/22 resolved (best so far), 9 timeouts, empty 3, no_edit 2, BUT tasks_with_arg_errors 3 -> 8 (arg_errors 5 -> 43, 42 backtick) -> BLOCKED by rule; needs fix (new tag) |
 | S5 (39038672b64d) | built 2026-10-26 from S4 + edit fallback; dev panel (kernel v5) RUNNING -> WAIT_PANEL |
+| S6 (291a2befe7e9) | built + frozen 2026-10-26 ~21:30 UTC from S5: edits through run_command + heredoc SEARCH/REPLACE editor, edit_file/write_file removed; 31 bundle tests + Linux exec-chain check 13/13 (results/editor_check/); QUEUED_PANEL (panel starts when the S5 panel is done) |
 | Paper | 4.10 agent section added (results/agent_summary.json via tools/agent_summary.py); 2,984 words incl. references; refresh: `python tools/agent_summary.py && python -m locstudy report` after each new panel/score |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
@@ -40,9 +41,15 @@ Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always us
 |---|---|---|---|
 | S2 | SKIPPED (superseded by S3 on 2026-10-13: tie on resolves, newest wins; S3 fewer timeouts) (panel: resolved 4/21 = S1; tasks with malformed calls 14 -> 5; timeouts 16 -> 14; empty patches 7 -> 9; no_edit 5 = 5) | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
 | S3 | SUBMITTED 2026-10-13 (panel: resolved_on_solvable 4/22; timeouts 12; empty_patch 7; tasks_with_arg_errors 3; no_edit 5; timeouts+no_edit 17 vs S2 19 -> READY) | S2 + localize shows rank-1 source in anchored mode (edit without a read), write_file /tmp misuse explained, finalize deletes /workspace/tmp | S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts |
+| S6 | QUEUED_PANEL (frozen 2026-10-26; launch its panel as soon as no dev-panel kernel is RUNNING, then WAIT_PANEL) | S5 minus edit_file, write_file and replace_lines.py; plus skill script edit.py, installed by localize.py (and by finalize.py on an empty patch) to /tmp/swe/edit.py and called from run_command with the code in a quoted heredoc: SEARCH/REPLACE blocks (exact, whitespace, indentation and copied-line-number tiers; unique match; all-or-nothing; compile guard; atomic write keeping EOL/mode; idempotent via a journal in .git), line ranges, new files; an unquoted heredoc is recovered raw from /proc | the gemma4 call parser emits keys alphabetically, so edit_file's long new_string precedes old_string and a stray closing backtick swallows old_string: edit_file 73/208 calls malformed in S1-S4 (S4 41/78; 2 solvable tasks lost with no edit, NO_EDIT_TOOL), run_command 0/807 (incl. 177 python -c, 26 heredocs). One code value per call removes the failure class |
 | S5 | WAIT_PANEL (kernel v5 pushed 2026-10-26) | S4 + skill script replace_lines.py (write_file the new lines to tmp_new_lines.txt, then replace lines A-B by number; refuses a result that does not compile) + prompt rule: after a missing-parameter or twice-not-found edit_file error never resend edit_file for that change, use the line fallback | S4 traces: 41/78 edit_file calls lost old_string in the call serialization (7 tasks), resent unchanged up to 13 times (identical_repeat 29); write_file (one code value) lost a field only 4 times in 76 across S1-S4 |
 | S4 | BLOCKED 2026-10-14 (panel: resolved_on_solvable 5/22; timeouts 9; empty_patch 3; tasks_with_arg_errors 8 vs S3 3 (arg_errors 43, backtick 42 vs 5); no_edit 2; empty+no_edit 5 vs 12 ok, but more arg errors = new failure mode per rule) | S3 + thinking_budget 2048 -> 1024, prompt rule: think briefly, edit the most plausible option and let the check decide | capped 2,048-token thinking turns (~60 s each, 28-29% of agent time in S1-S3) cause the late/no edits behind 7 empty patches and 12 timeouts |
 
+Decision rule for S6 after its panel (written 2026-10-26, before the panel): READY if resolved_on_solvable >= the best
+panel so far (S4 = 5, or S5's if higher), tasks with a malformed edit attempt (failure_audit malformed_edits > 0) <= 1,
+editor_not_applied / editor_calls <= 0.35, NO_EDIT_TOOL = 0, and no new failure mode (editor never installed, unquoted
+heredocs that corrupt code, scratch files in the patch, empty_patch + no_edit above S4's 3 + 2 by more than 2);
+otherwise BLOCKED. Report editor_calls, editor_not_applied, editor_unquoted and the failure_audit categories next to it.
 Decision rule for S5 after its panel: READY if resolved_on_solvable >= 5 (best so far: S4 = 5), tasks_with_arg_errors < 8 (S4)
 and arg_errors < 43, and no new failure mode appears (e.g. replace_lines misuse: wrong line ranges, NOT APPLIED loops, scratch
 file left in the patch; more empty patches + no_edit than S4's 3 + 2 by more than 2); otherwise BLOCKED.
@@ -51,6 +58,27 @@ and no new failure mode appears (e.g. more arg errors or truncated-thought turns
 Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and timeouts + no_edit do not grow vs S2.
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
+
+## Findings S1-S4 failure audit (2026-10-26, python -m analysis.failure_audit -> results/failure_audit.json)
+Per task and tag, first match wins: GOLD_UNSOLVABLE / RESOLVED / NO_EDIT_TOOL (>= 2 edit attempts failed at the tool
+level, no source write) / NO_EDIT / WRONG_FILE / RIGHT_FILE_TIMEOUT / RIGHT_FILE_WRONG_FIX (right file, submitted, fails).
+| Tag | resolved | NO_EDIT_TOOL | NO_EDIT | WRONG_FILE | RIGHT_FILE_TIMEOUT | RIGHT_FILE_WRONG_FIX | unsolvable |
+|---|---|---|---|---|---|---|---|
+| S1 | 4 | 0 | 6 | 2 | 7 | 2 | 3 |
+| S2 | 4 | 2 | 6 | 3 | 3 | 3 | 3 |
+| S3 | 4 | 0 | 6 | 2 | 5 | 5 | 2 |
+| S4 | 5 | 2 | 3 | 2 | 3 | 7 | 2 |
+- Localization is not the binding constraint on this panel: localize ranks a file the gold patch edits first in 13-14
+  of 24 tasks in every tag, yet 4-5 are resolved. The losses are after localization.
+- The same four tasks (3006, 3067, 3882, 3905) are resolved by every tag; S4 adds 3777. Version-to-version panel
+  differences are one task: within run-to-run noise, never evidence on their own.
+- Tool level: edit_file 73/208 calls malformed over S1-S4 (S4 41/78), write_file 4/76, run_skill_script 33/159 (all S1,
+  fixed in S2), read_file 3/825, run_command 0/807. Cause (vLLM gemma4 tool parser, v0.19.1): string values end only
+  at the <|"|> token and keys come out alphabetically; a value closed with a backtick swallows every later key
+  (edit_file: new_string swallows old_string; write_file: content swallows filepath). On timeout the working tree is
+  still graded (agent_runner fallback diff), so timeouts lose tasks only through unfinished or wrong edits.
+- Next largest class after the tool fix: RIGHT_FILE_WRONG_FIX (S4 7). Candidate next change after S6: a cheap
+  reproduce-then-verify step (run the related test or a python -c probe of the issue's example before and after).
 
 ## Findings S4 (dev panel 2026-10-14, analysed 2026-10-26; 22 gold-solvable, 5 resolved)
 - Largest measured failure mode: broken edit_file calls. 41 of 78 edit_file calls (S1 17/52, S2 15/44, S3 0/34) came

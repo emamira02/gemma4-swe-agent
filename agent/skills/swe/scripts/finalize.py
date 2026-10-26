@@ -27,6 +27,37 @@ SCRATCH = re.compile(r"^(repro\w*|reproduce\w*|debug\w*|scratch\w*|tmp\w*|temp\w
                      r"\.(py|sh|txt|log|out)$|\.(orig|rej|bak|swp)$|^tmp/")
 
 
+# ---- editor install (kept identical in localize.py and finalize.py; a test checks parity) ----
+TOOLS_DIR = os.environ.get("SWE_TOOLS_DIR", "/tmp/swe")  # outside the workspace: never part of the patch
+
+
+def install_editor(root: str) -> str:
+    """Copy the sibling edit.py (materialized next to this script by run_skill_script) to a directory that outlives
+    this call, so run_command can call it: TOOLS_DIR, else the workspace's .git directory (ignored by git diff).
+    Returns the one status line to print."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "edit.py"), "rb") as fh:
+            data = fh.read()
+    except OSError as e:
+        return f"EDITOR NOT INSTALLED ({type(e).__name__}); run this script once more."
+    for d in (TOOLS_DIR, os.path.join(root, ".git", "swe")):
+        dst = os.path.join(d, "edit.py")
+        try:
+            os.makedirs(d, exist_ok=True)
+            if not os.path.isfile(dst) or open(dst, "rb").read() != data:
+                tmp = f"{dst}.{os.getpid()}.tmp"
+                with open(tmp, "wb") as fh:
+                    fh.write(data)
+                os.replace(tmp, dst)
+            dst = dst.replace(os.sep, "/")
+            return (f"EDITOR READY: python3 {dst}" if d == TOOLS_DIR else
+                    f"EDITOR READY at python3 {dst} (use this path instead of /tmp/swe/edit.py)")
+        except OSError:
+            continue
+    return "EDITOR NOT INSTALLED (no writable directory); run this script once more."
+
+
+
 def find_root() -> str:
     cands = [os.environ.get("SWE_WORKSPACE"), os.environ.get("PWD"),
              *os.environ.get("PYTHONPATH", "").split(os.pathsep), "/workspace"]
@@ -111,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
     if errors:
         print("SYNTAX ERRORS - fix these before submit_patch:\n  " + "\n  ".join(errors))
     if not stat and not kept_new:
-        print("WARNING: the patch is EMPTY. Make the source change before calling submit_patch.")
+        print("WARNING: the patch is EMPTY. Make the source change before calling submit_patch.\n" + install_editor(root))
     else:
         print("PATCH:\n" + (stat or "(only new files)"))
     if not errors and (stat or kept_new):

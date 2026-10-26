@@ -19,3 +19,4 @@ results/*.log
 STATE.json
 .status.lock
 *.tmp
+kernels/editor_check/check.py

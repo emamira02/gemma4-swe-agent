@@ -1,0 +1,21 @@
+[{"stream_name":"stdout","time":1.029319489,"data":"PASS install via materialized localize\n"}
+,{"stream_name":"stdout","time":1.197096619,"data":"PASS quoted heredoc applies verbatim\n"}
+,{"stream_name":"stdout","time":1.32192925,"data":"PASS unquoted heredoc recovered from /proc\n"}
+,{"stream_name":"stdout","time":1.445034613,"data":"PASS unterminated heredoc still applies, no EOF left\n"}
+,{"stream_name":"stdout","time":1.561946232,"data":"PASS range edit, unterminated\n"}
+,{"stream_name":"stdout","time":1.716327543,"data":"PASS not found: exit 1, closest region, unchanged\n"}
+,{"stream_name":"stdout","time":1.8732863659999999,"data":"PASS compile guard\n"}
+,{"stream_name":"stdout","time":2.009977319,"data":"PASS tests refused\n"}
+,{"stream_name":"stdout","time":2.132670191,"data":"PASS outside workspace refused\n"}
+,{"stream_name":"stdout","time":2.26076905,"data":"PASS new file\n"}
+,{"stream_name":"stdout","time":2.379497664,"data":"PASS CRLF preserved\n"}
+,{"stream_name":"stdout","time":2.38320973,"data":"PASS only intended files changed\n"}
+,{"stream_name":"stdout","time":2.502126446,"data":"PASS finalize reinstalls on empty patch\n"}
+,{"stream_name":"stdout","time":2.504437401,"data":"{\"python\": \"3.13.15\", \"bash\": \"GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)\", \"passed\": 13, \"total\": 13}\n"}
+,{"stream_name":"stderr","time":5.472034817,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":5.472073867,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":5.910559461,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":5.910590625,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":7.781742583,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":9.144066447,"data":"[NbConvertApp] Writing 382433 bytes to __results__.html\n"}
+]

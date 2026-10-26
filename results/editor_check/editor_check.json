@@ -1,0 +1,73 @@
+{
+ "python": "3.13.15",
+ "bash": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)",
+ "passed": 13,
+ "total": 13,
+ "results": [
+  {
+   "case": "install via materialized localize",
+   "ok": true,
+   "detail": "mode: lexical (no symbol named in the query resolved; ranking is lexical) | indexed 3 files, 4 symbols\nTOP SYMBOLS (path:first-last line, symbol, signature  # doc). Re-rank them with the issue in mind, then read_file the best 1-3 ranges:\n 1. pkg/markup.py:4-7  escape  def escape(markup):  # Escape [ and \\ in markup.\n 2. pkg/markup.py:1-11  <module>  module-level code (imports, constants)\n 3. pkg/markup.py:10-11  other  def other():\nFILES: pkg/markup.py\nEDITOR READY: python3 /tmp/swe/edit.py\n"
+  },
+  {
+   "case": "quoted heredoc applies verbatim",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n"
+  },
+  {
+   "case": "unquoted heredoc recovered from /proc",
+   "ok": true,
+   "detail": "block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n/bin/bash: line 1: x: command not found\n\nFILE:\nimport re\n\n\ndef escape(markup):\n    \"\"\"Escape [ and \\\\ in markup.\"\"\"\n    markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n    markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n    return markup\n\n\ndef other():\n    return 1\n"
+  },
+  {
+   "case": "unterminated heredoc still applies, no EOF left",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n/bin/bash: line 8: warning: here-document at line 1 delimited by end-of-file (wanted `EOF')\n"
+  },
+  {
+   "case": "range edit, unterminated",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: replaced lines 12-12 (1) by 1 lines\nREMOVED (old lines 12-12):\n    12      return 1\nNOW lines 10-12:\n    10  \n    11  def other():\n    12      return 2\n/bin/bash: line 3: warning: here-document at line 1 delimited by end-of-file (wanted `EOF')\n"
+  },
+  {
+   "case": "not found: exit 1, closest region, unchanged",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: block 1: SEARCH not found in pkg/markup.py. Closest region (similarity 0.96), lines 7-7:\n     7      return markup\nCopy SEARCH exactly from these lines, or replace by line numbers: python3 /tmp/swe/edit.py pkg/markup.py 7-7 <<'EOF' ...new lines... EOF\n"
+  },
+  {
+   "case": "compile guard",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: NOT APPLIED: pkg/markup.py would not compile after this edit; '(' was never closed at line 7:\n     4  def escape(markup):\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      return (markup\n     8  \n     9  \n    10  def other():\nFix the indentation or the text and run the editor again.\n"
+  },
+  {
+   "case": "tests refused",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: tests/test_markup.py is a test or test-configuration file: the grader resets those, so change the source code instead.\n"
+  },
+  {
+   "case": "outside workspace refused",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: ../../etc/passwd is outside the workspace /tmp/ws_eonq6jxm; give a path relative to the repository root.\n"
+  },
+  {
+   "case": "new file",
+   "ok": true,
+   "detail": "CREATED pkg/new_mod.py (1 lines). If it defines public names, export them where the package does (for example in __init__.py).\n"
+  },
+  {
+   "case": "CRLF preserved",
+   "ok": true,
+   "detail": "b'A = 1\\r\\nB = 3\\r\\nC = 4\\r\\n'"
+  },
+  {
+   "case": "only intended files changed",
+   "ok": true,
+   "detail": " M pkg/crlf.py\n?? pkg/new_mod.py\n"
+  },
+  {
+   "case": "finalize reinstalls on empty patch",
+   "ok": true,
+   "detail": "workspace clean: no protected or scratch files touched\nWARNING: the patch is EMPTY. Make the source change before calling submit_patch.\nEDITOR READY: python3 /tmp/swe/edit.py\n"
+  }
+ ]
+}

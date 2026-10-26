@@ -136,13 +136,34 @@ server.stop() if hasattr(server, "stop") else None
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True)
-    ap.add_argument("--zip", type=Path, default=ROOT / "build" / "submission.zip")
+    ap.add_argument("--zip", type=Path, default=None,
+                    help="default: rebuild candidates/<tag>/bundle and require the sha in its MANIFEST")
     ap.add_argument("--n", type=int, default=24)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--repos", nargs="+", default=["Textualize/rich"])
     ap.add_argument("--kernel-id", default="emanuelemiranda/g4-agent-eval")
+    ap.add_argument("--force", action="store_true", help="replace panel.json before the previous panel was downloaded")
     a = ap.parse_args()
-    data = a.zip.read_bytes()
+    prev = json.loads((HERE / "panel.json").read_text(encoding="utf-8")) if (HERE / "panel.json").exists() else None
+    if (prev and prev["tag"] != a.tag and not a.force
+            and not (ROOT / "results" / f"kaggle_eval_{prev['tag']}" / "agent_eval" / "summary.json").exists()):
+        # tools/status.py names the running kernel's output after panel.json: replacing it now would file the
+        # previous tag's results under this tag
+        sys.exit(f"panel {prev['tag']} has not been downloaded yet (python tools/status.py); refusing to replace it")
+    if a.zip is None:  # the panel must run exactly the frozen bytes that a submission of this tag would send
+        from tools import build_submission as bs
+        man = bs.CANDIDATES / a.tag / "MANIFEST.json"
+        if not man.exists():
+            sys.exit(f"no frozen candidate {a.tag}: python tools/build_submission.py --tag {a.tag} first")
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            staged = bs.stage(man.parent / "bundle", Path(td) / "s")
+            bs.validate(staged)
+            data = bs.build_zip(staged)
+        if hashlib.sha256(data).hexdigest() != json.loads(man.read_text(encoding="utf-8"))["zip_sha256"]:
+            sys.exit(f"candidates/{a.tag} does not rebuild to its recorded sha")
+    else:
+        data = a.zip.read_bytes()
     sha = hashlib.sha256(data).hexdigest()
     tasks = [json.loads(l) for l in (ROOT / "data" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     pool = sorted(t["instance_id"] for t in tasks if t["repo"] in a.repos)

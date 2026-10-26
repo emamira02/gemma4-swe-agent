@@ -1,0 +1,1018 @@
+{
+ "S1": {
+  "counts": {
+   "GOLD_UNSOLVABLE": 3,
+   "RESOLVED": 4,
+   "NO_EDIT_TOOL": 0,
+   "NO_EDIT": 6,
+   "WRONG_FILE": 2,
+   "RIGHT_FILE_TOOL": 0,
+   "RIGHT_FILE_TIMEOUT": 7,
+   "RIGHT_FILE_WRONG_FIX": 2
+  },
+  "per_task": {
+   "rich_3006": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3063": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3067": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 23,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   },
+   "rich_3296": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 14,
+    "edit_attempts": 21,
+    "malformed_edits": 14,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3469": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3470": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3471": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 5,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3472": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3506": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3521": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3535": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3675": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 2,
+    "malformed_edits": 1,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3772": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 2,
+    "edit_attempts": 4,
+    "malformed_edits": 1,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3777": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 19
+   },
+   "rich_3782": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3882": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3905": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 5,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   },
+   "rich_3930": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 24
+   },
+   "rich_3935": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 9
+   },
+   "rich_3938": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 1,
+    "malformed_edits": 1,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3942": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3944": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 1,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3953": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_4070": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 10,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   }
+  }
+ },
+ "S2": {
+  "counts": {
+   "GOLD_UNSOLVABLE": 3,
+   "RESOLVED": 4,
+   "NO_EDIT_TOOL": 2,
+   "NO_EDIT": 6,
+   "WRONG_FILE": 3,
+   "RIGHT_FILE_TOOL": 0,
+   "RIGHT_FILE_TIMEOUT": 3,
+   "RIGHT_FILE_WRONG_FIX": 3
+  },
+  "per_task": {
+   "rich_3006": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3063": {
+    "category": "NO_EDIT_TOOL",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 2,
+    "edit_attempts": 8,
+    "malformed_edits": 2,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3067": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 3,
+    "edit_attempts": 8,
+    "malformed_edits": 3,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3296": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3469": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3470": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3471": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3472": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3506": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3521": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3535": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3675": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3772": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3777": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3782": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 5,
+    "edit_attempts": 5,
+    "malformed_edits": 5,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3882": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3905": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   },
+   "rich_3930": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 4
+   },
+   "rich_3935": {
+    "category": "NO_EDIT_TOOL",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 8,
+    "edit_attempts": 9,
+    "malformed_edits": 8,
+    "localize_gold_file_rank": 9
+   },
+   "rich_3938": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3942": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3944": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3953": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_4070": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 6,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   }
+  }
+ },
+ "S3": {
+  "counts": {
+   "GOLD_UNSOLVABLE": 2,
+   "RESOLVED": 4,
+   "NO_EDIT_TOOL": 0,
+   "NO_EDIT": 6,
+   "WRONG_FILE": 2,
+   "RIGHT_FILE_TOOL": 0,
+   "RIGHT_FILE_TIMEOUT": 5,
+   "RIGHT_FILE_WRONG_FIX": 5
+  },
+  "per_task": {
+   "rich_3006": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 4,
+    "malformed_edits": 1,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3063": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3067": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3296": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3469": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 1,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3470": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3471": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3472": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3506": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3521": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3535": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3675": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 4
+   },
+   "rich_3772": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3777": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3782": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3882": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3905": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3930": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3935": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 9
+   },
+   "rich_3938": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3942": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3944": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3953": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_4070": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 8,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   }
+  }
+ },
+ "S4": {
+  "counts": {
+   "GOLD_UNSOLVABLE": 2,
+   "RESOLVED": 5,
+   "NO_EDIT_TOOL": 2,
+   "NO_EDIT": 3,
+   "WRONG_FILE": 2,
+   "RIGHT_FILE_TOOL": 0,
+   "RIGHT_FILE_TIMEOUT": 3,
+   "RIGHT_FILE_WRONG_FIX": 7
+  },
+  "per_task": {
+   "rich_3006": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   },
+   "rich_3063": {
+    "category": "NO_EDIT_TOOL",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 13,
+    "edit_attempts": 15,
+    "malformed_edits": 13,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3067": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 4,
+    "edit_attempts": 7,
+    "malformed_edits": 4,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3296": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 5,
+    "edit_attempts": 9,
+    "malformed_edits": 5,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3469": {
+    "category": "GOLD_UNSOLVABLE",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 4,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3470": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3471": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 6,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3472": {
+    "category": "NO_EDIT_TOOL",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 6,
+    "edit_attempts": 7,
+    "malformed_edits": 6,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3506": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3521": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 3,
+    "malformed_edits": 1,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3535": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3675": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3772": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3777": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 1,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_3782": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3882": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 12,
+    "edit_attempts": 14,
+    "malformed_edits": 12,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3905": {
+    "category": "RESOLVED",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 3,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   },
+   "rich_3930": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 6,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 2
+   },
+   "rich_3935": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 9
+   },
+   "rich_3938": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3942": {
+    "category": "NO_EDIT",
+    "wrote_source": false,
+    "wrote_gold": false,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 0,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 1
+   },
+   "rich_3944": {
+    "category": "WRONG_FILE",
+    "wrote_source": true,
+    "wrote_gold": false,
+    "read_gold": false,
+    "malformed_calls": 0,
+    "edit_attempts": 1,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 0
+   },
+   "rich_3953": {
+    "category": "RIGHT_FILE_TIMEOUT",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 2,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": 3
+   },
+   "rich_4070": {
+    "category": "RIGHT_FILE_WRONG_FIX",
+    "wrote_source": true,
+    "wrote_gold": true,
+    "read_gold": true,
+    "malformed_calls": 0,
+    "edit_attempts": 6,
+    "malformed_edits": 0,
+    "localize_gold_file_rank": null
+   }
+  }
+ }
+}

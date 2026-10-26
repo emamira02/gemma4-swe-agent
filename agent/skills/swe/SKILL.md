@@ -1,6 +1,6 @@
 ---
 name: swe
-description: Fast issue localization (ranked symbols with file:line ranges, signatures and related tests), a line-range edit fallback when edit_file calls break, and patch hygiene before submit_patch.
+description: Fast issue localization (ranked symbols with file:line ranges, signatures and related tests), a SEARCH/REPLACE file editor driven from run_command, and patch hygiene before submit_patch.
 ---
 # swe skill
 
@@ -14,13 +14,24 @@ file paths, function or class names, options, config keys, quoted error text, a 
 Output: mode (anchored = names in the query resolved to symbols; lexical = ranking by word overlap only), the top
 symbols as path:first-last, symbol name, signature and docstring, the files they live in, literal matches of
 quoted text, and related test files. Re-rank the list using the issue, then read_file only the best one to three
-line ranges. Optional: args {"query": "...", "k": 40} for a longer list.
+line ranges. Optional: args {"query": "...", "k": 40} for a longer list. It also installs the editor.
 
-## scripts/replace_lines.py: when edit_file keeps failing
-First write_file with filepath tmp_new_lines.txt and the replacement lines as content, then run_skill_script with
-skill_name swe, file_path scripts/replace_lines.py and args {"file": "path/to/module.py", "start": A, "end": B}.
-Lines A to B (1-based, inclusive) are replaced; end = start - 1 inserts before line A. A result that would not
-compile is not applied. Prints the removed lines and the new region with line numbers.
+## the editor: how to change files
+Call run_command with the code in a quoted heredoc, each marker on its own line:
+
+python3 /tmp/swe/edit.py path/to/module.py <<'EOF'
+<<<<<<< SEARCH
+exact current lines, copied from read_file
+=======
+replacement lines
+>>>>>>> REPLACE
+EOF
+
+Several blocks for the same file may follow each other in one call; they apply in order, all or nothing. Other
+forms: python3 /tmp/swe/edit.py path/to/module.py 120-125 followed by the same heredoc holding only the new lines
+replaces lines 120 to 125 (120-119 inserts before line 120); a path that does not exist yet creates that file
+with the heredoc as its content. A SEARCH that is missing or not unique, or a result that would not compile,
+changes nothing and prints the closest lines with their numbers. Applied edits print the new region.
 
 ## scripts/finalize.py: before submit_patch
 run_skill_script with skill_name swe and file_path scripts/finalize.py.
