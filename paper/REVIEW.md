@@ -39,7 +39,7 @@ is still open. Criteria of the paper track: novelty, quality, relevance, verifia
 - File-level rank 1 in rich is easier than in larger repositories (few, large modules); 4.10 avoids generalising it.
 
 ## E. Clarity (3.5/5)
-- Dense: many intervals per sentence. The abstract is long (~330 words) but carries the four findings with numbers.
+- Dense: many intervals per sentence. The abstract is long (282 words, including the section heading) but carries the four findings with numbers.
 - Terminology is consistent (edited symbol / edited file, anchored / anchor-free, post hoc).
 - Figures 1-4 exist; check legibility at Kaggle writeup width before submission.
 
