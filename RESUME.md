@@ -79,6 +79,14 @@ level, no source write) / NO_EDIT / WRONG_FILE / RIGHT_FILE_TIMEOUT / RIGHT_FILE
   still graded (agent_runner fallback diff), so timeouts lose tasks only through unfinished or wrong edits.
 - Next largest class after the tool fix: RIGHT_FILE_WRONG_FIX (S4 7). Candidate next change after S6: a cheap
   reproduce-then-verify step (run the related test or a python -c probe of the issue's example before and after).
+- Post hoc, descriptive (confounded by task difficulty), pooled S1-S4 runs: median first edit 47 s in RESOLVED (17),
+  131 s in RIGHT_FILE_WRONG_FIX (17), 209 s in RIGHT_FILE_TIMEOUT (18). Wrong fixes were usually checked (14/17 ran a
+  check after the edit) but almost never with pytest (1/17; resolved 6/17): self-written python -c probes confirm the
+  model's own reading of the issue. Hypothesis for S7 (pre-register before building): after the first edit, run the
+  RELATED TESTS file of localize once (python -m pytest -x -q FILE 2>&1 | tail -25) before any other check.
+- Timing (kernel duration_s = container setup + agent + hidden-test verification per task): mean 241-275 s, max 528 s
+  (rich_3772, slow tests) on the panel. Builder worst case 120 x (5.0 + 0.5) + 15 min = 11.25 h; S1 and S3 hidden runs
+  finished inside the 12 h limit. Keep max_time_minutes at 5.0: 5.5 would leave no margin (120 x 6.0 = 12 h).
 
 ## Findings S4 (dev panel 2026-10-14, analysed 2026-10-26; 22 gold-solvable, 5 resolved)
 - Largest measured failure mode: broken edit_file calls. 41 of 78 edit_file calls (S1 17/52, S2 15/44, S3 0/34) came
