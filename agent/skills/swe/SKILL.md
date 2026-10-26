@@ -19,7 +19,7 @@ line ranges. Optional: args {"query": "...", "k": 40} for a longer list. It also
 ## the editor: how to change files
 Call run_command with the code in a quoted heredoc, each marker on its own line:
 
-python3 /tmp/swe/edit.py path/to/module.py <<'EOF'
+python3 /workspace/.git/swe/edit.py path/to/module.py <<'EOF'
 <<<<<<< SEARCH
 exact current lines, copied from read_file
 =======
@@ -28,7 +28,7 @@ replacement lines
 EOF
 
 Several blocks for the same file may follow each other in one call; they apply in order, all or nothing. Other
-forms: python3 /tmp/swe/edit.py path/to/module.py 120-125 followed by the same heredoc holding only the new lines
+forms: python3 /workspace/.git/swe/edit.py path/to/module.py 120-125 followed by the same heredoc holding only the new lines
 replaces lines 120 to 125 (120-119 inserts before line 120); a path that does not exist yet creates that file
 with the heredoc as its content. A SEARCH that is missing or not unique, or a result that would not compile,
 changes nothing and prints the closest lines with their numbers. Applied edits print the new region.

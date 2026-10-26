@@ -10,7 +10,7 @@ Categories, first match wins (denominator = all panel tasks; "solvable" = the go
   GOLD_UNSOLVABLE      the reference patch itself fails in the panel environment
   RESOLVED             hidden tests pass
   NO_EDIT_TOOL         no successful write to a non-test source file, >= 2 edit attempts failed at the tool level
-                       (a malformed call, or from S6 the heredoc editor refusing the block)
+                       (a malformed call, or from S6 the heredoc editor refusing the block or not being found)
   NO_EDIT              no successful write to a non-test source file
   WRONG_FILE           successful writes, none to a file the gold patch changes
   RIGHT_FILE_TOOL      a gold file was written, the run timed out and >= 3 edit attempts were malformed
@@ -85,8 +85,8 @@ def trace_facts(trace: dict, gold: set[str]) -> dict:
             elif editor:
                 if st == "ok" and ("APPLIED to" in obs or "CREATED " in obs):
                     written.add(_norm(editor.group(1)))
-                elif "EDIT NOT APPLIED" in obs:
-                    bad_edits += 1
+                elif "EDIT NOT APPLIED" in obs or "can't open file" in obs or "No such file or directory" in obs:
+                    bad_edits += 1  # refused block, or the editor was not where the command looked for it
             elif name == "run_command":
                 written.update(_norm(m) for m in WRITE_CMD.findall(a["command"]))
             elif name == "run_skill_script" and "localize" in str(a.get("file_path")) and rank is None:

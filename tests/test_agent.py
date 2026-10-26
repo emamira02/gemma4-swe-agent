@@ -482,11 +482,19 @@ def test_localize_and_finalize_install_the_editor(repo, tmp_path_factory, _tools
     (_tools_dir / "edit.py").unlink()
     finalize.main(["--root", str(repo)])  # empty patch: finalize reinstalls it for the edit still to come
     assert (_tools_dir / "edit.py").exists()
-    blocker = tmp_path_factory.mktemp("ro") / "file_not_dir"  # unusable tools dir: falls back to .git/swe
+    # default target: the workspace's .git (S6 panel: a /tmp install is invisible to run_command, which maps /tmp
+    # and /workspace to the task sandbox); never part of the patch
+    monkeypatch.setattr(localize, "TOOLS_DIR", None)
+    line = localize.install_editor(str(repo))
+    assert line == "EDITOR READY: python3 " + (repo / ".git" / "swe" / "edit.py").as_posix(), line
+    assert git(repo, "status", "--porcelain") == ""
+    ws = tmp_path_factory.mktemp("sbx") / "workspace"  # the harness sandbox layout: <sandbox root>/workspace
+    (ws / ".git").mkdir(parents=True)
+    assert localize.install_editor(str(ws)) == "EDITOR READY: python3 /workspace/.git/swe/edit.py"
+    assert (ws / ".git" / "swe" / "edit.py").read_bytes() == (SCRIPTS / "edit.py").read_bytes()
+    blocker = tmp_path_factory.mktemp("ro") / "file_not_dir"
     blocker.write_text("x")
-    monkeypatch.setattr(localize, "TOOLS_DIR", str(blocker / "sub"))
-    assert "use this path instead" in localize.install_editor(str(repo))
-    assert (repo / ".git" / "swe" / "edit.py").exists() and git(repo, "status", "--porcelain") == ""
+    assert localize.install_editor(str(blocker)).startswith("EDITOR NOT INSTALLED")
 
 
 def test_editor_install_runs_through_adk_skill_wrapper(repo, tmp_path, _tools_dir):
@@ -531,6 +539,17 @@ def test_trace_metrics_count_editor_edits():
     assert f["wrote_gold"] and f["edit_attempts"] == 2 and f["malformed_edits"] == 1
     f = failure_audit.trace_facts({"steps": trace["steps"][:2]}, {"pkg/core.py"})
     assert not f["wrote_source"] and f["edit_attempts"] == 1
+
+
+def test_edit_undoes_the_sandbox_path_rewriting(tmp_path):
+    """The harness's subprocess sandbox rewrites /tmp, /workspace and /usr/local/bin inside the whole run_command
+    string, heredoc included; code naming those paths must still reach the file as written."""
+    ws = tmp_path / "swegemma_sandbox_abc123_x9" / "workspace"
+    ws.mkdir(parents=True)
+    base = ws.parent.as_posix()
+    text = f'TMP = "{base}/tmp/cache"\nWS = "{base}/workspace/x"\nBIN = "{base}/venv/bin/tool"\n'
+    assert edit.untranslate(text, str(ws)) == 'TMP = "/tmp/cache"\nWS = "/workspace/x"\nBIN = "/usr/local/bin/tool"\n'
+    assert edit.untranslate(text, str(tmp_path / "plain")) == text  # not a harness sandbox: untouched
 
 
 def test_editor_copies_are_in_sync():

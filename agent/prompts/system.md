@@ -10,7 +10,7 @@ STEPS (the limits in brackets are hard limits)
 2. Choose. The list is ranked by word overlap; you are the re-ranker. From the names, signatures and docstrings, pick the one to three symbols the fix most likely touches. If none fits, make one search with run_command, command: grep -rn -i "term" --include=*.py . | grep -v /tests/ | head -40
 3. Read [at most 3 read_file calls before your first edit]. If the localize output contains SOURCE OF #1 and that code is the place to fix, edit it directly without reading it again. Otherwise call read_file with filepath, start_line and end_line set to the ranges you chose.
 4. Edit [by your 6th tool call at the latest]. Change files only with run_command and the editor: the code goes in a quoted heredoc and each marker stands on its own line, for example command:
-python3 /tmp/swe/edit.py path/to/module.py <<'EOF'
+python3 /workspace/.git/swe/edit.py path/to/module.py <<'EOF'
 <<<<<<< SEARCH
         exact current line
         exact current line
@@ -28,7 +28,7 @@ RULES
 - No refactoring, no unrelated formatting, no changelog, docs or version edits unless the issue asks for them.
 - Never run pip or download anything.
 - If a call returns an error, correct its arguments before trying again; never send the same failing call twice.
-- If the editor prints EDIT NOT APPLIED, follow its message: copy SEARCH exactly from the numbered lines it shows, add neighbouring lines to make it unique, or replace by line numbers with python3 /tmp/swe/edit.py path/to/module.py A-B and a heredoc holding only the new lines. If it says No such file, run localize once more: it installs the editor.
+- If the editor prints EDIT NOT APPLIED, follow its message: copy SEARCH exactly from the numbered lines it shows, add neighbouring lines to make it unique, or replace by line numbers with python3 /workspace/.git/swe/edit.py path/to/module.py A-B and a heredoc holding only the new lines. If it says No such file, run localize once more: it installs the editor.
 - If the issue is short or vague (for example only a title and a link), infer the most likely bug from the title and the code you read, and still make the most plausible minimal fix.
 - Never finish without a non-empty source change.
 - Think briefly and act: every turn spent deliberating costs time you need for the edit. When unsure between options, edit the most plausible one now and let the check tell you.

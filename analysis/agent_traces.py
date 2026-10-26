@@ -52,6 +52,7 @@ def task_metrics(trace: dict) -> dict:
             if name == "run_command" and EDITOR_RX.search(str(tc["arguments"].get("command", ""))):
                 c["editor_calls"] += 1
                 c["editor_not_applied"] += "EDIT NOT APPLIED" in obs
+                c["editor_missing"] += "can't open file" in obs or "No such file or directory" in obs
                 c["editor_unquoted"] += bool(UNQUOTED_RX.search(tc["arguments"]["command"]))
             if is_edit(name, tc["arguments"]) and first_edit is None:
                 first_edit = round(tc["extra"]["elapsed_s"], 1)
@@ -77,7 +78,8 @@ def main() -> None:
     tot = Counter()
     for v in per.values():
         tot.update({k: v[k] for k in ("calls", "arg_errors", "backtick_args", "identical_repeat", "after_submit",
-                                      "editor_calls", "editor_not_applied", "editor_unquoted") if k in v})
+                                      "editor_calls", "editor_not_applied", "editor_unquoted", "editor_missing")
+                    if k in v})
     summary = {"n": len(per), "gold_solvable": len(solv), "resolved_on_solvable": sum(bool(v["resolved"]) for v in solv),
                "timeouts": sum(v["timeout"] for v in per.values()), "empty_patch": sum(not v["patch_chars"] for v in per.values()),
                "tasks_with_arg_errors": sum(bool(v.get("arg_errors")) for v in per.values()),

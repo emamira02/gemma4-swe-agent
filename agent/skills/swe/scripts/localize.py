@@ -37,33 +37,38 @@ SKIP_DIRS = frozenset({".git", ".hg", ".svn", "node_modules", ".venv", "venv", "
 TEST_RX = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 AUX_RX = re.compile(r"(^|/)(docs?|docs_src|examples?|benchmarks?|scripts|tools|tutorials?)/")
 # ---- editor install (kept identical in localize.py and finalize.py; a test checks parity) ----
-TOOLS_DIR = os.environ.get("SWE_TOOLS_DIR", "/tmp/swe")  # outside the workspace: never part of the patch
+TOOLS_DIR = os.environ.get("SWE_TOOLS_DIR")  # tests only; the default is the workspace's .git directory
+EDITOR_CMD = "/workspace/.git/swe/edit.py"
 
 
 def install_editor(root: str) -> str:
-    """Copy the sibling edit.py (materialized next to this script by run_skill_script) to a directory that outlives
-    this call, so run_command can call it: TOOLS_DIR, else the workspace's .git directory (ignored by git diff).
-    Returns the one status line to print."""
+    """Copy the sibling edit.py (materialized next to this script by run_skill_script) to <workspace>/.git/swe/,
+    where run_command can call it after this script's temporary directory is gone. Commands spell it
+    /workspace/.git/swe/edit.py: the harness rewrites /workspace and /tmp inside run_command strings to the task
+    sandbox but not inside this Python process, so a /tmp install is invisible to run_command (S6 dev panel: the
+    editor was not found in most tasks). Files under .git never enter the patch. Returns the status line to print."""
     try:
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "edit.py"), "rb") as fh:
             data = fh.read()
     except OSError as e:
         return f"EDITOR NOT INSTALLED ({type(e).__name__}); run this script once more."
-    for d in (TOOLS_DIR, os.path.join(root, ".git", "swe")):
-        dst = os.path.join(d, "edit.py")
-        try:
-            os.makedirs(d, exist_ok=True)
-            if not os.path.isfile(dst) or open(dst, "rb").read() != data:
-                tmp = f"{dst}.{os.getpid()}.tmp"
-                with open(tmp, "wb") as fh:
-                    fh.write(data)
-                os.replace(tmp, dst)
-            dst = dst.replace(os.sep, "/")
-            return (f"EDITOR READY: python3 {dst}" if d == TOOLS_DIR else
-                    f"EDITOR READY at python3 {dst} (use this path instead of /tmp/swe/edit.py)")
-        except OSError:
-            continue
-    return "EDITOR NOT INSTALLED (no writable directory); run this script once more."
+    d = TOOLS_DIR or os.path.join(root, ".git", "swe")
+    dst = os.path.join(d, "edit.py")
+    try:
+        os.makedirs(d, exist_ok=True)
+        old = None
+        if os.path.isfile(dst):
+            with open(dst, "rb") as fh:
+                old = fh.read()
+        if old != data:
+            tmp = f"{dst}.{os.getpid()}.tmp"
+            with open(tmp, "wb") as fh:
+                fh.write(data)
+            os.replace(tmp, dst)
+    except OSError as e:
+        return f"EDITOR NOT INSTALLED ({type(e).__name__}: {e}); run this script once more."
+    in_workspace = not TOOLS_DIR and os.path.basename(os.path.normpath(root)) == "workspace"
+    return f"EDITOR READY: python3 {EDITOR_CMD if in_workspace else dst.replace(os.sep, '/')}"
 
 
 # ---- shared with locstudy.signals (kept identical; tests/test_agent.py checks parity) ----

@@ -7,7 +7,7 @@ with a stray backtick instead, old_string is swallowed (S4 dev panel: 41 of 78 e
 solvable tasks ended with no edit at all). run_command carries a single value (0 malformed calls in 807 over
 S1-S4) and a quoted heredoc passes code verbatim, without any escaping.
 
-  python3 /tmp/swe/edit.py path/to/module.py <<'EOF'
+  python3 /workspace/.git/swe/edit.py path/to/module.py <<'EOF'
   <<<<<<< SEARCH
   exact current lines
   =======
@@ -16,8 +16,8 @@ S1-S4) and a quoted heredoc passes code verbatim, without any escaping.
   EOF
 
   Several blocks may follow each other: they apply in order, all or nothing.
-  python3 /tmp/swe/edit.py path/to/module.py 120-125 <<'EOF'   replace lines 120..125 by stdin (120-119 inserts)
-  python3 /tmp/swe/edit.py path/to/new_module.py <<'EOF'       new file: stdin (or the REPLACE part) is its content
+  python3 /workspace/.git/swe/edit.py path/to/module.py 120-125 <<'EOF'   replace lines 120..125 (120-119 inserts)
+  python3 /workspace/.git/swe/edit.py path/to/new_module.py <<'EOF'       new file: stdin is its content
 
 Matching: exact, then ignoring trailing whitespace and surrounding blank lines, then ignoring a uniform indentation
 offset (the replacement is shifted by the same offset). A SEARCH that is missing or ambiguous changes nothing and
@@ -35,7 +35,10 @@ import re
 import sys
 import tempfile
 
-EDITOR = os.path.abspath(__file__).replace(os.sep, "/")  # /tmp/swe/edit.py once installed by localize.py
+_HERE = os.path.abspath(__file__).replace(os.sep, "/")
+# installed by localize.py in <workspace>/.git/swe/; run_command maps /workspace to the task sandbox, so the messages
+# name the editor by that spelling, never by the sandbox's real path
+EDITOR = "/workspace/.git/swe/edit.py" if _HERE.endswith("/workspace/.git/swe/edit.py") else _HERE
 PROTECTED = re.compile(r"(^|/)(tests?|testing)/.*\.py$|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)(conftest\.py|pytest\.ini|"
                        r"\.pytest\.ini|pyproject\.toml|setup\.cfg|tox\.ini|sitecustomize\.py|usercustomize\.py|"
                        r"_swegemma_stubs\.py)$|\.pth$")  # identical to finalize.py (a test checks parity)
@@ -120,6 +123,20 @@ def read_payload() -> str:
     if raw is None:
         raw = "" if sys.stdin is None or sys.stdin.isatty() else sys.stdin.buffer.read().decode("utf-8", "surrogateescape")
     return raw.replace("\r\n", "\n").replace(TOKEN_LEAK, "")
+
+
+def untranslate(text: str, root: str) -> str:
+    """Undo the harness's path rewriting inside the edit text. In its subprocess sandbox run_command replaces /tmp,
+    /workspace and /usr/local/bin in the whole command string, heredoc included, by the task sandbox's real
+    directories (<sandbox>/tmp, <sandbox>/workspace, <sandbox>/venv/bin); code that names those paths must reach the
+    file as written. Only applies when root is <...>/swegemma_sandbox_*/workspace (random, so never real content)."""
+    ws = root.replace(os.sep, "/").rstrip("/")
+    base = ws.rsplit("/", 1)[0]
+    if not ws.endswith("/workspace") or not base.rsplit("/", 1)[-1].startswith("swegemma_sandbox_"):
+        return text
+    for real, canon in ((base + "/venv/bin", "/usr/local/bin"), (base + "/tmp", "/tmp"), (ws, "/workspace")):
+        text = text.replace(real, canon)
+    return text
 
 
 def clean_tail(lines: list[str]) -> list[str]:
@@ -468,7 +485,8 @@ def main(argv: list[str] | None = None) -> int:
         k = argv.index("--root")
         root, argv = os.path.realpath(argv[k + 1]), argv[:k] + argv[k + 2:]
     try:
-        return run(argv, read_payload(), root or find_root())
+        root = root or find_root()
+        return run(argv, untranslate(read_payload(), root), root)
     except EditError as e:
         print(f"EDIT NOT APPLIED: {e}")
         return 1
