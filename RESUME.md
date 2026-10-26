@@ -18,6 +18,31 @@ identical): results/commit_id_map.md maps the ids cited in candidate manifests a
 It is idempotent: refreshes submission scores into runs.csv, downloads a finished dev-panel eval, aggregates its
 traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next action. Then commit and push.
 
+## Verified competition facts (read on kaggle.com 2026-10-26 ~20:50 UTC)
+- Rules 2.2: "You may submit a maximum of one (1) Submission per day"; "You may select up to two (2) Final
+  Submissions for judging". Team size max 5; entry and team-merger deadline 25 Nov; final submission deadline
+  2 Dec 23:59 UTC; paper 12 Nov 23:59 UTC. Prizes: $65,000 (37k/18k/10k) + paper $35,000 (total $110,000).
+- Kaggle staff, pinned thread 747519: a pending-submission limit separate from 1/day: a new submission is accepted
+  only after the team's previous one has finished scoring. Queue ~33 h (mid-Oct) -> ~14 h; "most runs should finish
+  within ~24h of submit now". So the real cadence is at most one scored submission per ~day, only if the next one is
+  sent as soon as the previous finishes.
+- Overview/Evaluation: the 12 h limit covers patch submission incl. sandbox setup, EXCLUDING patch validation.
+- Allowed models (all agents of a submission must use the same one): gemma-4-31b-it-qat-w4a16-ct,
+  gemma-4-12b-it-qat-w4a16-ct, gemma-4-e4b-it-qat-w4a16-ct, gemma-4-e2b-it-qat-w4a16-ct. PEFT LoRA adapters in
+  adapters/<name>/ (adapter_config.json + adapter_model.safetensors), one per LlmAgent allowed.
+- Winner license: Apache 2.0 (the repository needs a LICENSE before any prize claim).
+- Known platform risk (forum, 10-21/22): unchanged bundles failing with "Notebook Threw Exception" (slow vLLM start
+  on L4, ~1,200 s limit reported); a failed run still uses the daily slot.
+
+## Submission policy (from 2026-10-26; replaces "submit only READY")
+Every UTC day on which no submission is pending, submit one never-submitted frozen candidate that passes the
+SANITY gate: rebuilds to its sha, official compile ok, panel finished on >= 20 of 24 tasks, resolved_on_solvable
+>= 4, no infrastructure failure (editor/skills missing, crash loop). Among those pick the highest panel
+resolved_on_solvable, newest on ties. The dev panel (24 tasks, 1 repo, 1 run) cannot rank candidates within
++-2 tasks; the public leaderboard (58 hidden tasks) is the better measurement, but one run has a 95% interval of
+about +-9 points, so never read a 1-2 task difference as progress. Final selection (2 of them) by pooled evidence,
+not by the single best public score.
+
 ## Hard rules
 - One pending submission at a time (Kaggle). Every submission goes through `tools/kaggle_submit.py --tag Sx
   --hypothesis "..."` (validation + official compile + sha check + runs.csv). Never reuse a tag.
