@@ -40,9 +40,21 @@ def kaggle(*args: str, timeout: int = 300) -> str:
     return r.stdout
 
 
+def parse_submissions_csv(out: str) -> list[dict]:
+    """Rows of "kaggle competitions submissions --csv". The CLI may print notices (e.g. "Warning: Looks like you're
+    using an outdated kaggle version") on stdout before the header, so the table starts at the "ref," line. Fails
+    closed: unrecognised output raises instead of looking like "no submissions" (or like pending ones)."""
+    lines = out.splitlines()
+    start = next((i for i, ln in enumerate(lines) if ln.startswith("ref,")), None)
+    if start is None:
+        if not out.strip() or "No submissions found" in out:
+            return []
+        raise RuntimeError(f"unexpected kaggle submissions output: {out.strip()[:300]}")
+    return list(csv.DictReader(lines[start:]))
+
+
 def pending_submissions() -> list[str]:
-    out = kaggle("competitions", "submissions", COMP, "--csv")
-    rows = list(csv.DictReader(out.splitlines())) if out.strip() and "," in out else []
+    rows = parse_submissions_csv(kaggle("competitions", "submissions", COMP, "--csv"))
     return [r.get("fileName", "") + " " + r.get("date", "") for r in rows
             if str(r.get("status", "")).upper() not in ("COMPLETE", "SUBMISSIONSTATUS.COMPLETE", "ERROR", "SUBMISSIONSTATUS.ERROR")]
 

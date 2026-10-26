@@ -538,3 +538,20 @@ def test_editor_copies_are_in_sync():
     import inspect
     assert edit.PROTECTED.pattern == finalize.PROTECTED.pattern
     assert inspect.getsource(localize.install_editor) == inspect.getsource(finalize.install_editor)
+
+
+def test_submissions_csv_parser_skips_cli_notices_and_fails_closed():
+    """The kaggle CLI printed an "outdated version" warning before the CSV header; read as the header it made every
+    row look pending (2026-10-26). Both copies must skip notices and raise on output they cannot read."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import kaggle_submit
+    import status
+    out = ("Warning: Looks like you're using an outdated kaggle version\n"
+           "ref,fileName,date,description,status,publicScore,privateScore\n"
+           "1,submission.zip,2026-10-13,x,SubmissionStatus.COMPLETE,0.12,\n"
+           "2,submission.zip,2026-10-26,y,SubmissionStatus.PENDING,,\n")
+    for mod in (kaggle_submit, status):
+        assert [r["status"] for r in mod.parse_submissions_csv(out)] == ["SubmissionStatus.COMPLETE", "SubmissionStatus.PENDING"]
+        assert mod.parse_submissions_csv("") == [] and mod.parse_submissions_csv("No submissions found") == []
+        with pytest.raises(RuntimeError):
+            mod.parse_submissions_csv("401 - Unauthorized")

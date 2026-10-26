@@ -45,9 +45,22 @@ def atomic_write(path: Path, text: str) -> None:
     os.replace(tmp, path)
 
 
+
+def parse_submissions_csv(out: str) -> list[dict]:
+    """Rows of "kaggle competitions submissions --csv". The CLI may print notices (e.g. "Warning: Looks like you're
+    using an outdated kaggle version") on stdout before the header, so the table starts at the "ref," line. Fails
+    closed: unrecognised output raises instead of looking like "no submissions" (or like pending ones)."""
+    lines = out.splitlines()
+    start = next((i for i, ln in enumerate(lines) if ln.startswith("ref,")), None)
+    if start is None:
+        if not out.strip() or "No submissions found" in out:
+            return []
+        raise RuntimeError(f"unexpected kaggle submissions output: {out.strip()[:300]}")
+    return list(csv.DictReader(lines[start:]))
+
+
 def sync_submissions() -> list[dict]:
-    out = kaggle("competitions", "submissions", COMP, "--csv")
-    subs = list(csv.DictReader(out.splitlines())) if "," in out else []
+    subs = parse_submissions_csv(kaggle("competitions", "submissions", COMP, "--csv"))
     if not RUNS.exists():
         return subs
     rows = list(csv.DictReader(RUNS.open(encoding="utf-8")))

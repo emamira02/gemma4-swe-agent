@@ -1,3 +1,4 @@
 date,experiment_id,config_hash,public_score,status,notes
 2026-10-12 16:50,S1,4e14db4d5e2f,0.15,COMPLETE,"kernel v1; single agent + in-container lexical localization skill (paper mode rule, model re-ranks) + early-edit prompt + finalize hygiene; 5.0 min/task, thinking 2048, temp 1.0; baseline for all later ablations"
 2026-10-13 21:47,S3,e1af59a2b337,0.12,COMPLETE,kernel v2; S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts
+2026-10-26 20:50,S5,39038672b64d,,PENDING,"kernel v3; S4 + line-range edit fallback (replace_lines.py) and recovery rule for broken edit_file calls; panel 5/21, malformed calls 43->4, no_edit 8"
