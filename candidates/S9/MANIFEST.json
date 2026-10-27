@@ -1,0 +1,15 @@
+{
+ "tag": "S9",
+ "zip_sha256": "dc9e4d329ec5f2c8ab112502684a5591b01376f9e1f453dd48c12fae3ae4908f",
+ "git_head_at_freeze": "ca96a1a9090bdd6d7eab85fbb2fb72a2676aa924",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "8b6cb9548c35",
+  "eval_config.yaml": "0bda7953b8ef",
+  "prompts/system.md": "694e47091954",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "28fef95a959d",
+  "skills/swe/scripts/localize.py": "d7aa216b7a53",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

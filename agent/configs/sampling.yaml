@@ -1,11 +1,11 @@
-# S8: the sampling of the public Budget-Fit configuration (mean ~10/58 public tasks over ten draws, the most
-# replicated public result): temperature 0.2, top_p 0.95, 8,192 output tokens, thinking on with a 4,096-token budget.
-# S4-S7 used temperature 1.0 and a 1,024 budget to fit 5-minute sessions; with 8 minutes that trade-off no longer
-# applies. Thinking stays on (disabling it costs 16-28 of 129 tasks in public ablations). No thinking_level (maps to
-# reasoning_effort on vLLM) and no top_k (dropped by LiteLLM for OpenAI-compatible endpoints).
-temperature: 0.2
+# Thinking on with summaries (disabling either costs 16-28 of 129 tasks in public ablations); temperature 1.0
+# tied for best there. 1,024-token thinking budget (S4): in S1-S3 dev panels ~20 turns per panel hit the 2,048
+# cap at ~35 tok/s (~60 s each) and turns >=1,500 tokens took 28-29% of all agent time under the 5-minute limit.
+# No thinking_level (maps to reasoning_effort on vLLM) and no top_k (dropped by LiteLLM
+# for OpenAI-compatible endpoints, so it would only look configured).
+temperature: 1.0
 top_p: 0.95
 max_output_tokens: 8192
 thinking_config:
-  thinking_budget: 4096
+  thinking_budget: 1024
   include_thoughts: true
