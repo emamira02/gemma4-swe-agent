@@ -20,3 +20,4 @@ STATE.json
 .status.lock
 *.tmp
 kernels/editor_check/check.py
+kernels/gold_check/gold_check.py
