@@ -141,6 +141,10 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=24)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--repos", nargs="+", default=["Textualize/rich"])
+    ap.add_argument("--mix", nargs="+", default=None, metavar="REPO=N",
+                    help="mixed panel: N tasks per repository, each sampled with its own seed; overrides --n/--repos")
+    ap.add_argument("--pools", type=Path, default=None,
+                    help="JSON {repo: [instance ids]} restricting --mix sampling (e.g. results/gold_check/pools.json)")
     ap.add_argument("--kernel-id", default="emanuelemiranda/g4-agent-eval")
     ap.add_argument("--force", action="store_true", help="replace panel.json before the previous panel was downloaded")
     a = ap.parse_args()
@@ -166,8 +170,21 @@ def main() -> int:
         data = a.zip.read_bytes()
     sha = hashlib.sha256(data).hexdigest()
     tasks = [json.loads(l) for l in (ROOT / "data" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
-    pool = sorted(t["instance_id"] for t in tasks if t["repo"] in a.repos)
-    panel = sorted(random.Random(a.seed).sample(pool, min(a.n, len(pool))))
+    if a.mix:
+        pools = json.loads(a.pools.read_text(encoding="utf-8")) if a.pools else {}
+        known = {t["instance_id"] for t in tasks}
+        panel = []
+        for spec in a.mix:
+            repo, _, n = spec.rpartition("=")
+            pool = sorted(pools[repo]) if repo in pools else sorted(t["instance_id"] for t in tasks if t["repo"] == repo)
+            if not repo or not n.isdigit() or not pool or not set(pool) <= known or int(n) > len(pool):
+                sys.exit(f"bad --mix entry {spec!r}: need REPO=N with N <= {len(pool)} known tasks")
+            panel += random.Random(f"{a.seed}:{repo}").sample(pool, int(n))
+        panel = sorted(panel)
+        a.repos = [s.rpartition("=")[0] for s in a.mix]
+    else:
+        pool = sorted(t["instance_id"] for t in tasks if t["repo"] in a.repos)
+        panel = sorted(random.Random(a.seed).sample(pool, min(a.n, len(pool))))
     src = TEMPLATE.format(tag=a.tag, sha=sha, zip_b64=base64.b64encode(data).decode(), panel=json.dumps(panel))
     compile(src, "run_agent_eval.py", "exec")
     (HERE / "run_agent_eval.py").write_text(src, encoding="utf-8")
@@ -180,6 +197,7 @@ def main() -> int:
             "machine_shape": "NvidiaL4"}
     (HERE / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     (HERE / "panel.json").write_text(json.dumps({"tag": a.tag, "sha256": sha, "seed": a.seed, "repos": a.repos,
+                                                 "mix": a.mix, "pools": str(a.pools) if a.pools else None,
                                                  "panel": panel}, indent=1), encoding="utf-8")
     print(f"kernel for {a.tag} ({sha[:12]}): {len(panel)} tasks -> {HERE / 'run_agent_eval.py'}")
     return 0

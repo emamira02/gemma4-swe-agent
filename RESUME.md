@@ -116,6 +116,16 @@ Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and tim
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
 
+## Findings gold check (kernels/gold_check v1, CPU, 2026-10-27 05:00 UTC; results/gold_check/summary.json)
+- The 2026-10-12 note "fastapi gold fails: pydantic cannot import" no longer holds: fastapi gold patches resolve in
+  31 of 67 tasks in the same subprocess sandbox (kernel python 3.12.13; data/wheels has pydantic 1.10.15 and 2.13.4,
+  pydantic_core 2.46.4 cp312 and cp313). The other 34 + 2 fail at collection on missing test-only modules (e.g.
+  dirty_equals), an environment gap of this kernel, not of the patches. requests: 1 of 13 (httpbin fixtures need
+  the network); one requests test file runs 72 s, close to the old 100 s hidden-test timeout. httpx: 0 of 1.
+- results/gold_check/pools.json: 31 gold-solvable fastapi tasks + the 21 rich panel tasks whose gold passed in both
+  S7 and S8. kernels/agent_eval/build.py --mix Textualize/rich=12 fastapi/fastapi=12 --pools results/gold_check/pools.json
+  builds a mixed panel (each repository sampled with its own seed).
+
 ## Findings S8 (dev panel 2026-10-27; 21 gold-solvable, 5 resolved)
 - More time did not buy resolves: the first edit moved from 135 s (S7 median) to 238 s, so sessions spent the extra
   three minutes exploring. 7 sessions ran to the 8-minute cap (S7: 11 to the 5-minute cap).

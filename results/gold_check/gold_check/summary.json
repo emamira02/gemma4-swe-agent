@@ -1,0 +1,23 @@
+{
+ "n": 83,
+ "resolved": 34,
+ "by_repo": {
+  "fastapi/fastapi": {
+   "n": 67,
+   "resolved": 31
+  },
+  "encode/httpx": {
+   "n": 1,
+   "resolved": 0
+  },
+  "psf/requests": {
+   "n": 13,
+   "resolved": 1
+  },
+  "Textualize/rich": {
+   "n": 2,
+   "resolved": 2
+  }
+ },
+ "wall_s": 1296
+}
