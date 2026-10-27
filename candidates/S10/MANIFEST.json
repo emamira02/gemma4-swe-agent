@@ -1,0 +1,15 @@
+{
+ "tag": "S10",
+ "zip_sha256": "005c6be6738c093d35bb47df868efaefbb163fb21c9fefecefd575a044b7d266",
+ "git_head_at_freeze": "906f393fcb30257e50c4def7b23124d0af59d8d7",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "0a6bbacd1b56",
+  "eval_config.yaml": "e9e609af3000",
+  "prompts/system.md": "6cbd8f688164",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "28fef95a959d",
+  "skills/swe/scripts/localize.py": "d7aa216b7a53",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

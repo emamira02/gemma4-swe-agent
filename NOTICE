@@ -3,3 +3,10 @@ Copyright 2026 Emanuele Miranda
 
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 Competition data is not part of this repository and is not covered by this license.
+
+The S10 system prompt (agent/prompts/system.md from candidate S10 on) adapts the prompt of the public notebook
+"Gemma 4 | Budget-Aware Coding Agent" V10 by Flexonafft (Apache License 2.0), which credits Matterhorn3838's
+"Gemma 4 SuperAgent", as reproduced in prvsiyan's "Gemma and the Shape of Doubt" (Apache License 2.0). Changes:
+edit_file/write_file replaced by this repository's heredoc editor, localize and finalize skills added, backticks
+removed, and the call plan's first call set to localize. build/baselines/B1 is Wilmer E. Henao's (verracodeguacas)
+"Gemma 4 Agent: Budget-Fit Single Agent" (Apache License 2.0), used unmodified as a dev-panel baseline only.
