@@ -190,6 +190,30 @@ def test_finalize_syntax_error_and_empty_patch(repo, capsys):
     assert "SYNTAX ERRORS" in out and "pkg/render.py:1" in out and "OK: call submit_patch" not in out
 
 
+def test_finalize_reports_import_errors_caused_by_the_change(repo, capsys):
+    """S13 panel, rich_4070: the patch compiled but removed an import a class body still used (NameError at
+    import, every hidden test failed). Only failures running through a changed file are blamed on the change."""
+    render = repo / "pkg" / "render.py"
+    render.write_text("class Table:\n    sep = textwrap.dedent\n")  # compiles, fails at import
+    assert finalize.main(["--root", str(repo), "--dry-run"]) == 1
+    out = capsys.readouterr().out
+    assert "IMPORT ERRORS caused by your change" in out and "NameError" in out and "OK: call submit_patch" not in out
+    render.write_text("import textwrap\n\n\nclass Table:\n    sep = textwrap.dedent\n")
+    assert finalize.main(["--root", str(repo), "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    assert "IMPORT ERRORS" not in out and "OK: call submit_patch" in out
+    render.write_text("import not_installed_anywhere_xyz\n")  # environment gap, not the patch's fault
+    assert finalize.main(["--root", str(repo), "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    assert "IMPORT ERRORS" not in out and "probably pre-existing" in out
+    assert not list(repo.rglob("__pycache__"))
+    assert finalize.importable(str(repo), "pkg/render.py") == "pkg.render"
+    assert finalize.importable(str(repo), "pkg/__init__.py") == "pkg"
+    assert finalize.importable(str(repo), "docs_src/x/tutorial001_py310.py") == "docs_src.x.tutorial001_py310"
+    assert finalize.importable(str(repo), "scripts/release.py") is None  # loose scripts may run code
+    assert finalize.importable(str(repo), "setup.py") is None
+
+
 # ---------- builder ----------
 def test_bundle_validates_and_builds_reproducibly(tmp_path):
     from tools import build_submission as bs

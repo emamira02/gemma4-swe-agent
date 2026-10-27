@@ -1,0 +1,15 @@
+{
+ "tag": "S14",
+ "zip_sha256": "0d410b08034143e38054ff613a83e64f36859272eb4bcc0b8627bfa322ec9490",
+ "git_head_at_freeze": "7daca4ad7b0b7426ffe381f717d0654ce5856f20",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "0a6bbacd1b56",
+  "eval_config.yaml": "e9e609af3000",
+  "prompts/system.md": "aa39e9b62260",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "9d92826316c4",
+  "skills/swe/scripts/localize.py": "4fa93b545020",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

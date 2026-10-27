@@ -224,6 +224,24 @@ if err is None:
         res = exe.execute_code(None, CodeExecutionInput(code=wrap._build_wrapper_code(skill, "scripts/finalize.py", None)))
         case("B finalize reinstalls on an empty patch", "EDITOR READY: python3 /workspace/.git/swe/edit.py" in
              (res.stdout or "") and os.path.isfile(sed), (res.stdout or "")[-900:] + (res.stderr or "")[-600:])
+        # S14: finalize imports changed package modules (S13 rich_4070: compiled, NameError at import)
+        with open(os.path.join(sws, "pkg", "__init__.py"), "w") as fh:
+            fh.write("")
+        with open(os.path.join(sws, "pkg", "markup.py"), "w") as fh:
+            fh.write("class Markup:\n    dedent = textwrap.dedent\n")
+        res = exe.execute_code(None, CodeExecutionInput(code=wrap._build_wrapper_code(skill, "scripts/finalize.py", None)))
+        fo = (res.stdout or "") + (res.stderr or "")
+        case("B finalize reports an import-time NameError caused by the change",
+             "IMPORT ERRORS caused by your change" in fo and "NameError" in fo and "OK: call submit_patch" not in fo, fo[-1500:])
+        with open(os.path.join(sws, "pkg", "markup.py"), "w") as fh:
+            fh.write("import textwrap\n\n\nclass Markup:\n    dedent = textwrap.dedent\n")
+        res = exe.execute_code(None, CodeExecutionInput(code=wrap._build_wrapper_code(skill, "scripts/finalize.py", None)))
+        fo = (res.stdout or "") + (res.stderr or "")
+        pyc = [d for d, _, _ in os.walk(sws) if d.endswith("__pycache__") and "/.git" not in d]
+        case("B finalize passes the fixed module and writes no __pycache__",
+             "IMPORT ERRORS" not in fo and "OK: call submit_patch" in fo and not pyc, fo[-1500:] + f"\npycache: {pyc}")
+        subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
+        os.remove(os.path.join(sws, "pkg", "__init__.py"))
         code, out = run("python3 /tmp/swe/edit.py pkg/markup.py <<'EOF'\nx\nEOF")
         case("B (control) the S6 path is not reachable from run_command", code != 0, out)
 
