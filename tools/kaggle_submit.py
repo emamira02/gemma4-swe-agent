@@ -25,6 +25,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))  # tools.release_gate
 COMP = "gemma-4-developer-agent"
 KERNEL_DIR = ROOT / "kernels" / "submit"
 RUNS = ROOT / "runs.csv"
@@ -64,12 +65,19 @@ def main() -> int:
     ap.add_argument("--tag", required=True)
     ap.add_argument("--hypothesis", required=True, help="what this submission tests, written before it runs")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--owner-exception", default=None, metavar="TEXT",
+                    help="Emanuele's explicit chat approval for a tag that fails the release gate (quote it; logged)")
     a = ap.parse_args()
     if RUNS.exists() and any(r.get("experiment_id") == a.tag for r in csv.DictReader(RUNS.open(encoding="utf-8"))):
         raise SystemExit(f"tag {a.tag} already in runs.csv")
     subprocess.run([sys.executable, str(ROOT / "tools" / "build_submission.py"), "--tag", a.tag, "--from-candidate"], check=True)
     manifest = json.loads((ROOT / "build" / "MANIFEST.json").read_text(encoding="utf-8"))
     sha = manifest["zip_sha256"]
+    from tools.release_gate import submittable  # own dev panel SANITY, or a passing GATE.json for this exact sha
+    ok, why = submittable(a.tag, sha)
+    print(f"release gate for {a.tag}: {'OK' if ok else 'REFUSED'} - {why}")
+    if not ok and not a.owner_exception:
+        raise SystemExit(f"{a.tag} fails the release gate ({why}); only an explicit --owner-exception overrides it")
     pend = pending_submissions()
     if pend:
         raise SystemExit(f"a submission is still pending ({pend}); Kaggle accepts one at a time")
@@ -106,7 +114,7 @@ def main() -> int:
         if new:
             w.writerow(["date", "experiment_id", "config_hash", "public_score", "status", "notes"])
         w.writerow([dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M"), a.tag, sha[:12], "", "PENDING",
-                    f"kernel v{version}; {a.hypothesis}"])
+                    f"kernel v{version}; {a.hypothesis}" + (f"; OWNER EXCEPTION: {a.owner_exception}" if a.owner_exception else "")])
     print(f"submitted {a.tag} ({sha[:12]}), kernel version {version}")
     return 0
 

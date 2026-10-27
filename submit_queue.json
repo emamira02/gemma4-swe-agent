@@ -1,0 +1,12 @@
+[
+ {
+  "tag": "S12",
+  "added": "2026-10-27",
+  "hypothesis": "public Budget-Aware V10 prompt (attributed) + heredoc editor + localize/finalize, V10 budget; mixed panel 13/24 (fastapi 9/12, rich 4/12), 8.57 h"
+ },
+ {
+  "tag": "S14",
+  "added": "2026-10-27",
+  "hypothesis": "S12 + finalize import check: import-time errors caused by the change are reported before submit (S13 panel rich_4070: NameError at import failed every hidden test)"
+ }
+]

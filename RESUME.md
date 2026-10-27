@@ -34,6 +34,23 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 - Known platform risk (forum, 10-21/22): unchanged bundles failing with "Notebook Threw Exception" (slow vLLM start
   on L4, ~1,200 s limit reported); a failed run still uses the daily slot.
 
+## Release process (owner decision 2026-10-27, replaces the policy below where they differ)
+Emanuele (chat, 2026-10-27): "if you submit S12 today, submit S14 tomorrow"; every UTC day a NEW version that fixes
+the previous failures, even without a GPU dev panel. Mechanism (all in code, not only in instructions):
+- submit_queue.json: ordered versions to ship; tools/submit_next.py submits the first one not in runs.csv when no
+  submission is pending and none was made today (kaggle-loop step 5).
+- tools/release_gate.py: a tag with its own dev panel ships only if that panel passes SANITY (>= 20 tasks finished,
+  resolved_on_solvable >= 4, 120 x mean task time <= 11 h, editor never missing after localize); a tag without a
+  panel needs candidates/<TAG>/GATE.json: same zip sha, official compile, base tag passed panel SANITY,
+  agent.yaml/eval_config/sampling byte-identical to the base (time profile measured), skill files equal to a fully
+  passing harness-sandbox check (kernels/editor_check records their sha256 from v8), prompt diff <= 6 lines unless
+  allowed explicitly, agent/ == candidate and both test suites passing. tools/kaggle_submit.py enforces it again;
+  only --owner-exception "<quote>" overrides, and it is logged in runs.csv.
+- kaggle-improve (daily 12:20 local): one verified fix per day, frozen, gated (or panel-tested when GPU quota
+  exists), appended to submit_queue.json. If no verifiable fix exists it reports instead of queueing noise.
+- GPU quota: 0 until ~2026-10-31 11:30 UTC (Emanuele, 2026-10-27: 2:30 h left, reset in 85 h; S13 used ~1.6 h).
+- Queue now: S12 (tonight, own panel 13/24), S14 (2026-10-28, gate, base S12).
+
 ## Submission policy (from 2026-10-26; replaces "submit only READY")
 Every UTC day on which no submission is pending, submit one never-submitted frozen candidate that passes the
 SANITY gate: rebuilds to its sha, official compile ok, panel finished on >= 20 of 24 tasks, resolved_on_solvable
