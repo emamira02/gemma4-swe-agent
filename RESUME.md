@@ -78,6 +78,15 @@ Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always us
 | S5 | SUBMITTED 2026-10-26 20:50 UTC (Kaggle 57678289, daily-submission policy; panel rule had said BLOCKED at 20:36 UTC: panel: resolved_on_solvable 5/21; timeouts 12; empty_patch 10; no_edit 8; tasks_with_arg_errors 1 (arg_errors 4 vs S4 43); failure_audit: NO_EDIT 10, WRONG_FILE 1, RIGHT_FILE_TIMEOUT 2, RIGHT_FILE_WRONG_FIX 3, NO_EDIT_TOOL 0; replace_lines never called. Rule: empty_patch + no_edit 18 vs S4 3 + 2 grows by more than 2 = new failure mode -> BLOCKED. Malformed calls fixed, but 10 sessions never edited) | S4 + skill script replace_lines.py (write_file the new lines to tmp_new_lines.txt, then replace lines A-B by number; refuses a result that does not compile) + prompt rule: after a missing-parameter or twice-not-found edit_file error never resend edit_file for that change, use the line fallback | S4 traces: 41/78 edit_file calls lost old_string in the call serialization (7 tasks), resent unchanged up to 13 times (identical_repeat 29); write_file (one code value) lost a field only 4 times in 76 across S1-S4 |
 | S4 | BLOCKED 2026-10-14 (panel: resolved_on_solvable 5/22; timeouts 9; empty_patch 3; tasks_with_arg_errors 8 vs S3 3 (arg_errors 43, backtick 42 vs 5); no_edit 2; empty+no_edit 5 vs 12 ok, but more arg errors = new failure mode per rule) | S3 + thinking_budget 2048 -> 1024, prompt rule: think briefly, edit the most plausible option and let the check decide | capped 2,048-token thinking turns (~60 s each, 28-29% of agent time in S1-S3) cause the late/no edits behind 7 empty patches and 12 timeouts |
 
+S9 choice (pre-registered 2026-10-27 02:10 UTC, before the S8 and B1 panels; one change on top of S8):
+(a) if B1's empty_patch + no_edit is at least 3 below S8's, S9 = S8 + Budget-Fit's call-numbered deadlines (its
+"Budget" section: about 10 calls to find and read, an edit by the 12th call, no new exploration after the 20th),
+with edit_file replaced by our editor; (b) else if S8's RIGHT_FILE_WRONG_FIX + WRONG_FILE >= its NO_EDIT, S9 = S8 +
+reproduce-first (run the issue's example before and after the edit); (c) else S9 = S8 + localize printing the
+rank-1 enclosing function in full and an elapsed-time line from the session's first localize call. Evidence for the
+rule: S7 resolved tasks read 1-3 times before the first edit, NO_EDIT sessions 7-22 (median window 34 lines, 42 of
+220 reads mostly re-read lines already shown); turns are short (median 75-340 completion tokens), so those sessions
+end on the call cap, not the clock.
 Decision rule for S8 after its panel (written 2026-10-27 before the panel): SANITY: editor_missing = 0, panel finished
 on >= 20 tasks, and 120 x mean per-task duration_s <= 11.0 h (duration_s includes hidden-test verification, which the
 scorer's 12 h excludes, so this is conservative); a failed time check means BLOCKED and never submitted. READY if
