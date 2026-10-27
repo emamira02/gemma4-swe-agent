@@ -1,0 +1,15 @@
+{
+ "tag": "S11",
+ "zip_sha256": "d170eeca0ee1faf9d5fe850a25a3a453d5095663e1c60449ea671e451f1b72d8",
+ "git_head_at_freeze": "5512cddaa587c8afe51f5da146afe3ab15de4254",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "8b6cb9548c35",
+  "eval_config.yaml": "0bda7953b8ef",
+  "prompts/system.md": "694e47091954",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "28fef95a959d",
+  "skills/swe/scripts/localize.py": "4fa93b545020",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

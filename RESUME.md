@@ -58,14 +58,16 @@ not by the single best public score.
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | SKIPPED 2026-10-13 (superseded by S3: same panel resolves, fewer timeouts) |
 | S3 (e1af59a2b337) | panel done 2026-10-13 (4/22 resolved, 12 timeouts, no_edit 5); submitted 2026-10-13 21:47 UTC, COMPLETE, public score 0.12 (seen 2026-10-16 11:14 UTC; below S1 0.15) |
-| Queue | 2026-10-27 07:00 UTC: S5 PENDING; S9 mixed panel RUNNING (kernel v10); S10 frozen, QUEUED_PANEL after S9; Kaggle API auth expired at ~06:30 UTC (kaggle CLI: Authentication required) - Emanuele must run python -m kaggle auth login; until then no download, push or submission |
+| Queue | 2026-10-27 08:15 UTC: S5 PENDING; S9 BLOCKED (localize bug, fixed); S11 frozen (needs exception); S12 mixed panel RUNNING (kernel v11); Kaggle auth restored by 08:05 UTC |
 | S4 (16a19a7ecd46) | panel done 2026-10-14 07:15 UTC: 5/22 resolved (best so far), 9 timeouts, empty 3, no_edit 2, BUT tasks_with_arg_errors 3 -> 8 (arg_errors 5 -> 43, 42 backtick) -> BLOCKED by rule; needs fix (new tag) |
 | S5 (39038672b64d) | panel done 2026-10-26 20:34 UTC: 5/21 resolved, 12 timeouts, empty 10, no_edit 8, tasks_with_arg_errors 1 (arg_errors 4) -> BLOCKED (empty + no_edit 18 vs 5) |
 | S6 (291a2befe7e9) | panel done 2026-10-26 22:41 UTC: 5/22, editor not reachable in 15 tasks -> BLOCKED (infrastructure); superseded by S7 |
 | S7 (d45ce6480567) | panel done 2026-10-27 01:35 UTC: 7/22 resolved (best so far; first resolves of rich_3063, rich_3471, rich_3506; lost rich_3777, resolved in S4-S6), timeouts 8, empty 6, no_edit 6, arg_errors 1; editor applied in 18 tasks, editor_not_applied 5/33, editor_missing 1 (rich_4070: the model called the editor before localize, then followed the recovery rule, ran localize and edited). Rule: SANITY fails as written (editor_missing = 0 required; the one miss is model ordering, not infrastructure); READY criteria also fail (tasks with a malformed edit attempt 4 > 1, counting EDIT NOT APPLIED; empty + no_edit 12 > 7) -> BLOCKED. Not submitted unless Emanuele grants an explicit exception |
 | S8 (e8978829045f) | panel done 2026-10-27 04:08 UTC: 5/21 resolved (rich_3782 gold failed this run), timeouts 7, empty 4, no_edit 4, arg_errors 1; first edit median 238 s (S7 135 s); editor_missing 4 (rich_3944 x3, rich_4070 x2, both without a localize call first); mean task 350 s -> 11.68 h for 120 tasks. BLOCKED by its SANITY rule (time and editor_missing); READY also fails (5 < S7's 7) |
 | B1 (240d785b6daa) | baseline panel done 2026-10-27 06:10 UTC: 6/21 resolved (rich_3772 resolved for the first time by any run), timeouts 3, empty 5, no_edit 2, first edit median 93 s, arg_errors 57 in 625 calls (edit_file backticks, as in S1-S5), mean task 277 s -> 9.2 h for 120 tasks |
-| S9 (dc9e4d329ec5) | frozen 2026-10-27 06:10 UTC; mixed dev panel (kernel v10, pushed 06:13 UTC) RUNNING -> WAIT_PANEL |
+| S9 (dc9e4d329ec5) | mixed panel done 2026-10-27 ~08:00 UTC: 12/24 resolved (fastapi 9/12, rich 3/12; S7/S8/B1 on the same 12 rich: 5/3/3), timeouts 4, empty 4, no_edit 3, arg_errors 2, first edit median 96 s, mean task 209 s -> 7.0 h for 120 tasks; editor_missing 6: rich_3905 x3 and rich_4070 x2 before any localize call, rich_3067 x4 AFTER localize: localize's 'No symbol matches the query' path returned before installing the editor (our bug, present since S6; the model recovered and resolved 3067). Rule: SANITY fails as written (infrastructure) -> BLOCKED; fixed in S11 (S9 + fix) and S12 (S10 + fix) |
+| S11 (d170eeca0ee1) | frozen 2026-10-27 08:10 UTC: S9 with localize installing the editor on every exit path (regression test added); no panel of its own (GPU quota) -> submit only on Emanuele's explicit exception |
+| S12 (cb8fcafd455f) | frozen 2026-10-27 08:10 UTC: S10 + the same localize fix; mixed panel (kernel v11, pushed 08:11 UTC, same 24 tasks as S9) RUNNING; S10 superseded, never run |
 | Paper | 2026-10-26: 4.10 rewritten from the pooled S1-S4 failure audit (results/failure_audit.json -> agent_summary "failure"): 59.3% rank-1 edited file, >= half of unresolved runs edited a gold file, edit_file 73/208 vs run_command 0/807 malformed; abstract agent sentence; SweRank (Reddy et al., ICLR 2026, arXiv 2505.07849, verified) in related work; compact table + paper/RESULTS_AGENT.md; build now fails above 3,000 words (2,968 now, room for ~2 more tag rows); 93 claim guards pass. Refresh: python -m analysis.failure_audit && python tools/agent_summary.py && python -m locstudy report |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
@@ -83,6 +85,9 @@ Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always us
 | S5 | SUBMITTED 2026-10-26 20:50 UTC (Kaggle 57678289, daily-submission policy; panel rule had said BLOCKED at 20:36 UTC: panel: resolved_on_solvable 5/21; timeouts 12; empty_patch 10; no_edit 8; tasks_with_arg_errors 1 (arg_errors 4 vs S4 43); failure_audit: NO_EDIT 10, WRONG_FILE 1, RIGHT_FILE_TIMEOUT 2, RIGHT_FILE_WRONG_FIX 3, NO_EDIT_TOOL 0; replace_lines never called. Rule: empty_patch + no_edit 18 vs S4 3 + 2 grows by more than 2 = new failure mode -> BLOCKED. Malformed calls fixed, but 10 sessions never edited) | S4 + skill script replace_lines.py (write_file the new lines to tmp_new_lines.txt, then replace lines A-B by number; refuses a result that does not compile) + prompt rule: after a missing-parameter or twice-not-found edit_file error never resend edit_file for that change, use the line fallback | S4 traces: 41/78 edit_file calls lost old_string in the call serialization (7 tasks), resent unchanged up to 13 times (identical_repeat 29); write_file (one code value) lost a field only 4 times in 76 across S1-S4 |
 | S4 | BLOCKED 2026-10-14 (panel: resolved_on_solvable 5/22; timeouts 9; empty_patch 3; tasks_with_arg_errors 8 vs S3 3 (arg_errors 43, backtick 42 vs 5); no_edit 2; empty+no_edit 5 vs 12 ok, but more arg errors = new failure mode per rule) | S3 + thinking_budget 2048 -> 1024, prompt rule: think briefly, edit the most plausible option and let the check decide | capped 2,048-token thinking turns (~60 s each, 28-29% of agent time in S1-S3) cause the late/no edits behind 7 empty patches and 12 timeouts |
 
+Decision rule for S12 (written 2026-10-27 08:15 UTC, before its panel): S10's rule unchanged, with S9's mixed-panel
+result (12/24, fastapi 9/12) as the comparison. If S12 passes SANITY it is the next submission; else the candidate
+is S11 (S9 + the one-path localize fix), which has no panel of its own and needs Emanuele's explicit exception.
 Decision rule for S10 after its panel (written 2026-10-27 06:55 UTC, before the panel; same mixed panel as S9):
 SANITY as for S9 (>= 20 tasks finished, 120 x mean task time <= 11.0 h, resolved_on_solvable >= 4, no editor
 "No such file" after a localize call). Submission order under the daily policy: among SANITY-passing never-
@@ -133,6 +138,16 @@ and no new failure mode appears (e.g. more arg errors or truncated-thought turns
 Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and timeouts + no_edit do not grow vs S2.
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
+
+## Findings S9 (first mixed panel, 2026-10-27)
+- fastapi is far more solvable for this agent than rich: 9/12 vs 3/12 on gold-solvable tasks. fastapi statements
+  are long PR descriptions (median 677 chars, code examples) while rich's are PR titles (median 138); fastapi
+  patches touch fastapi/ core (51 of 67), 15 also docs_src/. The rich-only panel (S1-S8) underestimated the
+  hidden-set rate, whose local sample is 52% fastapi.
+- The call-numbered BUDGET section moved the first edit earlier (median 96 s vs S7 135 s) and sessions shorter
+  (209 s mean vs 257 s), 7.0 h estimated for 120 tasks.
+- Bug found: localize returned before installing the editor when no symbol matched the query (rich_3067); fixed
+  with try/finally around the whole run plus a regression test.
 
 ## Findings leaderboard (kaggle.com, read 2026-10-27 06:40 UTC)
 - Public leaderboard = ~50% of the test data; prizes use the other 50% (private). 3,884 teams; 5 at 0.24 (14/58),

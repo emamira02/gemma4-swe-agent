@@ -480,6 +480,13 @@ def test_localize_and_finalize_install_the_editor(repo, tmp_path_factory, _tools
     out = run_localize(repo, "parse_header sep")
     assert out.splitlines()[-1].startswith("EDITOR READY: python3 ") and out.rstrip().endswith("edit.py"), out
     assert (_tools_dir / "edit.py").read_bytes() == (SCRIPTS / "edit.py").read_bytes()
+    # every exit path installs it (S9 panel, rich_3067: "No symbol matches" returned before the install, 4 edits lost)
+    for query, rc in (("the and of", 0), ("", 2)):
+        (_tools_dir / "edit.py").unlink()
+        r = subprocess.run([sys.executable, str(SCRIPTS / "localize.py"), "--query", query, "--root", str(repo)],
+                           capture_output=True, text=True, timeout=120)
+        assert r.returncode == rc and r.stdout.splitlines()[-1].startswith("EDITOR READY: "), (query, r.stdout, r.stderr)
+        assert (_tools_dir / "edit.py").exists()
     (_tools_dir / "edit.py").unlink()
     finalize.main(["--root", str(repo)])  # empty patch: finalize reinstalls it for the edit still to come
     assert (_tools_dir / "edit.py").exists()

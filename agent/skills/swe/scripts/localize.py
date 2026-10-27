@@ -358,11 +358,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", default=None)
     a, rest = ap.parse_known_args(argv)
     query = " ".join([a.query, *[r for r in rest if r != "--"]]).strip()
+    root = find_root(a.root)
+    try:  # every exit path installs the editor: the S9 panel lost 4 edits after a "No symbol matches" early return
+        return localize(query, max(5, min(a.k, 60)), root)
+    finally:
+        print(install_editor(root))
+
+
+def localize(query: str, k: int, root: str) -> int:
     if not query:
         print("ERROR: pass args={\"query\": \"<identifiers, file paths, error text, key words from the issue>\"}")
         return 2
-    k = max(5, min(a.k, 60))
-    root = find_root(a.root)
     files = list_py_files(root)
     syms: list[Sym] = []
     src_texts: dict[str, list[str]] = {}
@@ -429,7 +435,7 @@ def main(argv: list[str] | None = None) -> int:
     text = "\n".join(out)
     if len(text) > MAX_OUT_CHARS:
         text = text[:MAX_OUT_CHARS - 20] + "\n...[truncated]"
-    print(text + source_block(top, mode, src_texts) + "\n" + install_editor(root))
+    print(text + source_block(top, mode, src_texts))
     return 0
 
 
