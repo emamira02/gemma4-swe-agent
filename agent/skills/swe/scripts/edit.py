@@ -20,7 +20,9 @@ S1-S4) and a quoted heredoc passes code verbatim, without any escaping.
   python3 /workspace/.git/swe/edit.py path/to/new_module.py <<'EOF'       new file: stdin is its content
 
 Matching: exact, then ignoring trailing whitespace and surrounding blank lines, then ignoring a uniform indentation
-offset (the replacement is shifted by the same offset). A SEARCH that is missing or ambiguous changes nothing and
+offset (the replacement is shifted by the same offset), then ignoring the number of backslashes when every run
+in the file is the same multiple of the run typed (the replacement is scaled by it; a run it cannot scale refuses
+the edit). A SEARCH that is missing or ambiguous changes nothing and
 prints the closest region with line numbers; resending a block this editor already applied is reported, not redone. A
 Python result that does not compile is not written. Writes are atomic and keep line endings, final newline and file
 mode. Tests and test configuration are refused (the grader resets them). Exit 0 = applied, 1 = nothing written.
@@ -34,6 +36,7 @@ import os
 import re
 import sys
 import tempfile
+from fractions import Fraction
 
 _HERE = os.path.abspath(__file__).replace(os.sep, "/")
 # installed by localize.py in <workspace>/.git/swe/; run_command maps /workspace to the task sandbox, so the messages
@@ -214,6 +217,42 @@ def _shift(search: list[str], window: list[str]):
     return None
 
 
+BS_RUN = re.compile(r"\\+")
+
+
+def _bs_runs(lines: list[str]) -> list[int]:
+    return [len(m.group()) for ln in lines for m in BS_RUN.finditer(ln)]
+
+
+def _bs_collapse(ln: str) -> str:
+    return BS_RUN.sub(lambda m: "\\", ln.rstrip())
+
+
+def _bs_scaler(search: list[str], window: list[str]):
+    """When window == search except that every backslash run in the file is k times (or 1/k of) the run the model
+    typed, with one k for all runs: a function scaling the replacement's runs by the same k. The model misreads
+    backslashes shown inside JSON tool output (S7-S13 panels: 9 of 16 near-identical NOT APPLIED; rich_3535 typed
+    \\\\u0020 for \\u0020, fastapi_15588 typed \\0 for \\\\0, then resent the same block up to 5 times)."""
+    rs, rw = _bs_runs(search), _bs_runs(window)
+    if not rs or len(rs) != len(rw):
+        return None
+    ratios = {Fraction(w, s) for s, w in zip(rs, rw)}
+    if len(ratios) != 1 or (k := ratios.pop()) == 1:
+        return None
+
+    def scale(ln: str) -> str:
+        def one(m: re.Match) -> str:
+            n = len(m.group()) * k
+            if n.denominator != 1:
+                raise EditError(f"the file has {k} backslashes for each one in your SEARCH, but the replacement has a "
+                                f"run of {len(m.group())} that cannot be scaled: retype the replacement with the file's "
+                                "backslashes, or replace by line numbers")
+            return "\\" * int(n)
+        return BS_RUN.sub(one, ln)
+    scale.factor = k
+    return scale
+
+
 def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int, object]]]:
     """(tier, [(start, end, reindent)]) for the first tier with any match; end is exclusive."""
     ident = lambda ln: ln  # noqa: E731
@@ -237,7 +276,21 @@ def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int,
             f = _shift(core, lines[i:i + m])
             if f:
                 shifted.append((i, i + m, f))
-    return ("indentation", shifted) if shifted else ("none", [])
+    if shifted:
+        return "indentation", shifted
+    if not _bs_runs(core):
+        return "none", []
+    cs = [_bs_collapse(ln) for ln in core]
+    scaled = []
+    for i in range(len(lines) - m + 1):
+        if _bs_collapse(lines[i]) == cs[0] and [_bs_collapse(ln) for ln in lines[i:i + m]] == cs:
+            f = _bs_scaler([ln.rstrip() for ln in core], [ln.rstrip() for ln in lines[i:i + m]])
+            if f:
+                scaled.append((i, i + m, f))
+    if scaled:
+        k = scaled[0][2].factor
+        return f"backslash count (the file has {k} for each of yours; the replacement was scaled the same way)", scaled
+    return "none", []
 
 
 def closest(lines: list[str], search: list[str]) -> tuple[float, int, int]:

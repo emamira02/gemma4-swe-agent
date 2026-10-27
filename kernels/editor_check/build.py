@@ -214,6 +214,18 @@ if err is None:
         case("B code naming /tmp, /workspace, /usr/local/bin reaches the file as written",
              code == 0 and (lit + "\n").encode() in read("pkg/markup.py", sws), out + "\nFILE:\n" + read("pkg/markup.py", sws).decode())
         subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
+        # S15: backslash-count tier through bash, the quoted heredoc and the sandbox's command rewriting
+        bs = chr(92)
+        with open(os.path.join(sws, "pkg", "rx.py"), "w") as fh:
+            fh.write('import re\nR = re.compile("^[' + bs + 'u0020-' + bs + 'u006f]*$")\n')
+        sline = 'R = re.compile("^[' + bs * 2 + 'u0020-' + bs * 2 + 'u006f]*$")'
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/rx.py <<'EOF'\n<<<<<<< SEARCH\n" + sline + "\n=======\n"
+                        + sline.replace("006f", "007e") + "\n>>>>>>> REPLACE\nEOF")
+        rx = read("pkg/rx.py", sws)
+        case("B backslash count corrected through the sandbox heredoc",
+             code == 0 and rx.endswith(('"^[' + bs + 'u0020-' + bs + 'u007e]*$")\n').encode()) and (bs * 2).encode() not in rx,
+             out + "\nFILE:\n" + rx.decode())
+        os.remove(os.path.join(sws, "pkg", "rx.py"))
         code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n<<<<<<< SEARCH\n    nothing here\n"
                         "=======\nx\n>>>>>>> REPLACE\nEOF")
         case("B failure message names the /workspace spelling", code == 1 and

@@ -25,3 +25,4 @@ results/gold_check/agent/
 results/gold_check/g4-gold-check.log
 results/gold_check/gold_check/per_task.jsonl
 results/gold_check/gold_check/gold/
+results/editor_check/*/g4-editor-linux-check.log

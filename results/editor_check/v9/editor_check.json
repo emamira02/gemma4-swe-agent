@@ -1,0 +1,144 @@
+{
+ "python": "3.12.13",
+ "bash": "GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)",
+ "passed": 26,
+ "total": 26,
+ "results": [
+  {
+   "case": "A install via materialized localize",
+   "ok": true,
+   "detail": "mode: lexical (no symbol named in the query resolved; ranking is lexical) | indexed 3 files, 4 symbols\nTOP SYMBOLS (path:first-last line, symbol, signature  # doc). Re-rank them with the issue in mind, then read_file the best 1-3 ranges:\n 1. pkg/markup.py:4-7  escape  def escape(markup):  # Escape [ and \\ in markup.\n 2. pkg/markup.py:1-11  <module>  module-level code (imports, constants)\n 3. pkg/markup.py:10-11  other  def other():\nFILES: pkg/markup.py\nEDITOR READY: python3 /tmp/ws_6gehll48/.git/swe/edit.py\n"
+  },
+  {
+   "case": "A quoted heredoc applies verbatim",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n"
+  },
+  {
+   "case": "A unquoted heredoc recovered from /proc",
+   "ok": true,
+   "detail": "block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n/bin/bash: line 1: x: command not found\n\nFILE:\nimport re\n\n\ndef escape(markup):\n    \"\"\"Escape [ and \\\\ in markup.\"\"\"\n    markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n    markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n    return markup\n\n\ndef other():\n    return 1\n"
+  },
+  {
+   "case": "A unterminated heredoc still applies, no EOF left",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n/bin/bash: line 8: warning: here-document at line 1 delimited by end-of-file (wanted `EOF')\n"
+  },
+  {
+   "case": "A range edit, unterminated",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: replaced lines 12-12 (1) by 1 lines\nREMOVED (old lines 12-12):\n    12      return 1\nNOW lines 10-12:\n    10  \n    11  def other():\n    12      return 2\n/bin/bash: line 3: warning: here-document at line 1 delimited by end-of-file (wanted `EOF')\n"
+  },
+  {
+   "case": "A not found: exit 1, closest region, unchanged",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: block 1: SEARCH not found in pkg/markup.py. Closest region (similarity 0.96), lines 7-7:\n     7      return markup\nCopy SEARCH exactly from these lines, or replace by line numbers: python3 /tmp/ws_6gehll48/.git/swe/edit.py pkg/markup.py 7-7 <<'EOF' ...new lines... EOF\n"
+  },
+  {
+   "case": "A compile guard",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: NOT APPLIED: pkg/markup.py would not compile after this edit; '(' was never closed at line 7:\n     4  def escape(markup):\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      return (markup\n     8  \n     9  \n    10  def other():\nFix the indentation or the text and run the editor again.\n"
+  },
+  {
+   "case": "A tests refused",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: tests/test_markup.py is a test or test-configuration file: the grader resets those, so change the source code instead.\n"
+  },
+  {
+   "case": "A outside workspace refused",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: ../../etc/passwd is outside the workspace /tmp/ws_6gehll48; give a path relative to the repository root.\n"
+  },
+  {
+   "case": "A new file",
+   "ok": true,
+   "detail": "CREATED pkg/new_mod.py (1 lines). If it defines public names, export them where the package does (for example in __init__.py).\n"
+  },
+  {
+   "case": "A CRLF preserved",
+   "ok": true,
+   "detail": "b'A = 1\\r\\nB = 3\\r\\nC = 4\\r\\n'"
+  },
+  {
+   "case": "A only intended files changed (.git/swe never)",
+   "ok": true,
+   "detail": " M pkg/crlf.py\n?? pkg/new_mod.py\n"
+  },
+  {
+   "case": "B harness wheelhouse installed",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "case": "B harness classes import",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "case": "B localize through run_skill_script installs the editor in the sandbox workspace",
+   "ok": true,
+   "detail": "sandbox workspace /tmp/swegemma_sandbox_d342d83b-1fd_6b3c2wke/workspace\nmode: lexical (no symbol named in the query resolved; ranking is lexical) | indexed 3 files, 4 symbols\nTOP SYMBOLS (path:first-last line, symbol, signature  # doc). Re-rank them with the issue in mind, then read_file the best 1-3 ranges:\n 1. pkg/markup.py:4-7  escape  def escape(markup):  # Escape [ and \\ in markup.\n 2. pkg/markup.py:1-11  <module>  module-level code (imports, constants)\n 3. pkg/markup.py:10-11  other  def other():\nFILES: pkg/markup.py\nEDITOR READY: python3 /workspace/.git/swe/edit.py\n"
+  },
+  {
+   "case": "B run_command finds the editor and applies verbatim",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n"
+  },
+  {
+   "case": "B absolute /workspace paths",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: replaced lines 11-11 (1) by 1 lines\nREMOVED (old lines 11-11):\n    11      return 1\nNOW lines 9-11:\n     9  \n    10  def other():\n    11      return 3\n"
+  },
+  {
+   "case": "B unquoted heredoc recovered",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 7-7 (1) by 2 lines\nNOW lines 5-10:\n     5      \"\"\"Escape [ and \\\\ in markup.\"\"\"\n     6      markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n     7      markup = markup.replace(\"\\\\\", \"\\\\\\\\\")  # $HOME `x` 'q' \"\"\"t\"\"\"\n     8      return markup\n     9  \n    10  \n/bin/bash: line 1: x: command not found\n"
+  },
+  {
+   "case": "B code naming /tmp, /workspace, /usr/local/bin reaches the file as written",
+   "ok": true,
+   "detail": "APPLIED to pkg/markup.py: block 1: replaced lines 11-11 (1) by 1 lines\nNOW lines 9-11:\n     9  \n    10  def other():\n    11      return \"/tmp/cache:/workspace/x:/usr/local/bin/y\"\n\nFILE:\nimport re\n\n\ndef escape(markup):\n    \"\"\"Escape [ and \\\\ in markup.\"\"\"\n    markup = re.sub(r\"(\\\\*)(\\[[a-z#/@][^[]*?])\", r\"\\1\\1\\\\\\2\", markup)\n    return markup\n\n\ndef other():\n    return \"/tmp/cache:/workspace/x:/usr/local/bin/y\"\n"
+  },
+  {
+   "case": "B backslash count corrected through the sandbox heredoc",
+   "ok": true,
+   "detail": "APPLIED to pkg/rx.py: block 1: replaced lines 2-2 (1) by 1 lines [matched ignoring backslash count (the file has 1/2 for each of yours; the replacement was scaled the same way)]\nNOW lines 1-2:\n     1  import re\n     2  R = re.compile(\"^[\\u0020-\\u007e]*$\")\n\nFILE:\nimport re\nR = re.compile(\"^[\\u0020-\\u007e]*$\")\n"
+  },
+  {
+   "case": "B failure message names the /workspace spelling",
+   "ok": true,
+   "detail": "EDIT NOT APPLIED: block 1: SEARCH not found in pkg/markup.py. Closest region (similarity 0.48), lines 1-1:\n     1  import re\nCopy SEARCH exactly from these lines, or replace by line numbers: python3 /workspace/.git/swe/edit.py pkg/markup.py 1-1 <<'EOF' ...new lines... EOF\n"
+  },
+  {
+   "case": "B .git/swe never in the patch",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "case": "B finalize reinstalls on an empty patch",
+   "ok": true,
+   "detail": "workspace clean: no protected or scratch files touched\nWARNING: the patch is EMPTY. Make the source change before calling submit_patch.\nEDITOR READY: python3 /workspace/.git/swe/edit.py\n"
+  },
+  {
+   "case": "B finalize reports an import-time NameError caused by the change",
+   "ok": true,
+   "detail": "T ERRORS caused by your change - every hidden test fails until you fix them:\n  import pkg.markup:\n      File \"/tmp/swegemma_sandbox_d342d83b-1fd_6b3c2wke/workspace/pkg/markup.py\", line 1, in <module>\n        class Markup:\n      File \"/tmp/swegemma_sandbox_d342d83b-1fd_6b3c2wke/workspace/pkg/markup.py\", line 2, in Markup\n        dedent = textwrap.dedent\n                 ^^^^^^^^\n    NameError: name 'textwrap' is not defined. Did you forget to import 'textwrap'?\nPATCH:\npkg/markup.py | 13 ++-----------\n 1 file changed, 2 insertions(+), 11 deletions(-)\nCommand failed with status=error, exit_code=1"
+  },
+  {
+   "case": "B finalize passes the fixed module and writes no __pycache__",
+   "ok": true,
+   "detail": "NEW untracked files kept in the patch (delete them if they are not part of the fix): pkg/__init__.py\nPATCH:\npkg/markup.py | 12 +++---------\n 1 file changed, 3 insertions(+), 9 deletions(-)\nOK: call submit_patch now.\n\npycache: []"
+  },
+  {
+   "case": "B (control) the S6 path is not reachable from run_command",
+   "ok": true,
+   "detail": "python3: can't open file '/tmp/swegemma_sandbox_d342d83b-1fd_6b3c2wke/tmp/swe/edit.py': [Errno 2] No such file or directory\n"
+  }
+ ],
+ "sha256": {
+  "skills/swe/scripts/localize.py": "4fa93b545020964bbad4550f9892387938421168a743c50a65e51d98c92e5195",
+  "skills/swe/scripts/finalize.py": "9d92826316c44bf8e15446125946c944a0c2fe3979a11c90da7a0de32ae1c583",
+  "skills/swe/scripts/edit.py": "67811e2bc4fc14a7a8dcb9bd1db5f511158662250766c263b33b036aabf3377e",
+  "skills/swe/SKILL.md": "285dc689a539d1ac2a280e6ccbe322a30df6209ab9d266a894dce860cdbabe0b"
+ }
+}

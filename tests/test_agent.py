@@ -364,6 +364,33 @@ def test_edit_matching_tiers(repo):
     compile(core(repo), "core.py", "exec")
 
 
+def test_edit_backslash_count_tier(repo):
+    """S7-S13 panels: 9 of 16 near-identical NOT APPLIED differed only in the number of backslashes (the model
+    misreads them inside JSON tool output); fastapi_15588 resent the same block 5 times."""
+    bs = chr(92)
+    cells = repo / "pkg" / "cells.py"
+    cells.write_text('import re\n\nsingle = re.compile("^[' + bs + 'u0020-' + bs + 'u006f]*$").match\n', encoding="utf-8")
+    search = 'single = re.compile("^[' + bs * 2 + 'u0020-' + bs * 2 + 'u006f]*$").match'  # rich_3535: doubled
+    r = run_edit(repo, block(search, search.replace("006f", "007e")), "pkg/cells.py")
+    assert r.returncode == 0 and "backslash count (the file has 1/2 for each of yours" in r.stdout, r.stdout
+    assert cells.read_text(encoding="utf-8").endswith('"^[' + bs + 'u0020-' + bs + 'u007e]*$").match\n')
+    sse = repo / "pkg" / "sse.py"
+    sse.write_text('def f():\n    """Must not contain null (' + bs * 2 + '0) characters."""\n    return 1\n', encoding="utf-8")
+    doc = '    """Must not contain null (' + bs + '0) characters."""'  # fastapi_15588: halved
+    r = run_edit(repo, block(doc + "\n    return 1", doc + "\n    return 2"), "pkg/sse.py")
+    assert r.returncode == 0 and "the file has 2 for each of yours" in r.stdout, r.stdout
+    assert sse.read_text(encoding="utf-8") == 'def f():\n    """Must not contain null (' + bs * 2 + '0) characters."""\n    return 2\n'
+    mixed = repo / "pkg" / "mixed.py"
+    mixed.write_text('x = "' + bs + 'n" + "' + bs * 2 + 'n"\n', encoding="utf-8")
+    before = mixed.read_text(encoding="utf-8")
+    r = run_edit(repo, block('x = "' + bs * 2 + 'n" + "' + bs * 2 + 'n"', "x = 1"), "pkg/mixed.py")  # ratios 1/2 and 1
+    assert r.returncode == 1 and "EDIT NOT APPLIED" in r.stdout and mixed.read_text(encoding="utf-8") == before
+    before = cells.read_text(encoding="utf-8")
+    odd = 'single = re.compile("^[' + bs * 2 + 'u0020-' + bs * 2 + 'u007e]*$").match'
+    r = run_edit(repo, block(odd, odd + '\nsep = "' + bs + 't"'), "pkg/cells.py")  # a run of 1 cannot be halved
+    assert r.returncode == 1 and "cannot be scaled" in r.stdout and cells.read_text(encoding="utf-8") == before, r.stdout
+
+
 def test_edit_refuses_ambiguous_empty_and_breaking_edits(repo):
     (repo / "pkg" / "dup.py").write_text("def a():\n    return 1\n\n\ndef b():\n    return 1\n", encoding="utf-8")
     before = (repo / "pkg" / "dup.py").read_text(encoding="utf-8")
