@@ -115,7 +115,8 @@ with open(OUT / "per_task.jsonl", "w") as fh:
                              "tool_calls": getattr(r, "tool_calls", None), "error": (r.error or "")[:300],
                              "duration_s": round(time.time() - t1, 1),
                              "agent_s": getattr(r, "agent_duration_seconds", None),
-                             "test_output_tail": (getattr(r, "test_output", "") or "")[-2500:]}}
+                             "test_output_tail": (getattr(r, "test_output", "") or "")[-2500:],
+                             "patch": (r.agent_patch or "")[:20000]}}  # replayable offline (finalize, gold-style checks)
             except Exception as e:
                 row[name] = {{"resolved": False, "error": f"{{type(e).__name__}}: {{e}}"[:300], "duration_s": round(time.time() - t1, 1)}}
                 traceback.print_exc()
