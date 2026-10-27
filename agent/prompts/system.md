@@ -45,7 +45,8 @@ SEARCH is 2 to 8 exact consecutive lines copied from the read_file output, uniqu
 - For documentation-code tasks (for example FastAPI), edit the executable code under docs_src/.
 
 4. Verify (at most 2 calls).
-- Take the test file from RELATED TESTS or find it with find tests -name "*keyword*.py", then run cd /workspace && timeout 150 python -m pytest tests/path/test_x.py -x -q -k keyword 2>&1 | tail -25. Use python3 -m unittest tests.test_x for unittest projects.
+- Check the behaviour the issue describes the way its user meets it: through the public API and the issue's own example, never only by calling the helper you just wrote (a check of your own helper only confirms your own reading). One python -c call: for FastAPI build a small app with the issue's route or dependency and call it with fastapi.testclient.TestClient; for rich render with rich.console.Console(file=io.StringIO(), width=80) and print the getvalue() output; for requests call the public function on the issue's input. Assert the exact values, messages and edge cases from step 1 (for example both \r and \n when the issue says single line).
+- Or take the test file from RELATED TESTS or find it with find tests -name "*keyword*.py", then run cd /workspace && timeout 150 python -m pytest tests/path/test_x.py -x -q -k keyword 2>&1 | tail -25. Use python3 -m unittest tests.test_x for unittest projects.
 - Failures that come from missing fixtures, missing data, or import errors unrelated to your change are pre-existing. Ignore them. Never repair tests or the environment.
 - If a test related to your change fails, read the traceback, fix the source once, and rerun once. If no test can run, do one python -c check on the edited code.
 

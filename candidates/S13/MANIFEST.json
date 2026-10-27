@@ -1,0 +1,15 @@
+{
+ "tag": "S13",
+ "zip_sha256": "b3338d9192d9a8b36a480824c09ae430c46a6ab8210a03b0e512c16afabc638f",
+ "git_head_at_freeze": "a220c3a5c4374fd890933a9ee2a833465aeccdf5",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "0a6bbacd1b56",
+  "eval_config.yaml": "e9e609af3000",
+  "prompts/system.md": "7dc16593f399",
+  "skills/swe/scripts/edit.py": "6215b87682b4",
+  "skills/swe/scripts/finalize.py": "28fef95a959d",
+  "skills/swe/scripts/localize.py": "4fa93b545020",
+  "skills/swe/SKILL.md": "285dc689a539"
+ }
+}

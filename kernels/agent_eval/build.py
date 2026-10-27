@@ -114,7 +114,8 @@ with open(OUT / "per_task.jsonl", "w") as fh:
                 row[name] = {{"resolved": bool(r.resolved), "exit": r.test_exit_code, "patch_chars": len(r.agent_patch or ""),
                              "tool_calls": getattr(r, "tool_calls", None), "error": (r.error or "")[:300],
                              "duration_s": round(time.time() - t1, 1),
-                             "agent_s": getattr(r, "agent_duration_seconds", None)}}
+                             "agent_s": getattr(r, "agent_duration_seconds", None),
+                             "test_output_tail": (getattr(r, "test_output", "") or "")[-2500:]}}
             except Exception as e:
                 row[name] = {{"resolved": False, "error": f"{{type(e).__name__}}: {{e}}"[:300], "duration_s": round(time.time() - t1, 1)}}
                 traceback.print_exc()
@@ -145,6 +146,8 @@ def main() -> int:
                     help="mixed panel: N tasks per repository, each sampled with its own seed; overrides --n/--repos")
     ap.add_argument("--pools", type=Path, default=None,
                     help="JSON {repo: [instance ids]} restricting --mix sampling (e.g. results/gold_check/pools.json)")
+    ap.add_argument("--tasks", nargs="+", default=None, metavar="ID",
+                    help="explicit task ids (targeted panel, e.g. a tag's failures plus controls); overrides --mix/--n")
     ap.add_argument("--kernel-id", default="emanuelemiranda/g4-agent-eval")
     ap.add_argument("--force", action="store_true", help="replace panel.json before the previous panel was downloaded")
     a = ap.parse_args()
@@ -170,7 +173,13 @@ def main() -> int:
         data = a.zip.read_bytes()
     sha = hashlib.sha256(data).hexdigest()
     tasks = [json.loads(l) for l in (ROOT / "data" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
-    if a.mix:
+    if a.tasks:
+        known = {t["instance_id"]: t["repo"] for t in tasks}
+        if not set(a.tasks) <= set(known) or len(set(a.tasks)) != len(a.tasks):
+            sys.exit(f"unknown or repeated --tasks ids: {sorted(set(a.tasks) - set(known))}")
+        panel = sorted(a.tasks)
+        a.repos = sorted({known[i] for i in panel})
+    elif a.mix:
         pools = json.loads(a.pools.read_text(encoding="utf-8")) if a.pools else {}
         known = {t["instance_id"] for t in tasks}
         panel = []
@@ -197,7 +206,7 @@ def main() -> int:
             "machine_shape": "NvidiaL4"}
     (HERE / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     (HERE / "panel.json").write_text(json.dumps({"tag": a.tag, "sha256": sha, "seed": a.seed, "repos": a.repos,
-                                                 "mix": a.mix, "pools": str(a.pools) if a.pools else None,
+                                                 "mix": a.mix, "tasks": a.tasks, "pools": str(a.pools) if a.pools else None,
                                                  "panel": panel}, indent=1), encoding="utf-8")
     print(f"kernel for {a.tag} ({sha[:12]}): {len(panel)} tasks -> {HERE / 'run_agent_eval.py'}")
     return 0

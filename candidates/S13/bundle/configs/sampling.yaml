@@ -1,0 +1,9 @@
+# S10: the sampling of the public Budget-Aware V10 / Budget-Fit family: temperature 0.2, top_p 0.95, 8,192 output
+# tokens, thinking on with a 4,096-token budget. No thinking_level (maps to reasoning_effort on vLLM) and no top_k
+# (dropped by LiteLLM for OpenAI-compatible endpoints).
+temperature: 0.2
+top_p: 0.95
+max_output_tokens: 8192
+thinking_config:
+  thinking_budget: 4096
+  include_thoughts: true
