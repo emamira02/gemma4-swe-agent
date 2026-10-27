@@ -88,6 +88,10 @@ rank-1 enclosing function in full and an elapsed-time line from the session's fi
 rule: S7 resolved tasks read 1-3 times before the first edit, NO_EDIT sessions 7-22 (median window 34 lines, 42 of
 220 reads mostly re-read lines already shown); turns are short (median 75-340 completion tokens), so those sessions
 end on the call cap, not the clock.
+Amendment 2026-10-27 04:40 UTC (after S8, before B1's results): S8 failed its time check, so S9's base is S7 (best
+panel, 8.6 h for 120 tasks) plus timeout_seconds 240, which here changes only the hidden-test timeout (no agent
+command reached 100 s in S7 or S8: 0 command timeouts in 1,081 calls). The (a)/(b)/(c) choice is unchanged, with S7
+in place of S8 (S7: empty_patch + no_edit = 12; RIGHT_FILE_WRONG_FIX + WRONG_FILE = 5 vs NO_EDIT 7).
 Decision rule for S8 after its panel (written 2026-10-27 before the panel): SANITY: editor_missing = 0, panel finished
 on >= 20 tasks, and 120 x mean per-task duration_s <= 11.0 h (duration_s includes hidden-test verification, which the
 scorer's 12 h excludes, so this is conservative); a failed time check means BLOCKED and never submitted. READY if
