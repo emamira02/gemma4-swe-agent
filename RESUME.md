@@ -114,7 +114,7 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 
 ## Findings S8 (dev panel 2026-10-27; 21 gold-solvable, 5 resolved)
 - More time did not buy resolves: the first edit moved from 135 s (S7 median) to 238 s, so sessions spent the extra
-  three minutes exploring. 9 sessions ran into the 8-minute cap (S7: 11 into the 5-minute cap).
+  three minutes exploring. 7 sessions ran to the 8-minute cap (S7: 11 to the 5-minute cap).
 - thinking_budget 4096 lengthens some turns badly: rich_3521 median turn 117 s (2,256 completion tokens), 6 counted
   calls in 482 s, no edit.
 - 120 x mean task time = 11.68 h: the Budget-Fit budget is proven for Budget-Fit's prompt (it submits in ~8-10
