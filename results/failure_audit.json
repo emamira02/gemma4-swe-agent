@@ -4355,6 +4355,660 @@
      }
     }
    }
+  },
+  "S7": {
+   "counts": {
+    "GOLD_UNSOLVABLE": 2,
+    "RESOLVED": 7,
+    "NO_EDIT_TOOL": 0,
+    "NO_EDIT": 7,
+    "WRONG_FILE": 1,
+    "RIGHT_FILE_TOOL": 1,
+    "RIGHT_FILE_TIMEOUT": 2,
+    "RIGHT_FILE_WRONG_FIX": 4
+   },
+   "per_task": {
+    "rich_3006": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       15,
+       0
+      ],
+      "read_file": [
+       4,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3063": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 0,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "run_command": [
+       15,
+       0
+      ],
+      "read_file": [
+       3,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3067": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 0,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       12,
+       0
+      ],
+      "read_file": [
+       4,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3296": {
+     "category": "GOLD_UNSOLVABLE",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 2,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "read_file": [
+       8,
+       0
+      ],
+      "run_command": [
+       5,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3469": {
+     "category": "GOLD_UNSOLVABLE",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": false,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 0,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       13,
+       0
+      ],
+      "read_file": [
+       19,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3470": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       13,
+       0
+      ],
+      "run_command": [
+       9,
+       0
+      ]
+     }
+    },
+    "rich_3471": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "read_file": [
+       13,
+       0
+      ],
+      "run_command": [
+       9,
+       0
+      ]
+     }
+    },
+    "rich_3472": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       10,
+       0
+      ],
+      "read_file": [
+       22,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3506": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       2,
+       0
+      ],
+      "run_command": [
+       9,
+       0
+      ]
+     }
+    },
+    "rich_3521": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       7,
+       0
+      ],
+      "run_command": [
+       11,
+       0
+      ]
+     }
+    },
+    "rich_3535": {
+     "category": "RIGHT_FILE_WRONG_FIX",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 2,
+     "malformed_edits": 1,
+     "localize_gold_file_rank": 3,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       9,
+       0
+      ],
+      "read_file": [
+       5,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3675": {
+     "category": "RIGHT_FILE_WRONG_FIX",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 3,
+     "malformed_edits": 1,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       18,
+       0
+      ],
+      "read_file": [
+       9,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3772": {
+     "category": "RIGHT_FILE_WRONG_FIX",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 1,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       3,
+       0
+      ],
+      "read_file": [
+       10,
+       1
+      ],
+      "run_command": [
+       3,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3777": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 3,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "run_command": [
+       10,
+       0
+      ],
+      "read_file": [
+       22,
+       0
+      ],
+      "get_status": [
+       1,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3782": {
+     "category": "RIGHT_FILE_WRONG_FIX",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 2,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "read_file": [
+       9,
+       0
+      ],
+      "run_command": [
+       9,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3882": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "read_file": [
+       2,
+       0
+      ],
+      "run_command": [
+       7,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3905": {
+     "category": "RESOLVED",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "read_file": [
+       1,
+       0
+      ],
+      "run_command": [
+       4,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3930": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 4,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       8,
+       0
+      ],
+      "run_command": [
+       17,
+       0
+      ]
+     }
+    },
+    "rich_3935": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": false,
+     "malformed_calls": 0,
+     "edit_attempts": 0,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 9,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       10,
+       0
+      ],
+      "run_command": [
+       10,
+       0
+      ]
+     }
+    },
+    "rich_3938": {
+     "category": "NO_EDIT",
+     "wrote_source": false,
+     "wrote_gold": false,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 1,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       13,
+       0
+      ],
+      "run_command": [
+       19,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3942": {
+     "category": "RIGHT_FILE_TIMEOUT",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 5,
+     "malformed_edits": 1,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       21,
+       0
+      ],
+      "run_command": [
+       10,
+       0
+      ]
+     }
+    },
+    "rich_3944": {
+     "category": "WRONG_FILE",
+     "wrote_source": true,
+     "wrote_gold": false,
+     "read_gold": false,
+     "malformed_calls": 0,
+     "edit_attempts": 2,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 0,
+     "calls_by_tool": {
+      "run_skill_script": [
+       2,
+       0
+      ],
+      "run_command": [
+       5,
+       0
+      ],
+      "read_file": [
+       4,
+       0
+      ],
+      "submit_patch": [
+       1,
+       0
+      ]
+     }
+    },
+    "rich_3953": {
+     "category": "RIGHT_FILE_TIMEOUT",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 2,
+     "malformed_edits": 0,
+     "localize_gold_file_rank": 3,
+     "calls_by_tool": {
+      "run_skill_script": [
+       1,
+       0
+      ],
+      "read_file": [
+       2,
+       0
+      ],
+      "run_command": [
+       14,
+       0
+      ]
+     }
+    },
+    "rich_4070": {
+     "category": "RIGHT_FILE_TOOL",
+     "wrote_source": true,
+     "wrote_gold": true,
+     "read_gold": true,
+     "malformed_calls": 0,
+     "edit_attempts": 7,
+     "malformed_edits": 3,
+     "localize_gold_file_rank": 1,
+     "calls_by_tool": {
+      "read_file": [
+       9,
+       0
+      ],
+      "run_command": [
+       20,
+       0
+      ],
+      "run_skill_script": [
+       1,
+       0
+      ]
+     }
+    }
+   }
   }
  },
  "aggregate": {
@@ -4364,29 +5018,30 @@
    "S3",
    "S4",
    "S5",
-   "S6"
+   "S6",
+   "S7"
   ],
-  "n_tags": 6,
-  "task_runs": 144,
-  "solvable_runs": 129,
-  "resolved_runs": 27,
+  "n_tags": 7,
+  "task_runs": 168,
+  "solvable_runs": 151,
+  "resolved_runs": 34,
   "resolved_min": 4,
-  "resolved_max": 5,
-  "rank1_runs": 80,
-  "rank1_rate": 0.620155,
-  "unresolved_runs": 102,
+  "resolved_max": 7,
+  "rank1_runs": 93,
+  "rank1_rate": 0.615894,
+  "unresolved_runs": 117,
   "unresolved": {
    "NO_EDIT_TOOL": 9,
-   "NO_EDIT": 41,
-   "WRONG_FILE": 10,
-   "RIGHT_FILE_TOOL": 0,
-   "RIGHT_FILE_TIMEOUT": 21,
-   "RIGHT_FILE_WRONG_FIX": 21
+   "NO_EDIT": 48,
+   "WRONG_FILE": 11,
+   "RIGHT_FILE_TOOL": 1,
+   "RIGHT_FILE_TIMEOUT": 23,
+   "RIGHT_FILE_WRONG_FIX": 25
   },
-  "unresolved_right_file": 42,
-  "unresolved_no_edit": 50,
-  "wrong_file_share": 0.098039,
-  "right_file_share": 0.411765,
+  "unresolved_right_file": 49,
+  "unresolved_no_edit": 57,
+  "wrong_file_share": 0.094017,
+  "right_file_share": 0.418803,
   "tools": {
    "edit_file": {
     "calls": 248,
@@ -4394,27 +5049,27 @@
     "rate": 0.310484
    },
    "get_status": {
-    "calls": 6,
+    "calls": 7,
     "malformed": 0,
     "rate": 0.0
    },
    "read_file": {
-    "calls": 1198,
-    "malformed": 6,
-    "rate": 0.005008
+    "calls": 1418,
+    "malformed": 7,
+    "rate": 0.004937
    },
    "run_command": {
-    "calls": 1365,
+    "calls": 1628,
     "malformed": 0,
     "rate": 0.0
    },
    "run_skill_script": {
-    "calls": 245,
+    "calls": 283,
     "malformed": 33,
-    "rate": 0.134694
+    "rate": 0.116608
    },
    "submit_patch": {
-    "calls": 72,
+    "calls": 87,
     "malformed": 0,
     "rate": 0.0
    },
