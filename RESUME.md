@@ -49,6 +49,13 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
   diff, Edit of gemma4-swe-agent/**). Emanuele: PC and app stay on in the evening; GPU quota 30 h/week, next reset
   ~2026-10-31 11:30 UTC.
 
+## Kaggle authentication (verified 2026-10-28 23:39 UTC)
+- The CLI's OAuth login (~/.kaggle/credentials.json) lasts ~12 h and is not refreshed automatically: written
+  2026-10-26 18:22 UTC -> "Authentication required" from ~06:30 UTC; written 2026-10-28 11:27 UTC -> failing at
+  23:36 UTC. Unattended runs then stop at status.py. Durable fix needs Emanuele (tokens are never handled by the
+  assistant): a non-expiring API token from kaggle.com/settings/api saved as ~/.kaggle/access_token (and, if the
+  expired OAuth file still takes precedence, a CLI logout). Until then the loop needs a fresh login every 12 h.
+
 ## Release process (owner decision 2026-10-27, replaces the policy below where they differ)
 Emanuele (chat, 2026-10-27): "if you submit S12 today, submit S14 tomorrow"; every UTC day a NEW version that fixes
 the previous failures, even without a GPU dev panel. Mechanism (all in code, not only in instructions):
