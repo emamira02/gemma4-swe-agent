@@ -42,8 +42,12 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 - kaggle-improve stopped on 2026-10-28 by its own rule (any unsubmitted queued tag = stop) although S14 and S15
   were two days ahead: no improvement work that day. Rule changed: stop only with >= 2 unsubmitted queued tags,
   and always build on the newest queued tag (the S12 = 0.17 line).
-- kaggle-loop now runs hourly 18:07-00:07 local and every 4 h otherwise. Open: unattended runs must not wait on
-  permission prompts (needs Emanuele's decision on a command allowlist).
+- kaggle-loop now runs hourly 18:07-00:07 local and every 4 h otherwise. Scheduled sessions start with the task's
+  stored permission mode (not the folder's bypassPermissions), so an unlisted command waits for a human: Emanuele
+  approved (2026-10-29) an allowlist in Hackaton/.claude/settings.local.json for the tasks' commands (python tools/*,
+  -m analysis.*, -m pytest, kernels/* builders, -m kaggle kernels/competitions, git status/pull/add/commit/push/log/
+  diff, Edit of gemma4-swe-agent/**). Emanuele: PC and app stay on in the evening; GPU quota 30 h/week, next reset
+  ~2026-10-31 11:30 UTC.
 
 ## Release process (owner decision 2026-10-27, replaces the policy below where they differ)
 Emanuele (chat, 2026-10-27): "if you submit S12 today, submit S14 tomorrow"; every UTC day a NEW version that fixes
