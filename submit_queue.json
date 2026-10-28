@@ -13,5 +13,10 @@
   "tag": "S15",
   "added": "2026-10-27",
   "hypothesis": "S14 + editor backslash-count tier: a SEARCH that differs from the file only by a consistent backslash multiple is applied and its REPLACE scaled (S7-S13: 9 of 16 near-identical NOT APPLIED; fastapi_15588 resent one block 5 times)"
+ },
+ {
+  "tag": "S16",
+  "added": "2026-10-29",
+  "hypothesis": "S15 + prompt: a grep/git grep with no match is not a broken command (63 of 165 run_command 'errors' in S9/S12/S13 were empty no-match searches); close each editor heredoc with exactly one EOF (6 successful edits reported as exit 127 after a second EOF line)"
  }
 ]

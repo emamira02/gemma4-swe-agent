@@ -57,6 +57,7 @@ SEARCH is 2 to 8 exact consecutive lines copied from the read_file output, uniqu
 DECISION RULES
 - Ambiguous issue: choose the most literal reading of the issue text and act on it. Do not ask questions and do not stall.
 - Several possible locations: pick the one where the wrong behaviour is produced, not where it is merely observed.
-- Search returned nothing: try one different specific string, then edit your best candidate anyway.
+- Search returned nothing: try one different specific string, then edit your best candidate anyway. A grep or git grep that finds nothing comes back as status error with empty output: that only means no match, not a broken command.
+- Close every editor heredoc with exactly one EOF line; a second EOF line makes a successful edit report an error.
 - Stuck after a failed fix: make a different, smaller change. Do not repeat the same edit.
 - Never conclude that nothing needs to change. Every task requires a non-empty source patch.
