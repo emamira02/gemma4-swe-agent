@@ -34,6 +34,17 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
 - Known platform risk (forum, 10-21/22): unchanged bundles failing with "Notebook Threw Exception" (slow vLLM start
   on L4, ~1,200 s limit reported); a failed run still uses the daily slot.
 
+## Incident 2026-10-28: no automatic submission for ~20 h
+- The kaggle-loop run started 2026-10-28 03:20 UTC stayed "running" after its second tool call (a Bash call, 8 s
+  after start; the transcript does not show why - most likely an unanswered permission prompt, UNVERIFIED). While
+  it hung, the scheduler started no further kaggle-loop run, so S12's score and the free slot were never acted on;
+  S14 was submitted by hand at 23:23 UTC. Stopped 2026-10-28 ~23:35 UTC.
+- kaggle-improve stopped on 2026-10-28 by its own rule (any unsubmitted queued tag = stop) although S14 and S15
+  were two days ahead: no improvement work that day. Rule changed: stop only with >= 2 unsubmitted queued tags,
+  and always build on the newest queued tag (the S12 = 0.17 line).
+- kaggle-loop now runs hourly 18:07-00:07 local and every 4 h otherwise. Open: unattended runs must not wait on
+  permission prompts (needs Emanuele's decision on a command allowlist).
+
 ## Release process (owner decision 2026-10-27, replaces the policy below where they differ)
 Emanuele (chat, 2026-10-27): "if you submit S12 today, submit S14 tomorrow"; every UTC day a NEW version that fixes
 the previous failures, even without a GPU dev panel. Mechanism (all in code, not only in instructions):
