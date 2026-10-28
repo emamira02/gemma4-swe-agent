@@ -2,4 +2,5 @@ date,experiment_id,config_hash,public_score,status,notes
 2026-10-12 16:50,S1,4e14db4d5e2f,0.15,COMPLETE,"kernel v1; single agent + in-container lexical localization skill (paper mode rule, model re-ranks) + early-edit prompt + finalize hygiene; 5.0 min/task, thinking 2048, temp 1.0; baseline for all later ablations"
 2026-10-13 21:47,S3,e1af59a2b337,0.12,COMPLETE,kernel v2; S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts
 2026-10-26 20:50,S5,39038672b64d,0.12,COMPLETE,"kernel v3; S4 + line-range edit fallback (replace_lines.py) and recovery rule for broken edit_file calls; panel 5/21, malformed calls 43->4, no_edit 8"
-2026-10-27 21:33,S12,cb8fcafd455f,,PENDING,"kernel v4; public Budget-Aware V10 prompt (attributed) + heredoc editor + localize/finalize, V10 budget; mixed panel 13/24 (fastapi 9/12, rich 4/12), 8.57 h"
+2026-10-27 21:33,S12,cb8fcafd455f,0.17,COMPLETE,"kernel v4; public Budget-Aware V10 prompt (attributed) + heredoc editor + localize/finalize, V10 budget; mixed panel 13/24 (fastapi 9/12, rich 4/12), 8.57 h"
+2026-10-28 23:23,S14,0d410b080341,,PENDING,kernel v5; S12 + finalize import check: import-time errors caused by the change are reported before submit (S13 panel rich_4070: NameError at import failed every hidden test)
