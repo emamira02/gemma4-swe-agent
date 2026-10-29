@@ -66,6 +66,15 @@ from swegemma.models import load_tasks
 from google.adk.agents.context_cache_config import ContextCacheConfig
 from google.adk.apps._configs import EventsCompactionConfig
 litellm.drop_params = True
+try:  # which sampling keys this wheelhouse's LiteLLM sends to vLLM (top_k: in extra_body, or dropped)
+    import importlib.metadata as _im
+    from litellm.utils import get_optional_params as _gop
+    _sc = {{"litellm": _im.version("litellm"), "params": _gop(model="gemma-4-31b-it-qat-w4a16-ct", custom_llm_provider="openai",
+                                                              temperature=1.0, top_p=0.95, top_k=64, drop_params=True)}}
+except Exception as e:
+    _sc = {{"error": f"{{type(e).__name__}}: {{e}}"}}
+print("sampling check:", json.dumps(_sc, default=str), flush=True)
+(OUT / "sampling_check.json").write_text(json.dumps(_sc, default=str))
 
 MODEL = "gemma-4-31b-it-qat-w4a16-ct"
 adapters = discover_adapters(str(AGENT), adapter_extensions=ALLOWED_ADAPTER_EXTENSIONS)

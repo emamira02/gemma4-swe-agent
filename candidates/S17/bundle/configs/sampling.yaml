@@ -1,0 +1,13 @@
+# S17: S16 with Google's recommended Gemma sampling: temperature 1.0, top_p 0.95, top_k 64 (Idris v24, one of the
+# six 0.24 teams, uses exactly this; Ayush Thakur's 129-task local screen: T 0.2 48, T 1.0 51). ADK's LiteLlm forwards
+# top_k and the repo venv's LiteLLM 1.93.2 sends it in extra_body for openai/ endpoints (checked 2026-10-29; the
+# panel kernel prints what the official wheelhouse does).
+# Output tokens and thinking unchanged: 8,192 output tokens, thinking on with a 4,096-token budget, no thinking_level
+# (maps to reasoning_effort on vLLM).
+temperature: 1.0
+top_p: 0.95
+top_k: 64
+max_output_tokens: 8192
+thinking_config:
+  thinking_budget: 4096
+  include_thoughts: true
