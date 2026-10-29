@@ -194,6 +194,16 @@ Decision rule for S3 after its panel: READY if resolved_on_solvable >= 4 and tim
 Decision rule for S2 after its panel (applied 2026-10-13): READY if resolved_on_solvable >= S1's (4) and tasks_with_arg_errors drops
 by at least half; otherwise fix the cause seen in the traces first (new tag), never submit a known regression.
 
+## Gap analysis 2026-10-29 (docs/gap-analysis-2026-10-29.md) - decisions pending with Emanuele
+- Medal rule (1000+ teams): bronze top 10%, silver 5%, gold 10 + 0.2%; ties go to the earlier submission. Public
+  board 2026-10-29: 4,100 teams, bronze needs 12/58 for a new submission. Our mean ~10/58 = the public V10/Budget-Fit
+  family (same eval_config and sampling as 10 public bundles).
+- Proposed P1 (T 1.0 / top_p 0.95 / top_k 64), P3 (discriminative panel), P4 (call cap 36) and the small-model
+  slot question are NOT approved yet: kaggle-improve and kaggle-loop must not build, queue or reorder anything from
+  this report until Emanuele answers in chat.
+- Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
+  extra_body); left unedited because agent/ must equal the frozen candidate.
+
 ## Findings S13 (targeted panel, 2026-10-27; first panel with hidden-test output recorded)
 - The public-API verification rule fixed none of S12's 11 failures and cost time (346 s vs 299 s mean on the same
   14 tasks, empty patches 5 vs 2): dropped.
