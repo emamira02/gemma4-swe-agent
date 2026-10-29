@@ -1,12 +1,43 @@
 {
  "tags": [
+  "B1",
   "S1",
   "S2",
   "S3",
   "S4",
-  "S5"
+  "S5",
+  "S6",
+  "S7",
+  "S8",
+  "S9",
+  "S12",
+  "S13",
+  "S14"
  ],
  "runs": {
+  "B1": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "rich"
+    ],
+    "gold_solvable": 21,
+    "resolved": 6,
+    "resolve_rate": 0.285714,
+    "timeouts": 3,
+    "empty_patch": 5,
+    "no_edit": 2,
+    "tasks_with_arg_errors": 3,
+    "first_edit_s_median": 93.25,
+    "calls": 625,
+    "arg_errors": 57,
+    "backtick_args": 52,
+    "max_tool_calls": 28,
+    "max_time_minutes": 8
+   }
+  },
   "S1": {
    "status": "COMPLETE",
    "config_hash": "4e14db4d5e2f",
@@ -102,8 +133,9 @@
    }
   },
   "S5": {
-   "status": "NOT_SUBMITTED",
-   "config_hash": null,
+   "status": "COMPLETE",
+   "config_hash": "39038672b64d",
+   "public_score": 0.12,
    "panel": {
     "n": 24,
     "repos": [
@@ -123,15 +155,163 @@
     "max_time_minutes": 5.0,
     "max_tool_calls": 32
    }
+  },
+  "S6": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "rich"
+    ],
+    "gold_solvable": 22,
+    "resolved": 5,
+    "resolve_rate": 0.227273,
+    "timeouts": 12,
+    "empty_patch": 12,
+    "no_edit": 7,
+    "tasks_with_arg_errors": 1,
+    "first_edit_s_median": 127.6,
+    "calls": 573,
+    "arg_errors": 1,
+    "backtick_args": 3,
+    "max_time_minutes": 5.0,
+    "max_tool_calls": 32
+   }
+  },
+  "S7": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "rich"
+    ],
+    "gold_solvable": 22,
+    "resolved": 7,
+    "resolve_rate": 0.318182,
+    "timeouts": 8,
+    "empty_patch": 6,
+    "no_edit": 6,
+    "tasks_with_arg_errors": 1,
+    "first_edit_s_median": 135.2,
+    "calls": 537,
+    "arg_errors": 1,
+    "backtick_args": 7,
+    "max_time_minutes": 5.0,
+    "max_tool_calls": 32
+   }
+  },
+  "S8": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "rich"
+    ],
+    "gold_solvable": 21,
+    "resolved": 5,
+    "resolve_rate": 0.238095,
+    "timeouts": 7,
+    "empty_patch": 4,
+    "no_edit": 4,
+    "tasks_with_arg_errors": 1,
+    "first_edit_s_median": 238.05,
+    "calls": 544,
+    "arg_errors": 1,
+    "backtick_args": 1,
+    "max_time_minutes": 8.0,
+    "max_tool_calls": 28
+   }
+  },
+  "S9": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "fastapi",
+     "rich"
+    ],
+    "gold_solvable": 24,
+    "resolved": 12,
+    "resolve_rate": 0.5,
+    "timeouts": 4,
+    "empty_patch": 4,
+    "no_edit": 3,
+    "tasks_with_arg_errors": 2,
+    "first_edit_s_median": 96.1,
+    "calls": 495,
+    "arg_errors": 2,
+    "backtick_args": 12,
+    "max_time_minutes": 5.0,
+    "max_tool_calls": 32
+   }
+  },
+  "S12": {
+   "status": "COMPLETE",
+   "config_hash": "cb8fcafd455f",
+   "public_score": 0.17,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "fastapi",
+     "rich"
+    ],
+    "gold_solvable": 24,
+    "resolved": 13,
+    "resolve_rate": 0.541667,
+    "timeouts": 3,
+    "empty_patch": 3,
+    "no_edit": 1,
+    "tasks_with_arg_errors": 0,
+    "first_edit_s_median": 149.4,
+    "calls": 480,
+    "arg_errors": 0,
+    "backtick_args": 5,
+    "max_time_minutes": 8.0,
+    "max_tool_calls": 28
+   }
+  },
+  "S13": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 14,
+    "repos": [
+     "fastapi",
+     "rich"
+    ],
+    "gold_solvable": 14,
+    "resolved": 3,
+    "resolve_rate": 0.214286,
+    "timeouts": 5,
+    "empty_patch": 5,
+    "no_edit": 3,
+    "tasks_with_arg_errors": 0,
+    "first_edit_s_median": 155.5,
+    "calls": 314,
+    "arg_errors": 0,
+    "backtick_args": 11,
+    "max_time_minutes": 8.0,
+    "max_tool_calls": 28
+   }
+  },
+  "S14": {
+   "status": "PENDING",
+   "config_hash": "0d410b080341"
   }
  },
  "scored": {
   "S1": 0.15,
-  "S3": 0.12
+  "S3": 0.12,
+  "S5": 0.12,
+  "S12": 0.17
  },
- "n_scored": 2,
- "n_panels": 5,
- "baseline": "S1",
+ "n_scored": 4,
+ "n_panels": 12,
+ "baseline": "B1",
  "failure": {
   "tags": [
    "S1",
@@ -143,6 +323,9 @@
   "n_tags": 5,
   "task_runs": 120,
   "solvable_runs": 107,
+  "calls": 2655,
+  "malformed_calls": 119,
+  "malformed_rate": 0.044821,
   "resolved_runs": 22,
   "resolved_min": 4,
   "resolved_max": 5,
@@ -196,6 +379,277 @@
     "calls": 94,
     "malformed": 4,
     "rate": 0.042553
+   }
+  }
+ },
+ "eras": {
+  "edit_file": {
+   "tags": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5"
+   ],
+   "n_tags": 5,
+   "task_runs": 120,
+   "solvable_runs": 107,
+   "calls": 2655,
+   "malformed_calls": 119,
+   "malformed_rate": 0.044821,
+   "resolved_runs": 22,
+   "resolved_min": 4,
+   "resolved_max": 5,
+   "rank1_runs": 62,
+   "rank1_rate": 0.579439,
+   "unresolved_runs": 85,
+   "unresolved": {
+    "NO_EDIT_TOOL": 4,
+    "NO_EDIT": 31,
+    "WRONG_FILE": 10,
+    "RIGHT_FILE_TOOL": 0,
+    "RIGHT_FILE_TIMEOUT": 20,
+    "RIGHT_FILE_WRONG_FIX": 20
+   },
+   "unresolved_right_file": 40,
+   "unresolved_no_edit": 35,
+   "wrong_file_share": 0.117647,
+   "right_file_share": 0.470588,
+   "tools": {
+    "edit_file": {
+     "calls": 248,
+     "malformed": 77,
+     "rate": 0.310484
+    },
+    "get_status": {
+     "calls": 5,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "read_file": {
+     "calls": 1011,
+     "malformed": 5,
+     "rate": 0.004946
+    },
+    "run_command": {
+     "calls": 1047,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "run_skill_script": {
+     "calls": 191,
+     "malformed": 33,
+     "rate": 0.172775
+    },
+    "submit_patch": {
+     "calls": 59,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "write_file": {
+     "calls": 94,
+     "malformed": 4,
+     "rate": 0.042553
+    }
+   }
+  },
+  "editor": {
+   "tags": [
+    "S7",
+    "S8",
+    "S9",
+    "S12"
+   ],
+   "n_tags": 4,
+   "task_runs": 96,
+   "solvable_runs": 91,
+   "calls": 2056,
+   "malformed_calls": 8,
+   "malformed_rate": 0.003891,
+   "resolved_runs": 37,
+   "resolved_min": 5,
+   "resolved_max": 13,
+   "rank1_runs": 62,
+   "rank1_rate": 0.681319,
+   "unresolved_runs": 54,
+   "unresolved": {
+    "NO_EDIT_TOOL": 1,
+    "NO_EDIT": 18,
+    "WRONG_FILE": 8,
+    "RIGHT_FILE_TOOL": 2,
+    "RIGHT_FILE_TIMEOUT": 6,
+    "RIGHT_FILE_WRONG_FIX": 19
+   },
+   "unresolved_right_file": 27,
+   "unresolved_no_edit": 19,
+   "wrong_file_share": 0.148148,
+   "right_file_share": 0.5,
+   "tools": {
+    "get_status": {
+     "calls": 1,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "list_skills": {
+     "calls": 1,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "load_skill": {
+     "calls": 1,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "read_file": {
+     "calls": 765,
+     "malformed": 7,
+     "rate": 0.00915
+    },
+    "run_command": {
+     "calls": 1049,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "run_skill_script": {
+     "calls": 165,
+     "malformed": 1,
+     "rate": 0.006061
+    },
+    "submit_patch": {
+     "calls": 74,
+     "malformed": 0,
+     "rate": 0.0
+    }
+   }
+  },
+  "public_prompt": {
+   "tags": [
+    "B1"
+   ],
+   "n_tags": 1,
+   "task_runs": 24,
+   "solvable_runs": 21,
+   "calls": 625,
+   "malformed_calls": 61,
+   "malformed_rate": 0.0976,
+   "resolved_runs": 6,
+   "resolved_min": 6,
+   "resolved_max": 6,
+   "rank1_runs": 0,
+   "rank1_rate": 0.0,
+   "unresolved_runs": 15,
+   "unresolved": {
+    "NO_EDIT_TOOL": 0,
+    "NO_EDIT": 4,
+    "WRONG_FILE": 2,
+    "RIGHT_FILE_TOOL": 0,
+    "RIGHT_FILE_TIMEOUT": 1,
+    "RIGHT_FILE_WRONG_FIX": 8
+   },
+   "unresolved_right_file": 9,
+   "unresolved_no_edit": 4,
+   "wrong_file_share": 0.133333,
+   "right_file_share": 0.6,
+   "tools": {
+    "edit_file": {
+     "calls": 121,
+     "malformed": 57,
+     "rate": 0.471074
+    },
+    "get_status": {
+     "calls": 3,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "read_file": {
+     "calls": 193,
+     "malformed": 4,
+     "rate": 0.020725
+    },
+    "run_command": {
+     "calls": 232,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "submit_patch": {
+     "calls": 29,
+     "malformed": 0,
+     "rate": 0.0
+    },
+    "write_file": {
+     "calls": 47,
+     "malformed": 0,
+     "rate": 0.0
+    }
+   }
+  }
+ },
+ "excluded": {
+  "S6": "editor unreachable in 15 tasks (infrastructure, fixed in S7)",
+  "S13": "targeted panel: 11 selected failures and 3 controls"
+ },
+ "stability": {
+  "tags": [
+   "B1",
+   "S1",
+   "S2",
+   "S3",
+   "S4",
+   "S5",
+   "S6",
+   "S7",
+   "S8",
+   "S9",
+   "S12",
+   "S13"
+  ],
+  "n_runs": 12,
+  "tasks": 34,
+  "runs_per_task_min": 2,
+  "runs_per_task_max": 12,
+  "always": 13,
+  "never": 16,
+  "mixed": 5,
+  "mixed_share": 0.147059,
+  "mixed_tasks": [
+   "rich_3063",
+   "rich_3471",
+   "rich_3506",
+   "rich_3772",
+   "rich_3777"
+  ],
+  "by_repo": {
+   "fastapi": {
+    "always": 9,
+    "never": 3,
+    "mixed": 0
+   },
+   "rich": {
+    "always": 4,
+    "never": 13,
+    "mixed": 5
+   }
+  }
+ },
+ "by_repo": {
+  "S9": {
+   "fastapi": {
+    "resolved": 9,
+    "solvable": 12
+   },
+   "rich": {
+    "resolved": 3,
+    "solvable": 12
+   }
+  },
+  "S12": {
+   "fastapi": {
+    "resolved": 9,
+    "solvable": 12
+   },
+   "rich": {
+    "resolved": 4,
+    "solvable": 12
    }
   }
  }

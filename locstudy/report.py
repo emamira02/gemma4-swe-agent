@@ -311,6 +311,35 @@ def agent_table_compact(doc: dict) -> str:
     return head + "\n" + "\n".join(rows)
 
 
+ERA_LABELS = {"edit_file": "edit_file (two code arguments)", "editor": "heredoc editor (one argument)",
+              "public_prompt": "public prompt, edit_file"}
+
+
+def _tag_list(tags: list[str]) -> str:
+    nums = [int(t[1:]) for t in tags if t[1:].isdigit() and t[0] == "S"]
+    if len(nums) == len(tags) > 2 and nums == list(range(nums[0], nums[-1] + 1)):
+        return f"S{nums[0]}–S{nums[-1]}"
+    return ", ".join(tags)
+
+
+def agent_table_eras(doc: dict, full_reasons: bool = False) -> str:
+    """The paper's agent table: runs pooled per edit channel (analysis.failure_audit ERAS), with the panels they ran
+    on, malformed tool calls and the public scores of the era's submitted tags; excluded tags get a short reason
+    (the full one with full_reasons, as in RESULTS_AGENT.md)."""
+    head = ("| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls | Public score |\n"
+            "|---|---|---|---|---|---|")
+    rows = []
+    for era, e in doc.get("eras", {}).items():
+        panels = sorted({"+".join(doc["runs"][t]["panel"]["repos"]) for t in e["tags"] if "panel" in doc["runs"].get(t, {})})
+        scores = ", ".join(f"{t} {doc['scored'][t]:.4g}" for t in e["tags"] if t in doc.get("scored", {})) or "not submitted"
+        rows.append(f"| {ERA_LABELS.get(era, era)} | {_tag_list(e['tags'])} | {'; '.join(panels)} | "
+                    f"{e['resolved_runs']}/{e['solvable_runs']} | {e['malformed_calls']:,}/{e['calls']:,} "
+                    f"({100 * e['malformed_rate']:.1f}%) | {scores} |")
+    why = {t: w if full_reasons else re.split(r" \(|:", w)[0] for t, w in doc.get("excluded", {}).items()}
+    note = f"\n\n*Excluded: {'; '.join(f'{t} ({w})' for t, w in why.items())}.*" if why else ""
+    return head + "\n" + "\n".join(rows) + note
+
+
 def render_agent(doc: dict, out_md: Path) -> None:
     """RESULTS_AGENT.md: the full per-tag panel table and the pooled loss decomposition behind paper 4.10."""
     parts = ["# Agent dev-panel results (auto-generated from results/agent_summary.json)", "",
@@ -325,6 +354,20 @@ def render_agent(doc: dict, out_md: Path) -> None:
         parts += [f"| {k} | {v} |" for k, v in f["unresolved"].items()]
         parts += ["", "| Tool | Calls | Malformed | Rate |", "|---|---|---|---|"]
         parts += [f"| {k} | {v['calls']} | {v['malformed']} | {100 * v['rate']:.1f}% |" for k, v in f["tools"].items()]
+    if doc.get("eras"):
+        parts += ["", "## Runs pooled per edit channel", "", agent_table_eras(doc, full_reasons=True)]
+    st = doc.get("stability")
+    if st:
+        parts += ["", f"## Outcome stability over {st['n_runs']} panel runs ({', '.join(st['tags'])})", "",
+                  f"{st['tasks']} tasks have at least two runs in which the reference patch resolves "
+                  f"({st['runs_per_task_min']}-{st['runs_per_task_max']} runs each): {st['always']} always resolved, "
+                  f"{st['never']} never, {st['mixed']} mixed ({', '.join(st['mixed_tasks'])}).", "",
+                  "| Repository | Always | Never | Mixed |", "|---|---|---|---|"]
+        parts += [f"| {r} | {v['always']} | {v['never']} | {v['mixed']} |" for r, v in st["by_repo"].items()]
+    if doc.get("by_repo"):
+        parts += ["", "| Mixed panel | Repository | Resolved / solvable |", "|---|---|---|"]
+        parts += [f"| {t} | {r} | {v['resolved']}/{v['solvable']} |" for t, repos in doc["by_repo"].items()
+                  for r, v in repos.items()]
     out_md.write_bytes(("\n".join(parts) + "\n").encode("utf-8"))
 
 
@@ -349,7 +392,7 @@ def build(results_dir: Path, paper_dir: Path) -> None:
         if agent.exists():
             docs["agent"] = json.loads(agent.read_text(encoding="utf-8"))
             docs["lb"] = docs["agent"]["scored"]  # empty until Kaggle returns a public score: gates leaderboard prose
-            docs["agentmd"] = {"table": agent_table_compact(docs["agent"])}
+            docs["agentmd"] = {"table": agent_table_compact(docs["agent"]), "eras": agent_table_eras(docs["agent"])}
             render_agent(docs["agent"], paper_dir / "RESULTS_AGENT.md")
         text = fill_template(tpl.read_text(encoding="utf-8"), docs)
         if word_count(text) > MAX_WORDS:

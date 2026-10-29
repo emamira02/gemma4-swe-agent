@@ -4,7 +4,9 @@
 
 Inputs: results/kaggle_eval_<tag>/agent_eval/{per_task.jsonl, results/traces/*.json} and the gold patches in
 data/tasks.jsonl (read locally, never copied: the output keeps task ids, file-level booleans and counts only).
-Output: {"by_tag": {tag: {"counts", "per_task"}}, "aggregate": pooled task runs of all tags (paper 4.10)}.
+Output: {"by_tag": {tag: {"counts", "per_task"}}, "aggregate": pooled task runs of the edit_file era (or of all
+tags if none of it was audited), "eras": pooled runs per era (ERAS), "excluded": tags kept out of every era and why,
+"stability": per-task outcome agreement over all runs, "by_repo": resolved/solvable per repository of mixed panels}.
 
 Categories, first match wins (denominator = all panel tasks; "solvable" = the gold patch resolves the task):
   GOLD_UNSOLVABLE      the reference patch itself fails in the panel environment
@@ -36,6 +38,11 @@ REQUIRED = {"run_command": {"command"}, "read_file": {"filepath"}, "edit_file": 
             "write_file": {"filepath", "content"}, "run_skill_script": {"file_path", "skill_name"}}
 CATEGORIES = ("GOLD_UNSOLVABLE", "RESOLVED", "NO_EDIT_TOOL", "NO_EDIT", "WRONG_FILE", "RIGHT_FILE_TOOL", "RIGHT_FILE_TIMEOUT",
               "RIGHT_FILE_WRONG_FIX")
+# Runs are pooled only within one edit channel: edit_file (two code-valued arguments) up to S5, the single-argument
+# heredoc editor from S7, and the public Budget-Fit prompt (edit_file) as B1. Two tags stay out of every era.
+ERAS = {"edit_file": ("S1", "S2", "S3", "S4", "S5"), "editor": ("S7", "S8", "S9", "S12"), "public_prompt": ("B1",)}
+EXCLUDED = {"S6": "editor unreachable in 15 tasks (infrastructure, fixed in S7)",
+            "S13": "targeted panel: 11 selected failures and 3 controls"}
 
 
 def gold_files(patch: str) -> set[str]:
@@ -143,7 +150,9 @@ def aggregate(by_tag: dict) -> dict:
     resolved = [t["counts"]["RESOLVED"] for t in by_tag.values()]
     rank1 = sum(v["localize_gold_file_rank"] == 1 for v in solv)
     cats = Counter(v["category"] for v in unres)
+    calls, bad = sum(c for c, _ in tools.values()), sum(b for _, b in tools.values())
     return {"tags": list(by_tag), "n_tags": len(by_tag), "task_runs": len(runs), "solvable_runs": len(solv),
+            "calls": calls, "malformed_calls": bad, "malformed_rate": round(bad / calls, 6) if calls else 0.0,
             "resolved_runs": len(solv) - len(unres), "resolved_min": min(resolved), "resolved_max": max(resolved),
             "rank1_runs": rank1, "rank1_rate": round(rank1 / len(solv), 6),
             "unresolved_runs": len(unres), "unresolved": {c: cats.get(c, 0) for c in CATEGORIES[2:]},
@@ -156,18 +165,69 @@ def aggregate(by_tag: dict) -> dict:
                       for n, (c, b) in sorted(tools.items())}}
 
 
+def _repo(task_id: str) -> str:
+    return task_id.rsplit("_", 1)[0]
+
+
+def stability(by_tag: dict) -> dict:
+    """Does a task's outcome depend on the configuration? Over every run (all tags and panel designs) in which the
+    task's reference patch resolves, a task is "always" or "never" resolved, or "mixed"; tasks with one such run are
+    left out."""
+    outcomes: dict[str, list[bool]] = {}
+    for t in by_tag.values():
+        for tid, v in t["per_task"].items():
+            if v["category"] != "GOLD_UNSOLVABLE":
+                outcomes.setdefault(tid, []).append(v["category"] == "RESOLVED")
+    kind = {tid: "always" if all(o) else "never" if not any(o) else "mixed" for tid, o in outcomes.items() if len(o) >= 2}
+    n = Counter(kind.values())
+    return {"tags": list(by_tag), "n_runs": len(by_tag), "tasks": len(kind),
+            "runs_per_task_min": min((len(outcomes[t]) for t in kind), default=0),
+            "runs_per_task_max": max((len(outcomes[t]) for t in kind), default=0),
+            **{k: n.get(k, 0) for k in ("always", "never", "mixed")},
+            "mixed_share": round(n.get("mixed", 0) / max(1, len(kind)), 6),
+            "mixed_tasks": sorted(t for t, k in kind.items() if k == "mixed"),
+            "by_repo": {r: {k: sum(1 for t, kt in kind.items() if _repo(t) == r and kt == k) for k in ("always", "never", "mixed")}
+                        for r in sorted({_repo(t) for t in kind})}}
+
+
+def by_repo(by_tag: dict) -> dict:
+    """Resolved and gold-solvable task counts per repository, for panels that mix repositories."""
+    out = {}
+    for tag, t in by_tag.items():
+        repos: dict[str, list[int]] = {}
+        for tid, v in t["per_task"].items():
+            r = repos.setdefault(_repo(tid), [0, 0])
+            if v["category"] != "GOLD_UNSOLVABLE":
+                r[0], r[1] = r[0] + (v["category"] == "RESOLVED"), r[1] + 1
+        if len(repos) > 1:
+            out[tag] = {r: {"resolved": a, "solvable": b} for r, (a, b) in sorted(repos.items())}
+    return out
+
+
+def build(by_tag: dict) -> dict:
+    eras = {name: aggregate({t: by_tag[t] for t in tags if t in by_tag})
+            for name, tags in ERAS.items() if any(t in by_tag for t in tags)}
+    return {"by_tag": by_tag, "aggregate": eras.get("edit_file") or aggregate(by_tag), "eras": eras,
+            "excluded": {t: why for t, why in EXCLUDED.items() if t in by_tag}, "stability": stability(by_tag),
+            "by_repo": by_repo({t: v for t, v in by_tag.items() if t not in EXCLUDED})}
+
+
+def _tag_key(tag: str) -> tuple:
+    return (tag[:1], int(tag[1:]) if tag[1:].isdigit() else 0)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tags", nargs="+", default=None)
     ap.add_argument("--out", type=Path, default=ROOT / "results" / "failure_audit.json")
     a = ap.parse_args()
-    tags = a.tags or sorted((p.name.removeprefix("kaggle_eval_") for p in (ROOT / "results").glob("kaggle_eval_S*")
-                             if (p / "agent_eval" / "per_task.jsonl").exists()), key=lambda t: int(t[1:]))
+    tags = a.tags or sorted((p.name.removeprefix("kaggle_eval_") for p in (ROOT / "results").glob("kaggle_eval_*")
+                             if (p / "agent_eval" / "per_task.jsonl").exists()), key=_tag_key)
     golds = {t["instance_id"]: gold_files(t["patch"]) for t in
              map(json.loads, (ROOT / "data" / "tasks.jsonl").read_text(encoding="utf-8").splitlines())}
     out = {t: audit(t, golds) for t in tags}
-    a.out.write_bytes((json.dumps({"by_tag": out, "aggregate": aggregate(out)}, indent=1) + "\n").encode("utf-8"))
-    ids = sorted(next(iter(out.values()))["per_task"])
+    a.out.write_bytes((json.dumps(build(out), indent=1) + "\n").encode("utf-8"))
+    ids = sorted(set().union(*(t["per_task"] for t in out.values())))
     short = {"GOLD_UNSOLVABLE": "--", "RESOLVED": "OK", "NO_EDIT_TOOL": "NT", "NO_EDIT": "NE", "WRONG_FILE": "WF", "RIGHT_FILE_TOOL": "RT",
              "RIGHT_FILE_TIMEOUT": "TO", "RIGHT_FILE_WRONG_FIX": "WX"}
     print("task       " + " ".join(f"{t:>3}" for t in tags))

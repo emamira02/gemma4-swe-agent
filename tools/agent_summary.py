@@ -4,8 +4,8 @@
 
 Inputs: results/agent_runs/<tag>.json (dev-panel aggregates from analysis.agent_traces), runs.csv (public
 leaderboard scores, one scored run per tag) and results/failure_audit.json (analysis.failure_audit: pooled loss
-categories and malformed calls per tool, under "failure"). A tag appears under "scored" only once Kaggle has returned
-a score.
+categories and malformed calls per tool under "failure", plus its "eras", "excluded", "stability" and "by_repo"
+blocks). A tag appears under "scored" only once Kaggle has returned a score.
 """
 from __future__ import annotations
 
@@ -51,7 +51,9 @@ def build(runs_dir: Path, runs_csv: Path, audit: Path | None = None) -> dict:
     doc = {"tags": tags, "runs": runs, "scored": scored, "n_scored": len(scored),
            "n_panels": len(with_panel), "baseline": with_panel[0] if with_panel else None}
     if audit is not None and audit.exists():
-        doc["failure"] = json.loads(audit.read_text(encoding="utf-8"))["aggregate"]
+        fa = json.loads(audit.read_text(encoding="utf-8"))
+        doc["failure"] = fa["aggregate"]
+        doc.update({k: fa[k] for k in ("eras", "excluded", "stability", "by_repo") if k in fa})
     return doc
 
 

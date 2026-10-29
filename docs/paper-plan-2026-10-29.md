@@ -30,8 +30,8 @@ public code link), method 3.5, clarity 3.5. What is stale or weak:
 2. **What limits the agent (rewritten 4.10, new section).**
    - Tool-call serialization: with the scorer's vLLM gemma4 parser, tools with two code-valued string arguments
      break (edit_file 77/248 malformed in S1-S5). After moving edits to one argument (heredoc editor), malformed
-     calls fell from 125 of 2,655 (4.7%, S1-S5) to 4 of 2,370 (0.2%, S7-S13); the public edit_file prompt run on
-     the same harness (B1) had 57 of 625 (9.1%). Descriptive, different configurations: stated as such.
+     calls fell from 119 of 2,655 (4.5%, S1-S5) to 8 of 2,056 (0.4%, S7, S8, S9, S12; failure_audit definition); the
+     public edit_file prompt on the same harness (B1) had 61 of 625 (9.8%). Descriptive, different configurations: stated as such.
    - After localization: the policy ranks an edited file first in 57.9% of solvable runs (S1-S5), yet only 10 of 85
      unresolved runs edited the wrong file; the rest are right-file wrong fixes, timeouts and no edits; the mixed panel shows fastapi (long PR descriptions) far more solvable than rich
      (titles): 9/12 vs 3-4/12.
@@ -49,7 +49,7 @@ the in-container localization and editing skills would be the resource).
 | Dates | Work | Output |
 |---|---|---|
 | 29-30 Oct | Plan, Emanuele's decisions below | this file |
-| 30 Oct-2 Nov | Extend analysis to all panels: failure audit for S6-S13 and B1, per-repository splits, outcome stability metric, serialization table, claim guards; tests | results/*.json, guards |
+| 30 Oct-2 Nov | DONE 29 Oct (eras, stability, per-repo, era table in 4.10; build green at 2,992 words). Extend analysis to all panels: failure audit for S6-S13 and B1, per-repository splits, outcome stability metric, serialization table, claim guards; tests | results/*.json, guards |
 | 31 Oct-1 Nov | P1 panels (already scheduled, p1-panel-1..4) | optional row |
 | 2-4 Nov | Rewrite: abstract, contributions, new sections 5-6, compressed 4.1-4.8, limitations, reproducibility; build passes at <= 3,000 words | paper/PAPER.md |
 | 5-6 Nov | Fresh-eyes review against the five criteria; clarity pass; figure legibility at writeup width | REVIEW.md |
@@ -59,10 +59,10 @@ the in-container localization and editing skills would be the resource).
 
 ## Decisions (Emanuele, chat 2026-10-29)
 - Code: DECIDED (a), a Kaggle notebook in Project Links, private until 12 Nov and public afterwards.
-- Code contents: PENDING. Recommended: study and analysis code only (localization study, panel aggregates in
-  results/agent_runs, the analysis that produces every number); the agent's skill scripts and prompt are described
-  in the text and released after 2 Dec. Reason: the notebook becomes public 20 days before the main-track deadline
-  and Emanuele wants to avoid others building on his work there.
+- Code contents: DECIDED (Emanuele: "Yes, study only"): study and analysis code only (localization study, panel
+  aggregates in results/agent_runs, the analysis that produces every number); the agent's skill scripts and prompt
+  are described in the text and released after 2 Dec, because the notebook becomes public 20 days before the
+  main-track deadline.
 - kaggle-paper-final: DECIDED, moved to 9 Nov 10:00 with a prompt matching this plan (final build, writeup draft,
   stop before Submit).
 

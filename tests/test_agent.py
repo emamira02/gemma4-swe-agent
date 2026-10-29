@@ -600,6 +600,28 @@ def test_trace_metrics_count_editor_edits():
     assert not f["wrote_source"] and f["edit_attempts"] == 1
 
 
+def test_failure_audit_eras_stability_and_repos():
+    """The paper pools runs only within an edit channel (eras), keeps S6 and S13 out of every era, counts per-task
+    outcome agreement over all runs and splits mixed panels by repository."""
+    from analysis import failure_audit as fa
+
+    def run(cats, tools):
+        return {"counts": {c: list(cats.values()).count(c) for c in fa.CATEGORIES},
+                "per_task": {tid: {"category": c, "localize_gold_file_rank": 1 if c == "RESOLVED" else 2,
+                                   "calls_by_tool": tools} for tid, c in cats.items()}}
+    by_tag = {"S1": run({"rich_1": "RESOLVED", "rich_2": "NO_EDIT", "rich_3": "GOLD_UNSOLVABLE"}, {"edit_file": [4, 2]}),
+              "S6": run({"rich_1": "RESOLVED", "rich_2": "RESOLVED", "rich_3": "NO_EDIT"}, {"run_command": [3, 0]}),
+              "S12": run({"rich_1": "RESOLVED", "rich_2": "WRONG_FILE", "fastapi_9": "RESOLVED"}, {"run_command": [8, 0]})}
+    doc = fa.build(by_tag)
+    assert set(doc["eras"]) == {"edit_file", "editor"} and doc["aggregate"] == doc["eras"]["edit_file"]
+    assert doc["eras"]["edit_file"]["malformed_rate"] == 0.5 and doc["eras"]["editor"]["malformed_rate"] == 0.0
+    assert doc["eras"]["editor"]["tags"] == ["S12"] and doc["excluded"] == {"S6": fa.EXCLUDED["S6"]}
+    st = doc["stability"]  # rich_1 always (3 runs), rich_2 mixed (3 runs), rich_3 and fastapi_9 have one solvable run
+    assert (st["tasks"], st["always"], st["never"], st["mixed"]) == (2, 1, 0, 1) and st["mixed_tasks"] == ["rich_2"]
+    assert st["by_repo"] == {"rich": {"always": 1, "never": 0, "mixed": 1}}
+    assert doc["by_repo"] == {"S12": {"fastapi": {"resolved": 1, "solvable": 1}, "rich": {"resolved": 1, "solvable": 2}}}
+
+
 def test_edit_undoes_the_sandbox_path_rewriting(tmp_path):
     """The harness's subprocess sandbox rewrites /tmp, /workspace and /usr/local/bin inside the whole run_command
     string, heredoc included; code naming those paths must still reach the file as written."""

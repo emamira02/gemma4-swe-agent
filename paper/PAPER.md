@@ -64,13 +64,13 @@ The dev set has 129 tasks from fastapi, rich, requests and httpx; 126 change non
 **4.10 The agent.** Our single agent runs the lexical policy of 4.8 in the task container; the model re-ranks the printed symbols, reads one to three ranges and edits, and a script reverts test edits and compiles changed files before `submit_patch`. Each configuration ran once, with the scorer's settings, on 24 rich tasks. Pooling 5 configurations (the same tasks, so runs are not independent), the reference patch passes on 107 of 120 task runs; on 57.9% of these the policy ranks an edited file first, yet each configuration resolves only 4–5 tasks. Few losses are wrong-file edits: of 85 unresolved runs, 10 edited only other files, while 40 edited such a file but timed out (20) or submitted a wrong fix (20) and 35 never applied an edit. One cause is the serving stack: arguments come out in alphabetical order and the parser ends a string only at a dedicated token, so a string closed with a backtick swallows the arguments after it. 77 of 248 `edit_file` calls (two code arguments) arrived malformed, against 0 of 1,047 `run_command` calls (one argument); later tags pass code in a single argument. The panel is small and single-repository: a debugging instrument, not an estimate of hidden-set performance (full tables: RESULTS_AGENT.md). Public leaderboard scores below are from one scored run per configuration on the hidden tasks; with a single run, differences between configurations are not tested.
 
 
-| Tag | Resolved (of solvable) | Timeouts | Tasks with malformed calls | Public score |
-|---|---|---|---|---|
-| S1 | 4/21 | 16 | 14 | 0.15 |
-| S2 | 4/21 | 14 | 5 | not submitted |
-| S3 | 4/22 | 12 | 3 | 0.12 |
-| S4 | 5/22 | 9 | 8 | not submitted |
-| S5 | 5/21 | 12 | 1 | not submitted |
+| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls | Public score |
+|---|---|---|---|---|---|
+| edit_file (two code arguments) | S1–S5 | rich | 22/107 | 119/2,655 (4.5%) | S1 0.15, S3 0.12, S5 0.12 |
+| heredoc editor (one argument) | S7, S8, S9, S12 | fastapi+rich; rich | 37/91 | 8/2,056 (0.4%) | S12 0.17 |
+| public prompt, edit_file | B1 | rich | 6/21 | 61/625 (9.8%) | not submitted |
+
+*Excluded: S6 (editor unreachable in 15 tasks); S13 (targeted panel).*
 
 
 ## 5. Implications for agent design
