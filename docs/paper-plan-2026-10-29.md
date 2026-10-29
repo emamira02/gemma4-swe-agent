@@ -57,7 +57,16 @@ the in-container localization and editing skills would be the resource).
 | 9 Nov | Clean-commit build, Emanuele confirms in chat, submit | submitted writeup |
 | 10-12 Nov | Buffer only | |
 
-## Decisions needed from Emanuele
+## Decisions (Emanuele, chat 2026-10-29)
+- Code: DECIDED (a), a Kaggle notebook in Project Links, private until 12 Nov and public afterwards.
+- Code contents: PENDING. Recommended: study and analysis code only (localization study, panel aggregates in
+  results/agent_runs, the analysis that produces every number); the agent's skill scripts and prompt are described
+  in the text and released after 2 Dec. Reason: the notebook becomes public 20 days before the main-track deadline
+  and Emanuele wants to avoid others building on his work there.
+- kaggle-paper-final: DECIDED, moved to 9 Nov 10:00 with a prompt matching this plan (final build, writeup draft,
+  stop before Submit).
+
+## Decisions as first proposed
 1. Code for verifiability: (a) a Kaggle notebook attached in Project Links, private until the deadline and then
    made public automatically (rules-compliant, recommended); (b) no code, writeup only (weaker on Verifiability).
 2. What the code contains before 2 Dec: (a) the localization study and analysis code plus the three skill scripts
