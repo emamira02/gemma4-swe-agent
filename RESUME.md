@@ -49,12 +49,15 @@ traces into results/agent_runs/<tag>.json, writes STATE.json, prints the next ac
   diff, Edit of gemma4-swe-agent/**). Emanuele: PC and app stay on in the evening; GPU quota 30 h/week, next reset
   ~2026-10-31 11:30 UTC.
 
-## Kaggle authentication (verified 2026-10-28 23:39 UTC)
-- The CLI's OAuth login (~/.kaggle/credentials.json) lasts ~12 h and is not refreshed automatically: written
-  2026-10-26 18:22 UTC -> "Authentication required" from ~06:30 UTC; written 2026-10-28 11:27 UTC -> failing at
-  23:36 UTC. Unattended runs then stop at status.py. Durable fix needs Emanuele (tokens are never handled by the
-  assistant): a non-expiring API token from kaggle.com/settings/api saved as ~/.kaggle/access_token (and, if the
-  expired OAuth file still takes precedence, a CLI logout). Until then the loop needs a fresh login every 12 h.
+## Kaggle authentication (updated 2026-10-29 ~13:15 UTC)
+- FIXED 2026-10-29: Emanuele generated a new API token on kaggle.com/settings/api and saved it himself as
+  ~/.kaggle/access_token (13:09 UTC). kaggle 2.2.4 tries, in order: KAGGLE_API_TOKEN, ~/.kaggle/access_token (skipped
+  if introspection says invalid/expired), legacy kaggle.json, then the OAuth ~/.kaggle/credentials.json. Verified
+  without printing the token: KaggleApi().authenticate() -> auth_method ACCESS_TOKEN, user emanuelemiranda, and a
+  competition_submissions call works. The token's expiry is whatever Emanuele chose (not visible to the assistant).
+- Before: the old access_token file held an invalid token, so the CLI fell back to the OAuth login, which failed
+  ~12 h after each login (2026-10-26 and 2026-10-28). If "Authentication required" comes back, the token expired or
+  was revoked: Emanuele regenerates it; tokens are never handled by the assistant.
 
 ## Release process (owner decision 2026-10-27, replaces the policy below where they differ)
 Emanuele (chat, 2026-10-27): "if you submit S12 today, submit S14 tomorrow"; every UTC day a NEW version that fixes
