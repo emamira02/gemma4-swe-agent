@@ -3,4 +3,5 @@ date,experiment_id,config_hash,public_score,status,notes
 2026-10-13 21:47,S3,e1af59a2b337,0.12,COMPLETE,kernel v2; S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts
 2026-10-26 20:50,S5,39038672b64d,0.12,COMPLETE,"kernel v3; S4 + line-range edit fallback (replace_lines.py) and recovery rule for broken edit_file calls; panel 5/21, malformed calls 43->4, no_edit 8"
 2026-10-27 21:33,S12,cb8fcafd455f,0.17,COMPLETE,"kernel v4; public Budget-Aware V10 prompt (attributed) + heredoc editor + localize/finalize, V10 budget; mixed panel 13/24 (fastapi 9/12, rich 4/12), 8.57 h"
-2026-10-28 23:23,S14,0d410b080341,,PENDING,kernel v5; S12 + finalize import check: import-time errors caused by the change are reported before submit (S13 panel rich_4070: NameError at import failed every hidden test)
+2026-10-28 23:23,S14,0d410b080341,0.15,COMPLETE,kernel v5; S12 + finalize import check: import-time errors caused by the change are reported before submit (S13 panel rich_4070: NameError at import failed every hidden test)
+2026-10-30 19:21,S15,a9049082de21,,PENDING,kernel v6; S14 + editor backslash-count tier: a SEARCH that differs from the file only by a consistent backslash multiple is applied and its REPLACE scaled (S7-S13: 9 of 16 near-identical NOT APPLIED; fastapi_15588 resent one block 5 times)
