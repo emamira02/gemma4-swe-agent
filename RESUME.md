@@ -100,7 +100,7 @@ not by the single best public score.
 | S1 dev panel | 4/21 solvable resolved; 16 timeouts; 53 malformed calls (backticks); see results/agent_runs/S1.json |
 | S2 (fbfe865bd968) | SKIPPED 2026-10-13 (superseded by S3: same panel resolves, fewer timeouts) |
 | S3 (e1af59a2b337) | panel done 2026-10-13 (4/22 resolved, 12 timeouts, no_edit 5); submitted 2026-10-13 21:47 UTC, COMPLETE, public score 0.12 (seen 2026-10-16 11:14 UTC; below S1 0.15) |
-| Queue | 2026-10-30 19:21 UTC: public scores S1 0.15, S3 0.12, S5 0.12, S12 0.17 (best so far, 10/58), S14 0.15 (seen 2026-10-30 19:19 UTC); S15 SUBMITTED 19:21 UTC (kernel v6, PENDING); no submission on 2026-10-29 UTC (S14 still scoring); S16 next in submit_queue.json (last queued tag) |
+| Queue | 2026-10-30 20:21 UTC (loop check: S15 still PENDING, no panel running, GPU quota 0 until 2026-10-31 ~11:30 UTC): public scores S1 0.15, S3 0.12, S5 0.12, S12 0.17 (best so far, 10/58), S14 0.15 (seen 2026-10-30 19:19 UTC); S15 SUBMITTED 19:21 UTC (kernel v6, PENDING); no submission on 2026-10-29 UTC (S14 still scoring); S16 next in submit_queue.json (last queued tag) |
 | S4 (16a19a7ecd46) | panel done 2026-10-14 07:15 UTC: 5/22 resolved (best so far), 9 timeouts, empty 3, no_edit 2, BUT tasks_with_arg_errors 3 -> 8 (arg_errors 5 -> 43, 42 backtick) -> BLOCKED by rule; needs fix (new tag) |
 | S5 (39038672b64d) | submitted 2026-10-26 20:50 UTC, COMPLETE, public score 0.12 (seen 2026-10-27 21:32 UTC); panel done 2026-10-26 20:34 UTC: 5/21 resolved, 12 timeouts, empty 10, no_edit 8, tasks_with_arg_errors 1 (arg_errors 4) -> BLOCKED (empty + no_edit 18 vs 5) |
 | S6 (291a2befe7e9) | panel done 2026-10-26 22:41 UTC: 5/22, editor not reachable in 15 tasks -> BLOCKED (infrastructure); superseded by S7 |
