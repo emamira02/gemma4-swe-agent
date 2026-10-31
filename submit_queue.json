@@ -18,5 +18,10 @@
   "tag": "S16",
   "added": "2026-10-29",
   "hypothesis": "S15 + prompt: a grep/git grep with no match is not a broken command (63 of 165 run_command 'errors' in S9/S12/S13 were empty no-match searches); close each editor heredoc with exactly one EOF (6 successful edits reported as exit 127 after a second EOF line)"
+ },
+ {
+  "tag": "S18",
+  "added": "2026-10-31",
+  "hypothesis": "S16 + editor import check: after each applied edit the editor imports the module it wrote and warns when the error is raised in that file (S12 and S13 rich_4070 removed a still-used import inspect and ran out of calls before finalize; 12 of 50 non-empty S9/S12/S13 patches never ran finalize)"
  }
 ]

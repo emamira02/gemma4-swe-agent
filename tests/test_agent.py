@@ -633,10 +633,49 @@ def test_edit_undoes_the_sandbox_path_rewriting(tmp_path):
     assert edit.untranslate(text, str(tmp_path / "plain")) == text  # not a harness sandbox: untouched
 
 
+def test_edit_reports_an_import_broken_by_the_edit(repo):
+    """S12 and S13 panels, rich_4070: an applied edit removed import inspect still used in a class body; the session
+    then ran out of calls without finalize (12 of 50 non-empty S9/S12/S13 patches never ran it), so the NameError at
+    import failed every hidden test. The editor itself now reports it right after the edit; the edit stays written."""
+    (repo / "pkg" / "frames.py").write_text("import inspect\nimport os\n\n\nclass Frames:\n"
+                                            "    current = inspect.currentframe\n", encoding="utf-8")
+    r = run_edit(repo, block("import inspect\nimport os", "import os"), "pkg/frames.py")
+    assert r.returncode == 0 and r.stdout.startswith("APPLIED to pkg/frames.py"), r.stdout
+    assert "WARNING: import pkg.frames now fails" in r.stdout and "NameError" in r.stdout, r.stdout
+    assert "import inspect" not in (repo / "pkg" / "frames.py").read_text(encoding="utf-8")
+    r = run_edit(repo, block("import os", "import inspect\nimport os"), "pkg/frames.py")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    # a new module that breaks at import, a missing third-party package, a loose script, a non-Python file
+    r = run_edit(repo, "VALUE = undefined_name\n", "pkg/fresh.py")
+    assert r.returncode == 0 and "CREATED pkg/fresh.py" in r.stdout and "WARNING: import pkg.fresh" in r.stdout
+    r = run_edit(repo, block("def render_table(rows, width=80):", "import not_installed_anywhere_xyz\n\n\n"
+                             "def render_table(rows, width=80):"), "pkg/render.py")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    r = run_edit(repo, block("def parse_header_example():", "X = undefined_name\n\n\ndef parse_header_example():"),
+                 "docs/example.py")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    r = run_edit(repo, "x = undefined_name\n", "notes.txt")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    # an import that runs through other files only is not blamed on this edit
+    (repo / "pkg" / "uses_fresh.py").write_text("from .fresh import VALUE\n", encoding="utf-8")
+    r = run_edit(repo, block("from .fresh import VALUE", "from .fresh import VALUE\nOTHER = 1"), "pkg/uses_fresh.py")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    # raised in this file through the package __init__ (frozen importlib frames in between); a bad name import
+    r = run_edit(repo, block("DEFAULT_SEP = ';'", "DEFAULT_SEP = re.escape(SEP_CHAR)"), "pkg/core.py")
+    assert r.returncode == 0 and "WARNING: import pkg.core now fails" in r.stdout and "SEP_CHAR" in r.stdout, r.stdout
+    r = run_edit(repo, block("DEFAULT_SEP = re.escape(SEP_CHAR)", "DEFAULT_SEP = ';'"), "pkg/core.py")
+    assert r.returncode == 0 and "WARNING" not in r.stdout, r.stdout
+    r = run_edit(repo, "from .core import no_such_name\n", "pkg/names.py")
+    assert r.returncode == 0 and "WARNING: import pkg.names now fails" in r.stdout and "ImportError" in r.stdout
+    assert not list(repo.rglob("__pycache__"))
+    assert edit.import_warning(str(repo), "pkg/missing_file.py") == ""  # never raises
+
+
 def test_editor_copies_are_in_sync():
     """PROTECTED must match finalize.py; install_editor must be the same code in localize.py and finalize.py."""
     import inspect
     assert edit.PROTECTED.pattern == finalize.PROTECTED.pattern
+    assert inspect.getsource(edit.importable) == inspect.getsource(finalize.importable)
     assert inspect.getsource(localize.install_editor) == inspect.getsource(finalize.install_editor)
 
 

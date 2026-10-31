@@ -252,6 +252,17 @@ if err is None:
         pyc = [d for d, _, _ in os.walk(sws) if d.endswith("__pycache__") and "/.git" not in d]
         case("B finalize passes the fixed module and writes no __pycache__",
              "IMPORT ERRORS" not in fo and "OK: call submit_patch" in fo and not pyc, fo[-1500:] + f"\npycache: {pyc}")
+        # S18: the editor reports an import its own edit broke (S12/S13 rich_4070 never reached finalize)
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n<<<<<<< SEARCH\nimport textwrap\n"
+                        "=======\nimport os\n>>>>>>> REPLACE\nEOF")
+        case("B editor warns that its edit broke the import, with workspace-relative paths",
+             code == 0 and "WARNING: import pkg.markup now fails" in out and "NameError" in out
+             and 'File "pkg/markup.py"' in out and sws not in out, out)
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n<<<<<<< SEARCH\nimport os\n"
+                        "=======\nimport textwrap\n>>>>>>> REPLACE\nEOF")
+        pyc = [d for d, _, _ in os.walk(sws) if d.endswith("__pycache__") and "/.git" not in d]
+        case("B editor is silent once the import works again, no __pycache__",
+             code == 0 and out.startswith("APPLIED") and "WARNING" not in out and not pyc, out + f"\npycache: {pyc}")
         subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
         os.remove(os.path.join(sws, "pkg", "__init__.py"))
         code, out = run("python3 /tmp/swe/edit.py pkg/markup.py <<'EOF'\nx\nEOF")

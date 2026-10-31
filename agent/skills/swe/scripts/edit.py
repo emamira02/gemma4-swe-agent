@@ -24,7 +24,8 @@ offset (the replacement is shifted by the same offset), then ignoring the number
 in the file is the same multiple of the run typed (the replacement is scaled by it; a run it cannot scale refuses
 the edit). A SEARCH that is missing or ambiguous changes nothing and
 prints the closest region with line numbers; resending a block this editor already applied is reported, not redone. A
-Python result that does not compile is not written. Writes are atomic and keep line endings, final newline and file
+Python result that does not compile is not written; a
+written package module that no longer imports is reported. Writes are atomic and keep line endings, final newline and file
 mode. Tests and test configuration are refused (the grader resets them). Exit 0 = applied, 1 = nothing written.
 """
 from __future__ import annotations
@@ -34,6 +35,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 from fractions import Fraction
@@ -464,6 +466,56 @@ def compile_error(lines: list[str], rel: str) -> str | None:
     return None
 
 
+IMPORT_TIMEOUT_S = 20
+TB_FILE_RX = re.compile(r'^\s*File "([^"]+)", line \d+', re.M)
+
+
+def importable(root: str, path: str) -> str | None:
+    """Dotted module name for a changed file inside a package (a top-level directory with __init__.py, or
+    docs_src/, whose tutorials the tests import); None for scripts and other loose files, which may run code."""
+    parts = path[:-3].split("/")
+    if parts[0] == "src" and len(parts) > 2:
+        parts = parts[1:]
+        root = os.path.join(root, "src")
+    if len(parts) < 2 or not all(p.isidentifier() for p in parts):
+        return None
+    if parts[0] != "docs_src" and not os.path.isfile(os.path.join(root, parts[0], "__init__.py")):
+        return None
+    if parts[-1] == "__init__":
+        parts = parts[:-1]
+    return ".".join(parts)
+
+
+def import_warning(root: str, rel: str) -> str:
+    """A warning when importing the module just written now fails with an error raised in this file. finalize.py
+    checks a whole patch, but 12 of 50 non-empty patches in the S9/S12/S13 panels were submitted without finalize
+    (budget or clock): S12 and S13 rich_4070 removed a still-used import inspect around call 8 and every hidden test
+    failed on the NameError at import. A missing third-party package is an environment gap, not reported. Never
+    raises."""
+    try:
+        mod = importable(root, rel) if rel.endswith(".py") else None
+        if not mod:
+            return ""
+        cwd = os.path.join(root, "src") if rel.startswith("src/") else root
+        env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}  # no __pycache__ in the workspace
+        r = subprocess.run([sys.executable, "-c", f"import {mod}"], cwd=cwd, env=env, capture_output=True,
+                           text=True, errors="replace", timeout=IMPORT_TIMEOUT_S)
+        lines = r.stderr.strip().splitlines()
+        frames = [f for f in TB_FILE_RX.findall(r.stderr) if not f.startswith("<")]  # skip <frozen importlib...>
+        # blame the edit only when the error is raised in this file (the innermost frame), not in a module it imports
+        if r.returncode == 0 or not lines or not frames or not ("/" + frames[-1].replace(os.sep, "/")).endswith("/" + rel):
+            return ""
+        missing = re.match(r"ModuleNotFoundError: No module named '([\w.]+)'", lines[-1])
+        if missing and not os.path.isdir(os.path.join(cwd, missing.group(1).split(".")[0])):
+            return ""
+        prefixes = (cwd + os.sep, cwd.replace(os.sep, "/") + "/")  # show workspace-relative paths
+        tail = "\n    ".join(ln.replace(prefixes[0], "").replace(prefixes[1], "")[:200] for ln in lines[-6:])
+        return (f"\nWARNING: import {mod} now fails, so every hidden test fails until this is fixed (unless the next "
+                f"edit of this change fixes it):\n    {tail}")
+    except Exception:  # timeout, no interpreter: the edit itself stands
+        return ""
+
+
 # ---------- main ----------
 def run(argv: list[str], payload: str, root: str) -> int:
     args = [a for a in argv if a != "--"]
@@ -489,7 +541,7 @@ def run(argv: list[str], payload: str, root: str) -> int:
             raise EditError(f"NOT WRITTEN: new file {rel} would not compile ({err})")
         write_atomic(full, content, "\n", True)
         print(f"CREATED {rel} ({len(content)} lines). If it defines public names, export them where the package does "
-              "(for example in __init__.py).")
+              "(for example in __init__.py)." + import_warning(root, rel))
         return 0
     lines, eol, final_nl = read_text(full)
     before_ok = compile_error(lines, rel) is None
@@ -522,7 +574,8 @@ def run(argv: list[str], payload: str, root: str) -> int:
                       f"{show(out, lo - CONTEXT, hi + CONTEXT)}" for lo, hi in regions)
     msg = (f"APPLIED to {rel}: " + "; ".join(report) + "\n" + removed + shown
            + ("\nWARNING: the file did not compile before this edit either." if err else ""))
-    print(msg if len(msg) <= MAX_OUT else msg[:MAX_OUT - 40] + "\n...[output shortened]")
+    print((msg if len(msg) <= MAX_OUT else msg[:MAX_OUT - 40] + "\n...[output shortened]")
+          + ("" if err else import_warning(root, rel)))
     return 0
 
 
