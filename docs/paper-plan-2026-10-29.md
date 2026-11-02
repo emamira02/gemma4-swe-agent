@@ -104,6 +104,8 @@ the in-container localization and editing skills would be the resource).
 - 2026-11-02 (chat, supersedes the code decisions below where they differ): the GitHub repository stays PUBLIC
   ("Keep it public, post the link"); its link is posted on the main competition's Kaggle discussion forum to meet
   General Rule 6.b. The paper cites it in section 8. "Study only" no longer applies: the agent bundles are public.
+  POSTED 2026-11-02 ~22:58 UTC from emanuelemiranda (owner: "Sì, pubblica", text approved in chat, via his Chrome):
+  https://www.kaggle.com/competitions/gemma-4-developer-agent/discussion/755172 , visible signed out.
 - Code: DECIDED (a), a Kaggle notebook in Project Links, private until 12 Nov and public afterwards.
 - Code contents: DECIDED (Emanuele: "Yes, study only"): study and analysis code only (localization study, panel
   aggregates in results/agent_runs, the analysis that produces every number); the agent's skill scripts and prompt
