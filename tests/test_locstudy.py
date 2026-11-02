@@ -307,3 +307,22 @@ def test_agent_summary_carries_failure_aggregate(tmp_path):
     audit.write_text(json.dumps({"by_tag": {}, "aggregate": {"right_file_share": 0.5}}))
     assert agent_summary.build(runs, tmp_path / "none.csv", audit)["failure"] == {"right_file_share": 0.5}
     assert "failure" not in agent_summary.build(runs, tmp_path / "none.csv")
+
+
+def test_serialization_signature_finds_the_swallowed_argument(tmp_path):
+    from analysis.serialization_audit import audit_tags, call_facts
+    swallowed = {"filepath": "a.py", "new_string": 'x = "`y`"`,old_string:<|"|>x = 1'}
+    assert call_facts("edit_file", swallowed) == {"missing": ["old_string"], "found": ["old_string"],
+                                                  "closers": ["backtick"], "alphabetical": True}
+    lost = call_facts("edit_file", {"filepath": "a.py", "new_string": "old_strings are fine: no key here"})
+    assert lost["missing"] == ["old_string"] and lost["found"] == []                 # missing, but no signature
+    assert not call_facts("edit_file", {"filepath": "a", "old_string": "b", "new_string": "c"})["alphabetical"]
+    traces = tmp_path / "kaggle_eval_T1" / "agent_eval" / "results" / "traces"
+    traces.mkdir(parents=True)
+    calls = [{"function_name": "edit_file", "arguments": swallowed},
+             {"function_name": "edit_file", "arguments": {"filepath": "a", "new_string": "c", "old_string": "b"}},
+             {"function_name": "run_command", "arguments": {"command": "ls"}}]
+    (traces / "trace_t.json").write_text(json.dumps({"steps": [{"tool_calls": calls}]}), encoding="utf-8")
+    out = audit_tags(("T1",), tmp_path)["edit_file"]
+    assert out == {"calls": 2, "missing_required": 1, "missing_found_in_value": 1, "well_formed": 1,
+                   "well_formed_alphabetical": 1, "closer_before_swallowed_key": {"backtick": 1}}

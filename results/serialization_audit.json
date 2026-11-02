@@ -1,0 +1,56 @@
+{
+ "eras": {
+  "edit_file": {
+   "tags": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5"
+   ],
+   "write_file": {
+    "calls": 94,
+    "well_formed": 90,
+    "well_formed_alphabetical": 90,
+    "missing_required": 4,
+    "missing_found_in_value": 4,
+    "closer_before_swallowed_key": {
+     "backtick": 3,
+     "double_quote": 1
+    }
+   },
+   "edit_file": {
+    "calls": 248,
+    "well_formed": 171,
+    "well_formed_alphabetical": 170,
+    "missing_required": 77,
+    "missing_found_in_value": 77,
+    "closer_before_swallowed_key": {
+     "backtick": 72,
+     "double_quote": 5
+    }
+   }
+  },
+  "public_prompt": {
+   "tags": [
+    "B1"
+   ],
+   "write_file": {
+    "calls": 47,
+    "well_formed": 47,
+    "well_formed_alphabetical": 47
+   },
+   "edit_file": {
+    "calls": 121,
+    "well_formed": 64,
+    "well_formed_alphabetical": 64,
+    "missing_required": 57,
+    "missing_found_in_value": 57,
+    "closer_before_swallowed_key": {
+     "backtick": 49,
+     "double_quote": 8
+    }
+   }
+  }
+ }
+}
