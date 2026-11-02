@@ -36,6 +36,13 @@ after localization, and one of them is a serialization failure diagnosed per cal
 2610.33958, SweRank, 2607.11046, 2607.09691 and in-competition work (748395, 750732, BudgetAudit, codegraph-loc).
 CPU-only additions: lexical-overlap control for C1/C2 (post hoc, declared). No new inference unless approved.
 
+F2 done 2026-11-02 (owner: "Sì, procedi con F2"). Registered post hoc results (docs/posthoc-anchor-analysis-2026-11-02.md):
+the re-rank does not narrow the anchor gap (BM25 minus re-rank +3.0 pp [-14.8, 22.0]); the gap splits into pool
+reachability +22.8 pp [7.5, 37.7] and ranking +6.7 pp [-3.1, 17.6]; the anchor odds ratio stays above 1 with lexical
+overlap controlled (re-rank 4.31 [2.07, 10.60]). The earlier idea "the re-rank closes the anchor gap" was false and
+is not in the paper. The "Proposed thesis" below is history; the paper follows the two-contribution plan.
+Next: fresh-eyes review (5-6 Nov row), figures at writeup width, then notebook and writeup draft.
+
 ## Verified facts (competition pages, read 2026-10-29)
 - Submission: a Kaggle Writeup with title and subtitle, abstract, introduction, methods and experiments, related
   work and citations; **at most 3,000 words**; unpublished research; non-archival. Optional: a public notebook in
@@ -86,8 +93,8 @@ the in-container localization and editing skills would be the resource).
 |---|---|---|
 | 29-30 Oct | Plan, Emanuele's decisions below | this file |
 | 30 Oct-2 Nov | DONE 29 Oct (eras, stability, per-repo, era table in 4.10; build green at 2,992 words). Extend analysis to all panels: failure audit for S6-S13 and B1, per-repository splits, outcome stability metric, serialization table, claim guards; tests | results/*.json, guards |
-| 31 Oct-1 Nov | P1 panels (already scheduled, p1-panel-1..4) | optional row |
-| 2-4 Nov | Rewrite: abstract, contributions, new sections 5-6, compressed 4.1-4.8, limitations, reproducibility; build passes at <= 3,000 words | paper/PAPER.md |
+| 31 Oct-1 Nov | P1 panels (already scheduled, p1-panel-1..4) | optional row; DROPPED 2 Nov (S16ctl verdict has no owner task; not needed for the two-contribution paper) |
+| 2-4 Nov | DONE 2 Nov (2db4f35, owner OK for F2 in chat): rewrite around two contributions, registered post hoc anchor analyses (cd93427, 55ac7a9), serialization audit, related work vs nearest priors; build green at 2,911 words | paper/PAPER.md |
 | 5-6 Nov | Fresh-eyes review against the five criteria; clarity pass; figure legibility at writeup width | REVIEW.md |
 | 7-8 Nov | Code notebook (if approved) and writeup draft on Kaggle (Claude in Chrome, Emanuele signed in); word count as the site counts it | draft writeup |
 | 9 Nov | Clean-commit build, Emanuele confirms in chat, submit | submitted writeup |
