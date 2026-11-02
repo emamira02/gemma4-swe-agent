@@ -33,3 +33,8 @@ from it. A significant result for one method and not another is not by itself a 
 
 Output: results/anchor_posthoc.json via python -m analysis.anchor_posthoc (aggregates only, no task text).
 The paper may report these only as post hoc, with their intervals, whatever they show.
+
+## Addendum 2026-11-02 ~22:40 UTC (after computing Q1-Q3; not registered)
+Q3's model does not control for repository, and anchor status differs by repository. Added one descriptive check
+only, chosen after seeing Q1-Q3: Hit@5 counts per repository and anchor stratum for the three methods
+(results/anchor_posthoc.json, by_repo_hit5_unregistered). No other variant was computed.

@@ -326,3 +326,24 @@ def test_serialization_signature_finds_the_swallowed_argument(tmp_path):
     out = audit_tags(("T1",), tmp_path)["edit_file"]
     assert out == {"calls": 2, "missing_required": 1, "missing_found_in_value": 1, "well_formed": 1,
                    "well_formed_alphabetical": 1, "closer_before_swallowed_key": {"backtick": 1}}
+
+
+def test_anchor_posthoc_decomposition_and_odds_ratio():
+    from analysis.anchor_posthoc import analyze, decompose, logit, overlap
+    c_r, c_c = decompose(0.81, 0.936, 0.554, 0.839)
+    assert c_r + c_c == pytest.approx(0.81 * 0.936 - 0.554 * 0.839)                   # the two parts sum to the gap
+    # common odds ratio 3 in both overlap levels: the additive logit model fits exactly, so the MLE recovers it
+    cells = [(0, 0, 1, 4), (1, 0, 2, 4), (0, 1, 4, 8), (1, 1, 6, 8)]                 # (anchored, level, hits, n)
+    x = np.array([[1, a, lv] for a, lv, h, n in cells for _ in range(n)], float)
+    y = np.array([float(i < h) for a, lv, h, n in cells for i in range(n)])
+    assert np.exp(logit(x, y)[1]) == pytest.approx(3.0, rel=1e-6)
+    assert logit(np.array([[1, 0.], [1, 1.]]), np.array([0., 1.])) is None             # separation: no estimate
+    assert overlap("Fix the Console width", {"rich.console.Console"}, {"rich.console.Console": "width = 80"}) == 1.0
+    rows = [{"has_ident": a, "sym": {"bm25": {"rank": rb}, "rrf+": {"rank": rf}, "rerank50": {"rank": rr}}}
+            for a, rb, rf, rr in [(True, 3, 1, 0), (True, 30, 2, 1), (True, None, 9, None), (True, 40, 1, 2),
+                                  (False, 45, 60, 4), (False, None, None, None), (False, 2, 8, 0), (False, 49, 7, 9)]]
+    doc = analyze(rows, np.array([.9, .5, .2, .7, .3, .1, .6, .4]), n_boot=200)
+    assert doc["n"] == {"anchored": 4, "anchor_free": 4} and doc["R"]["anchored"][0] == 0.75
+    assert doc["gap"]["rerank50"][0] == pytest.approx(0.25) and doc["C"]["anchor_free"][0] == pytest.approx(2 / 3, abs=1e-4)
+    parts = doc["contrib"]["reachability"][0] + doc["contrib"]["ranking"][0]
+    assert parts == pytest.approx(doc["gap"]["rerank50"][0], abs=1e-4)
