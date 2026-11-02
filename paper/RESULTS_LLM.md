@@ -5,7 +5,7 @@ Prompt sha 1737974fa6ea3223 · tasks 114/114 · hypothesis JSON parsed 1.0 · re
 Per task (two calls, concurrent batching): latency p50 17.12 s, p90 28.07 s, max 37.18 s; mean prompt 3598.6 / completion 84.0 tokens. Re-rank returned < 10 valid indices for 7 tasks (BM25 order fills the rest); no hypothesis resolved for 15; transport errors 0.
 
 ## All tasks (n=114)
-| Signal | R@1 | R@5 | R@20 | MRR | Hit@8k_tok |
+| Signal | Hit@1 | Hit@5 | Hit@20 | MRR | Hit@8k_tok |
 |---|---|---|---|---|---|
 | BM25 | 12.3 [7.0, 18.4] | 25.4 [17.5, 33.3] | 42.1 [33.3, 50.9] | 20.0 [14.2, 26.1] | 50.9 [41.2, 60.5] |
 | RRF+ | 15.8 [9.7, 22.8] | 32.5 [23.7, 41.2] | 44.7 [36.0, 54.4] | 23.0 [16.7, 29.7] | 45.6 [36.8, 55.3] |
@@ -15,7 +15,7 @@ Per task (two calls, concurrent batching): latency p50 17.12 s, p90 28.07 s, max
 | Two-mode policy | 29.8 [21.9, 38.6] | 50.0 [41.2, 58.8] | 61.4 [52.6, 70.2] | 38.2 [30.6, 46.2] | 62.3 [53.5, 71.0] |
 
 ## Issue names a symbol (n=58)
-| Signal | R@1 | R@5 | R@20 | MRR | Hit@8k_tok |
+| Signal | Hit@1 | Hit@5 | Hit@20 | MRR | Hit@8k_tok |
 |---|---|---|---|---|---|
 | BM25 | 22.4 [12.1, 32.8] | 41.4 [29.3, 53.4] | 60.3 [48.3, 72.4] | 32.5 [23.1, 42.6] | 62.1 [50.0, 74.1] |
 | RRF+ | 29.3 [17.2, 41.4] | 53.4 [39.7, 65.5] | 72.4 [60.3, 82.8] | 39.5 [29.0, 50.1] | 69.0 [56.9, 81.0] |
@@ -25,7 +25,7 @@ Per task (two calls, concurrent batching): latency p50 17.12 s, p90 28.07 s, max
 | Two-mode policy | 29.3 [17.2, 41.4] | 53.4 [39.7, 65.5] | 72.4 [60.3, 82.8] | 39.5 [29.0, 50.1] | 69.0 [56.9, 81.0] |
 
 ## Issue names none (n=56)
-| Signal | R@1 | R@5 | R@20 | MRR | Hit@8k_tok |
+| Signal | Hit@1 | Hit@5 | Hit@20 | MRR | Hit@8k_tok |
 |---|---|---|---|---|---|
 | BM25 | 1.8 [0.0, 5.4] | 8.9 [1.8, 17.9] | 23.2 [12.5, 35.7] | 6.9 [3.2, 11.7] | 39.3 [26.8, 51.8] |
 | RRF+ | 1.8 [0.0, 5.4] | 10.7 [3.6, 19.6] | 16.1 [7.1, 26.8] | 5.9 [2.4, 10.6] | 21.4 [10.7, 32.1] |
@@ -37,7 +37,7 @@ Per task (two calls, concurrent batching): latency p50 17.12 s, p90 28.07 s, max
 ## Re-rank ceiling (post hoc)
 Re-ranking can only promote symbols in BM25's top-50.
 
-| Subset | Gold in BM25 top-50 | Re-rank R@1 given reachable | Re-rank R@5 given reachable | Pool bm25@100 | Pool bm25@50+hyp_fused@50 |
+| Subset | Gold in BM25 top-50 | Re-rank Hit@1 given reachable | Re-rank Hit@5 given reachable | Pool bm25@100 | Pool bm25@50+hyp_fused@50 |
 |---|---|---|---|---|---|
 | All tasks (n=114) | 68.4 [59.7, 77.2] | 68.0 [57.7, 78.2] | 89.7 [82.0, 96.2] | 73.7 [65.8, 81.6] | 79.0 [71.0, 86.0] |
 | Issue names a symbol (n=58) | 81.0 [70.7, 89.7] | 76.6 [63.8, 87.2] | 93.6 [85.1, 100.0] | 86.2 [77.6, 94.8] | 89.7 [81.0, 96.5] |

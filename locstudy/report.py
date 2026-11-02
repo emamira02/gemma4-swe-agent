@@ -10,13 +10,19 @@ LABEL = {"ident": "Identifiers", "ident+": "Identifiers+", "bm25": "BM25", "emb"
          "graph": "Graph 1-hop", "graph2": "Graph 2-hop", "rrf": "RRF", "rrf+": "RRF+", "lex": "Lexical policy (no graph)"}
 
 
+def _col(key: str) -> str:
+    """Display name of a result key: 'R@k' keys hold Hit@k (any edited symbol in the top k), not recall of all of them;
+    the key name is kept so result files and template slots stay stable."""
+    return key.replace("R@", "Hit@")
+
+
 def _fmt(ci: list[float]) -> str:
     """Percent with one decimal from 4-dp stored values (single rounding step)."""
     return f"{100 * ci[0]:.1f} [{100 * ci[1]:.1f}, {100 * ci[2]:.1f}]"
 
 
 def table(block: dict, cols: tuple[str, ...]) -> str:
-    head = "| Signal | " + " | ".join(cols) + " |\n|---|" + "---|" * len(cols) + "\n"
+    head = "| Signal | " + " | ".join(map(_col, cols)) + " |\n|---|" + "---|" * len(cols) + "\n"
     rows = []
     for s, lab in LABEL.items():
         if s in block:
@@ -67,14 +73,14 @@ def render(summary: dict, sens: dict | None, out_md: Path) -> None:
         lines.append("")
     lines += ["## Hop distance from nearest anchor to the edited symbol (call graph, undirected)",
               ", ".join(f"{k}: {v}" for k, v in summary["hop_distance"].items()), ""]
-    lines += ["## Per repository (symbol level, R@5 / R@20)"]
+    lines += ["## Per repository (symbol level, Hit@5 / Hit@20)"]
     for repo, blk in summary["by_repo"].items():
         if blk.get("n"):
             lines.append(f"- {repo} (n={blk['n']}): BM25 {_fmt(blk['bm25']['R@5'])} / {_fmt(blk['bm25']['R@20'])} · "
                          f"RRF+ {_fmt(blk['rrf+']['R@5'])} / {_fmt(blk['rrf+']['R@20'])}")
     lines.append("")
     if sens:
-        lines += ["## Sensitivity (one-at-a-time; point estimates)", "| Setting | BM25 R@5 | RRF R@5 | RRF+ R@5 | RRF+ R@20 | RRF+ MRR |",
+        lines += ["## Sensitivity (one-at-a-time; point estimates)", "| Setting | BM25 Hit@5 | RRF Hit@5 | RRF+ Hit@5 | RRF+ Hit@20 | RRF+ MRR |",
                   "|---|---|---|---|---|---|"]
         for k, v in sens.items():
             lines.append(f"| {k} | {v['bm25']['R@5']:.3f} | {v['rrf']['R@5']:.3f} | {v['rrf+']['R@5']:.3f} | "
@@ -102,7 +108,7 @@ def figures(summary: dict, out_dir: Path) -> list[Path]:
             ax.fill_between(ks, lo, hi, color=col, alpha=0.12)
         ax.set_xscale("log"); ax.set_xticks(ks); ax.set_xticklabels(ks)
         ax.set_title(f"{title} (n={blk['n']})"); ax.set_xlabel("k (symbols ranked)"); ax.grid(alpha=0.3)
-    axes[0].set_ylabel("Recall@k of an edited symbol"); axes[0].legend(frameon=False)
+    axes[0].set_ylabel("Hit@k: an edited symbol in the top k"); axes[0].legend(frameon=False)
     fig.tight_layout(); p = out_dir / "fig1_recall_by_anchor.png"; fig.savefig(p, dpi=200); plt.close(fig); paths.append(p)
 
     fig, ax = plt.subplots(figsize=(6, 3.6))
@@ -153,13 +159,13 @@ def render_llm(llm: dict, out_md: Path) -> None:
                   f"no hypothesis resolved for {c['hyp_unresolved']}; transport errors {c['errors']}.", ""]
     for key, title in LLM_BLOCKS:
         blk = llm[key]
-        lines += [f"## {title} (n={blk['n']})", "| Signal | R@1 | R@5 | R@20 | MRR | Hit@8k_tok |", "|---|---|---|---|---|---|"]
+        lines += [f"## {title} (n={blk['n']})", "| Signal | Hit@1 | Hit@5 | Hit@20 | MRR | Hit@8k_tok |", "|---|---|---|---|---|---|"]
         lines += [f"| {LLM_LABEL[s]} | " + " | ".join(_fmt(blk[s][col]) for col in ("R@1", "R@5", "R@20", "MRR", "Hit@8k_tok")) + " |"
                   for s in LLM_SIGNALS if s in blk]
         lines.append("")
     if "ceiling" in llm:
         lines += ["## Re-rank ceiling (post hoc)", "Re-ranking can only promote symbols in BM25's top-50.", "",
-                  "| Subset | Gold in BM25 top-50 | Re-rank R@1 given reachable | Re-rank R@5 given reachable | "
+                  "| Subset | Gold in BM25 top-50 | Re-rank Hit@1 given reachable | Re-rank Hit@5 given reachable | "
                   + " | ".join(f"Pool {k}" for k in POOLS) + " |", "|---|---|---|---|" + "---|" * len(POOLS)]
         for key, title in LLM_BLOCKS:
             cb = llm["ceiling"][key]
@@ -202,7 +208,7 @@ def figure_llm(llm: dict, out_dir: Path) -> Path:
         ax.bar(xs, ms, width=w, color=col, label=LLM_LABEL[s], yerr=err, capsize=2, error_kw={"lw": 0.8})
     ax.set_xticks(range(len(LLM_BLOCKS)))
     ax.set_xticklabels([f"{t} (n={llm[k]['n']})" for k, t in LLM_BLOCKS])
-    ax.set_ylabel("Recall@5 of an edited symbol"); ax.set_ylim(0, 1); ax.grid(axis="y", alpha=0.3)
+    ax.set_ylabel("Hit@5: an edited symbol in the top 5"); ax.set_ylim(0, 1); ax.grid(axis="y", alpha=0.3)
     ax.set_title("Bars: 95 % task-level bootstrap intervals", fontsize=8, loc="left")
     ax.legend(frameon=False, fontsize=7, ncol=3, loc="upper right")
     fig.tight_layout(); p = out_dir / "fig4_model_in_loop.png"; fig.savefig(p, dpi=200); plt.close(fig)
@@ -246,37 +252,80 @@ def check_claims(template: str, docs: dict[str, dict]) -> list[str]:
     return bad
 
 
+def _render_slot(m: re.Match, docs: dict[str, dict]) -> str:
+    ref, fmt = m.group(1), (m.group(2) or "raw")
+    src, _, path = ref.partition(":")
+    v = _lookup(docs[src], path)
+    if fmt == "pct":
+        return f"{100 * v:.1f}%"
+    if fmt == "dpct":
+        return f"{100 * v:+.1f} pp"
+    if fmt == "p":
+        return "< 0.001" if v < 0.001 else f"= {v:.3f}"
+    if fmt == "ci":
+        return f"{100 * v[0]:.1f}% [{100 * v[1]:.1f}, {100 * v[2]:.1f}]"
+    if fmt == "f2":
+        return f"{v:.2f}"
+    if fmt == "f3":
+        return f"{v:.3f}"
+    if fmt == "int":
+        return f"{int(v):,}"
+    return str(v)
+
+
+def _keep_blocks(template: str, docs: dict[str, dict]) -> str:
+    return _BLOCK.sub(lambda m: m.group(3) if bool(docs.get(m.group(2))) != bool(m.group(1)) else "", template)
+
+
 def fill_template(template: str, docs: dict[str, dict]) -> str:
     """Replace {{source:path/to/value|fmt}} with values from result files. Unknown paths raise (no silent gaps).
     <!-- if:src --> ... <!-- endif --> blocks are kept only when result source `src` exists (<!-- if:!src --> when it does not).
     <!-- claim: ... --> guards are checked on the kept text, then removed.
     fmt: pct (x100, 1 dp, %), dpct (signed percentage points), ci (mean [lo, hi] as %), p (p-value as "= 0.053" or
     "< 0.001"), f2, f3, int, raw."""
-    template = _BLOCK.sub(lambda m: m.group(3) if bool(docs.get(m.group(2))) != bool(m.group(1)) else "", template)
+    template = _keep_blocks(template, docs)
     bad = check_claims(template, docs)
     if bad:
         raise ClaimError("unsupported claims:\n  " + "\n  ".join(bad))
     template = _CLAIM.sub("", template)
-    def sub(m):
-        ref, fmt = m.group(1), (m.group(2) or "raw")
-        src, _, path = ref.partition(":")
-        v = _lookup(docs[src], path)
-        if fmt == "pct":
-            return f"{100 * v:.1f}%"
-        if fmt == "dpct":
-            return f"{100 * v:+.1f} pp"
-        if fmt == "p":
-            return "< 0.001" if v < 0.001 else f"= {v:.3f}"
-        if fmt == "ci":
-            return f"{100 * v[0]:.1f}% [{100 * v[1]:.1f}, {100 * v[2]:.1f}]"
-        if fmt == "f2":
-            return f"{v:.2f}"
-        if fmt == "f3":
-            return f"{v:.3f}"
-        if fmt == "int":
-            return f"{int(v):,}"
-        return str(v)
-    return _SLOT.sub(sub, template)
+    return _SLOT.sub(lambda m: _render_slot(m, docs), template)
+
+
+def _status(where: str) -> str:
+    """Analysis status of a paragraph, from how the paper labels it (Methods 'Inference', H1-H3 in 4.9, 'post hoc')."""
+    w = where.lower()
+    if w.startswith("abstract"):
+        return "restates section 4"
+    if "post hoc" in w:
+        return "post hoc"
+    if re.search(r"\bh[123]\b", w) or "4.5 " in w or "4.7 " in w:
+        return "pre-specified"
+    return "descriptive"
+
+
+def claim_registry(template: str, docs: dict[str, dict]) -> str:
+    """CLAIMS.md: every number and every guarded directional claim of the rendered paper, by paragraph, with the result
+    key it comes from and the paragraph's analysis status. Generated with the paper, so it cannot drift from it."""
+    rows, section = [], ""
+    for para in re.split(r"\n\s*\n", _keep_blocks(template, docs)):
+        lines = para.strip().split("\n")
+        while lines and (head := re.match(r"#+ (.+)", lines[0])):
+            section, lines = head.group(1), lines[1:]
+        para = "\n".join(lines)
+        lead = re.match(r"\*\*(.+?)\*\*", para)
+        where = f"{section} / {lead.group(1).rstrip('.')}" if lead else section
+        for m in _SLOT.finditer(para):
+            v = _render_slot(m, docs)
+            rows.append(f"| {where} | value | `{m.group(1)}` | {'(table)' if chr(10) in v else v} | {_status(where)} |")
+        for m in _CLAIM.finditer(para):
+            rows.append(f"| {where} | guard | `{m.group(1)} {m.group(2)} {m.group(3)}` | holds | {_status(where)} |")
+    return ("<!-- AUTO-GENERATED by `python -m locstudy report` with PAPER.md. -->\n# Claim registry\n\n"
+            "Every number and every machine-checked directional claim in PAPER.md, in reading order. Keys point into "
+            "results/summary.json (s), sensitivity.json (sens), llm_summary.json (llm), label_audit.json (audit) and "
+            "agent_summary.json (agent, lb, agentmd). Keys named R@k hold Hit@k. Status: pre-specified = fixed in "
+            "Methods 'Inference' or as H1-H3 before the model outputs existed; post hoc = labelled so in the text; "
+            "descriptive = reported without a test. A false guard fails the build, so every listed guard holds.\n\n"
+            "| Where | Kind | Key or guard | Rendered | Status |\n|---|---|---|---|---|\n" + "\n".join(rows) + "\n")
 
 
 MAX_WORDS = 3000  # paper-track limit; counted on the rendered paper, references and tables included
@@ -284,6 +333,29 @@ MAX_WORDS = 3000  # paper-track limit; counted on the rendered paper, references
 
 def word_count(text: str) -> int:
     return len(re.sub(r"<!--.*?-->", " ", text, flags=re.S).split())
+
+
+def word_report(text: str) -> str:
+    """WORDCOUNT.md: the gate's count (whitespace tokens, references, tables and markdown syntax included: the most
+    conservative reading of the 3,000-word rule) per section, next to two narrower counts. No official counter exists."""
+    body = text.partition("\n## References")[0]
+    prose = [w for w in re.sub(r"<!--.*?-->", " ", body, flags=re.S).split() if re.search(r"[A-Za-z0-9]", w)]
+    rows, name, buf = [], "Title and subtitle", []
+    for line in text.splitlines():
+        head = re.match(r"#+ (.+)", line)
+        if head and buf:
+            rows.append((name, word_count("\n".join(buf))))
+            name, buf = head.group(1), []
+        buf.append(line)
+    rows.append((name, word_count("\n".join(buf))))
+    return ("<!-- AUTO-GENERATED by `python -m locstudy report` with PAPER.md. -->\n# Word count\n\n"
+            f"| Count | Words |\n|---|---|\n| Build gate: all whitespace tokens (limit {MAX_WORDS:,}) | {word_count(text):,} |\n"
+            f"| Without references | {word_count(body):,} |\n"
+            f"| Without references and markdown-only tokens | {len(prose):,} |\n\n"
+            "Rule (host, discussion 743255): title, abstract, text, captions and table text count; figures and "
+            "references do not. No official counter is published; the gate keeps references in, so it should not "
+            "undercount.\n\n| Section (gate count) | Words |\n|---|---|\n"
+            + "\n".join(f"| {n} | {c:,} |" for n, c in rows) + "\n")
 
 
 def agent_table(doc: dict) -> str:
@@ -399,3 +471,5 @@ def build(results_dir: Path, paper_dir: Path) -> None:
             raise ClaimError(f"paper has {word_count(text)} words; the limit is {MAX_WORDS}")
         (paper_dir / "PAPER.md").write_text("<!-- AUTO-GENERATED from PAPER.template.md + results/*.json -->\n" + text,
                                             encoding="utf-8")
+        (paper_dir / "CLAIMS.md").write_text(claim_registry(tpl.read_text(encoding="utf-8"), docs), encoding="utf-8")
+        (paper_dir / "WORDCOUNT.md").write_text(word_report(text), encoding="utf-8")

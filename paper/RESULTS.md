@@ -7,7 +7,7 @@ Task types (heuristic): {'bug': 65, 'feature': 19, 'other': 42}. Repositories: {
 Values: % mean [95% bootstrap CI], task-level resampling, 10000 resamples, seed 0.
 
 ## Table 1 — Symbol level (n=114)
-| Signal | R@1 | R@5 | R@20 | R@50 | MRR |
+| Signal | Hit@1 | Hit@5 | Hit@20 | Hit@50 | MRR |
 |---|---|---|---|---|---|
 | Identifiers | 15.8 [9.7, 22.8] | 21.9 [14.9, 29.8] | 23.7 [15.8, 31.6] | 25.4 [17.5, 33.3] | 18.7 [12.2, 25.7] |
 | Identifiers+ | 11.4 [6.1, 17.5] | 21.9 [14.9, 29.8] | 24.6 [16.7, 32.5] | 24.6 [16.7, 32.5] | 16.4 [10.5, 22.6] |
@@ -33,7 +33,7 @@ Values: % mean [95% bootstrap CI], task-level resampling, 10000 resamples, seed 
 | Lexical policy (no graph) | 32.5 [23.7, 41.2] | 51.7 [43.0, 60.5] | 64.0 [55.3, 72.8] | 4784 |
 
 ## Table 3 — File level (n=126)
-| Signal | R@1 | R@5 | R@20 | MRR |
+| Signal | Hit@1 | Hit@5 | Hit@20 | MRR |
 |---|---|---|---|---|
 | Identifiers | 27.8 [20.6, 35.7] | 31.8 [23.8, 39.7] | 32.5 [24.6, 41.3] | 29.5 [22.0, 37.4] |
 | Identifiers+ | 25.4 [18.2, 33.3] | 31.8 [23.8, 39.7] | 33.3 [25.4, 42.1] | 28.2 [20.9, 35.8] |
@@ -46,7 +46,7 @@ Values: % mean [95% bootstrap CI], task-level resampling, 10000 resamples, seed 
 | Lexical policy (no graph) | 30.2 [22.2, 38.1] | 48.4 [39.7, 57.1] | 65.9 [57.9, 73.8] | 38.7 [31.6, 46.2] |
 
 ## Table 4a — Issues that name a resolvable symbol (n=58)
-| Signal | R@5 | R@20 | R@50 | MRR |
+| Signal | Hit@5 | Hit@20 | Hit@50 | MRR |
 |---|---|---|---|---|
 | Identifiers | 43.1 [31.0, 55.2] | 46.6 [34.5, 58.6] | 50.0 [37.9, 62.1] | 36.7 [25.4, 48.1] |
 | Identifiers+ | 43.1 [31.0, 55.2] | 48.3 [36.2, 60.3] | 48.3 [36.2, 60.3] | 32.1 [22.1, 42.7] |
@@ -59,7 +59,7 @@ Values: % mean [95% bootstrap CI], task-level resampling, 10000 resamples, seed 
 | Lexical policy (no graph) | 58.6 [46.6, 70.7] | 70.7 [58.6, 82.8] | 84.5 [74.1, 93.1] | 42.2 [32.1, 52.7] |
 
 ## Table 4b — Issues that name none (n=56)
-| Signal | R@5 | R@20 | R@50 | MRR |
+| Signal | Hit@5 | Hit@20 | Hit@50 | MRR |
 |---|---|---|---|---|
 | Identifiers | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] |
 | Identifiers+ | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] | 0.0 [0.0, 0.0] |
@@ -139,14 +139,14 @@ Values: % mean [95% bootstrap CI], task-level resampling, 10000 resamples, seed 
 ## Hop distance from nearest anchor to the edited symbol (call graph, undirected)
 0: 28, 1: 8, 2: 18, 3: 12, 4: 21, None: 27
 
-## Per repository (symbol level, R@5 / R@20)
+## Per repository (symbol level, Hit@5 / Hit@20)
 - Textualize/rich (n=43): BM25 16.3 [7.0, 27.9] / 39.5 [25.6, 53.5] · RRF+ 30.2 [16.3, 44.2] / 46.5 [32.6, 60.5]
 - encode/httpx (n=1): BM25 100.0 [100.0, 100.0] / 100.0 [100.0, 100.0] · RRF+ 100.0 [100.0, 100.0] / 100.0 [100.0, 100.0]
 - fastapi/fastapi (n=58): BM25 29.3 [17.2, 41.4] / 43.1 [31.0, 56.9] · RRF+ 27.6 [17.2, 39.7] / 37.9 [25.9, 50.0]
 - psf/requests (n=12): BM25 33.3 [8.3, 58.3] / 41.7 [16.7, 66.7] · RRF+ 58.3 [33.3, 83.3] / 66.7 [41.7, 91.7]
 
 ## Sensitivity (one-at-a-time; point estimates)
-| Setting | BM25 R@5 | RRF R@5 | RRF+ R@5 | RRF+ R@20 | RRF+ MRR |
+| Setting | BM25 Hit@5 | RRF Hit@5 | RRF+ Hit@5 | RRF+ Hit@20 | RRF+ MRR |
 |---|---|---|---|---|---|
 | rrf_k=10 | 0.254 | 0.316 | 0.307 | 0.439 | 0.226 |
 | rrf_k=30 | 0.254 | 0.307 | 0.316 | 0.447 | 0.224 |

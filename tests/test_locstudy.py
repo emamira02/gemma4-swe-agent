@@ -274,6 +274,30 @@ def test_paper_word_limit_counts_rendered_text_only(tmp_path):
     assert MAX_WORDS == 3000 and word_count("one two <!-- claim: a > b -->\nthree <!-- x\ny -->") == 3
 
 
+def test_claim_registry_lists_rendered_values_with_status():
+    from locstudy import report
+    docs = {"s": {"h": [0.25, 0.1, 0.4], "p": 0.01}}
+    tpl = ("# T\n## Abstract\nHit {{s:h|ci}}.\n\n## 4. Results\n**4.3 Mode (post hoc).** p {{s:p|p}}.<!-- claim: s:p < 0.05 -->"
+           "\n\n**Creating anchors (H2).** {{s:h/0|pct}}\n\n<!-- if:llm -->**4.9 Model.** {{llm:x}}<!-- endif -->")
+    reg = report.claim_registry(tpl, docs)
+    assert "| Abstract | value | `s:h` | 25.0% [10.0, 40.0] | restates section 4 |" in reg
+    assert "| 4. Results / 4.3 Mode (post hoc) | value | `s:p` | = 0.010 | post hoc |" in reg
+    assert "| 4. Results / 4.3 Mode (post hoc) | guard | `s:p < 0.05` | holds | post hoc |" in reg
+    assert "| 4. Results / Creating anchors (H2) | value | `s:h/0` | 25.0% | pre-specified |" in reg
+    assert "llm:x" not in reg                                                       # dropped block: not registered
+    assert report.claim_registry("a {{s:p|p}} b", docs).count("| value |") == 1
+
+
+def test_word_report_keeps_the_gate_count_and_excludes_references_only_below_it():
+    from locstudy.report import word_count, word_report
+    text = "# Title\n*Sub.*\n## Abstract\nOne two | three |\n|---|\n## References\nA, B. (2024). X."
+    rep = word_report(text)
+    assert f"| Build gate: all whitespace tokens (limit 3,000) | {word_count(text)} |" in rep
+    assert word_count(text) == 17 and "| Without references | 11 |" in rep          # "# Title" ... "|---|" = 11 tokens
+    assert "| Without references and markdown-only tokens | 6 |" in rep             # Title *Sub.* Abstract One two three
+    assert "| Title and subtitle | 3 |" in rep and "| Abstract | 8 |" in rep and "| References | 6 |" in rep
+
+
 def test_agent_summary_carries_failure_aggregate(tmp_path):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
     import agent_summary
