@@ -9,8 +9,8 @@ Verified this session (repo main, kaggle CLI, gh, kaggle.com pages):
   Kaggle forum or notebooks. OPEN: owner decision.
 - H1-H3 chronology holds: LLM kernel v1 died of CUDA OOM (no model output); 6a28d29 (H1-H3) 16:33:42 CEST,
   model outputs on disk 16:48:55 CEST, 10 Oct (git and file timestamps; Kaggle kernel versions not checked).
-- `python -m locstudy report` rebuilds PAPER.md byte-identically from results/*.json. results/summary.json
-  provenance is commit e1f06d4 (pre-rewrite id), dirty: regenerate from a clean commit before the final build.
+- `python -m locstudy report` rebuilds PAPER.md byte-identically from results/*.json. results/summary.json was
+  recomputed from data/ (604a429): all 1,225 values identical, provenance now clean commit 6ac0a73.
 - F1 done (8229c35, a5a7d86): "Recall@k" renamed Hit@k (keys unchanged, earlier name stated in Methods);
   4.10 eras marked as system comparisons; per-call serialization evidence (analysis/serialization_audit.py:
   S1-S5 77/77 malformed edit_file calls carry old_string inside new_string, after a backtick 72 or quote 5;
@@ -95,7 +95,7 @@ the in-container localization and editing skills would be the resource).
 | 30 Oct-2 Nov | DONE 29 Oct (eras, stability, per-repo, era table in 4.10; build green at 2,992 words). Extend analysis to all panels: failure audit for S6-S13 and B1, per-repository splits, outcome stability metric, serialization table, claim guards; tests | results/*.json, guards |
 | 31 Oct-1 Nov | P1 panels (already scheduled, p1-panel-1..4) | optional row; DROPPED 2 Nov (S16ctl verdict has no owner task; not needed for the two-contribution paper) |
 | 2-4 Nov | DONE 2 Nov (2db4f35, owner OK for F2 in chat): rewrite around two contributions, registered post hoc anchor analyses (cd93427, 55ac7a9), serialization audit, related work vs nearest priors; build green at 2,911 words | paper/PAPER.md |
-| 5-6 Nov | Fresh-eyes review against the five criteria; clarity pass; figure legibility at writeup width | REVIEW.md |
+| 5-6 Nov | DONE 2 Nov (c3c581e): independent review, 15 findings, responses in paper/REVIEW.md (2 open: publish text-free model ranks; manual label sample). Still to do: figure legibility at writeup width | REVIEW.md |
 | 7-8 Nov | Code notebook (if approved) and writeup draft on Kaggle (Claude in Chrome, Emanuele signed in); word count as the site counts it | draft writeup |
 | 9 Nov | Clean-commit build, Emanuele confirms in chat, submit | submitted writeup |
 | 10-12 Nov | Buffer only | |
