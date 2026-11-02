@@ -5,119 +5,130 @@ Every number and every machine-checked directional claim in PAPER.md, in reading
 
 | Where | Kind | Key or guard | Rendered | Status |
 |---|---|---|---|---|
-| Abstract | value | `s:coverage/tasks` | 129 | restates section 4 |
+| Abstract | value | `s:symbol_level/n` | 114 | restates section 4 |
 | Abstract | value | `s:by_anchor/named_symbol/n` | 58 | restates section 4 |
-| Abstract | value | `s:by_anchor/named_symbol/rrf+/R@5` | 53.4% [41.4, 65.5] | restates section 4 |
+| Abstract | value | `s:by_anchor/named_symbol/rrf+/R@5/0` | 53.4% | restates section 4 |
 | Abstract | value | `s:by_anchor/no_named_symbol/n` | 56 | restates section 4 |
-| Abstract | value | `llm:no_named_symbol/bm25/R@5/0` | 8.9% | restates section 4 |
+| Abstract | value | `s:by_anchor/no_named_symbol/rrf+/R@5/0` | 10.7% | restates section 4 |
+| Abstract | value | `s:by_anchor/no_named_symbol/bm25/R@5/0` | 8.9% | restates section 4 |
 | Abstract | value | `llm:no_named_symbol/rerank50/R@5/0` | 46.4% | restates section 4 |
 | Abstract | value | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm` | < 0.001 | restates section 4 |
 | Abstract | value | `llm:cost/latency_s_p50` | 17.12 | restates section 4 |
-| Abstract | value | `agent:failure/unresolved/WRONG_FILE` | 10 | restates section 4 |
 | Abstract | value | `agent:failure/unresolved_runs` | 85 | restates section 4 |
+| Abstract | value | `agent:failure/unresolved/WRONG_FILE` | 10 | restates section 4 |
+| Abstract | value | `agent:failure/no_edit_read_gold` | 30 | restates section 4 |
+| Abstract | value | `agent:failure/unresolved_no_edit` | 35 | restates section 4 |
 | Abstract | value | `ser:eras/edit_file/edit_file/missing_found_in_value` | 77 | restates section 4 |
+| Abstract | value | `agent:failure/unresolved_with_malformed_edit` | 9 | restates section 4 |
 | Abstract | guard | `s:by_anchor/no_named_symbol/rrf+/R@5/0 < 0.15` | holds | restates section 4 |
+| Abstract | guard | `s:by_anchor/no_named_symbol/bm25/R@50/0 > s:by_anchor/no_named_symbol/rrf+/R@50/0` | holds | restates section 4 |
+| Abstract | guard | `s:by_anchor/no_named_symbol/bm25/R@50/0 > s:by_anchor/no_named_symbol/emb/R@50/0` | holds | restates section 4 |
+| Abstract | guard | `s:by_anchor/no_named_symbol/bm25/R@50/0 > s:by_anchor/no_named_symbol/graph/R@50/0` | holds | restates section 4 |
 | Abstract | guard | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm < 0.05` | holds | restates section 4 |
 | Abstract | guard | `post:gap_minus_rerank/bm25/1 < 0` | holds | restates section 4 |
 | Abstract | guard | `post:gap_minus_rerank/bm25/2 > 0` | holds | restates section 4 |
-| Abstract | guard | `post:contrib/reachability/1 > 0` | holds | restates section 4 |
-| Abstract | guard | `post:contrib/ranking/1 < 0` | holds | restates section 4 |
 | Abstract | guard | `post:or_anchored/rerank50/1 > 1` | holds | restates section 4 |
 | Abstract | guard | `agent:failure/wrong_file_share < 0.2` | holds | restates section 4 |
+| Abstract | guard | `agent:failure/no_edit_read_gold > agent:failure/unresolved/WRONG_FILE` | holds | restates section 4 |
 | 2. Setting and data | value | `s:coverage/tasks` | 129 | descriptive |
 | 2. Setting and data | value | `s:coverage/source_change` | 126 | descriptive |
 | 3. Method / Gold symbols | value | `s:coverage/hunks_mapped` | 425 | descriptive |
 | 3. Method / Gold symbols | value | `s:coverage/hunks_total` | 660 | descriptive |
 | 3. Method / Gold symbols | value | `audit:kinds/unmapped: edit: imports or comments` | 62 | descriptive |
 | 3. Method / Gold symbols | value | `audit:kinds/unmapped: edit: module-level code outside any symbol` | 57 | descriptive |
+| 3. Method / Gold symbols | value | `audit:kinds/unmapped: edit: lines not matched (whitespace or duplication)` | 16 | descriptive |
 | 3. Method / Gold symbols | value | `s:symbol_level/n` | 114 | descriptive |
-| 3. Method / Label audit | value | `s:coverage/label_full_coverage/0` | 267 | descriptive |
-| 3. Method / Label audit | value | `s:coverage/label_full_coverage/1` | 290 | descriptive |
-| 3. Method / Label audit | value | `audit:counts/header_agree` | 262 | descriptive |
-| 3. Method / Label audit | value | `audit:counts/header_checked` | 419 | descriptive |
-| 3. Method / Label audit | value | `audit:kinds/disagree: header names the preceding top-level def or class (git funcname heuristic)` | 154 | descriptive |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:symbol_level/n` | 114 | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:symbol_level/rrf+/R@5` | 32.5% [23.7, 41.2] | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:symbol_level/rrf+/R@20` | 44.7% [36.0, 53.5] | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:symbol_level/bm25/R@50` | 68.4% [59.7, 77.2] | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:file_level/graph/R@5` | 50.8% [42.1, 59.5] | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:comparisons/rrf+_vs_others_R@20/graph/mcnemar_p_holm` | < 0.001 | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/diff` | +7.0 pp | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/ci/0` | -1.8 pp | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/ci/1` | +15.8 pp | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/mcnemar_p_holm` | = 0.303 | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/ident/R@50/0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/ident+/R@50/0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/emb/R@50/0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/graph/R@50/0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/graph2/R@50/0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/ident/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/ident/diff > 0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/emb/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/emb/diff > 0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/graph/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/graph/diff > 0` | holds | pre-specified |
-| 4. Results / 4.1 Overall (pre-specified comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/bm25/mcnemar_p_holm >= 0.05` | holds | pre-specified |
-| 4. Results / 4.2 Anchors decide | value | `s:coverage/issue_names_resolvable_symbol` | 65 | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:coverage/source_change` | 126 | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/named_symbol/rrf+/R@5` | 53.4% [41.4, 65.5] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/named_symbol/rrf+/R@20` | 72.4% [60.3, 82.8] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/no_named_symbol/rrf+/R@5` | 10.7% [3.6, 19.6] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/no_named_symbol/emb/R@50` | 7.1% [1.8, 14.3] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/no_named_symbol/graph/R@50` | 8.9% [1.8, 17.9] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:by_anchor/no_named_symbol/bm25/R@5` | 8.9% [1.8, 17.9] | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:hop_distance/0` | 28 | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:hop_distance/1` | 8 | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:hop_distance/2` | 18 | descriptive |
-| 4. Results / 4.2 Anchors decide | value | `s:hop_distance/None` | 27 | descriptive |
-| 4. Results / 4.2 Anchors decide | guard | `s:by_anchor/no_named_symbol/emb/R@50/0 < 0.15` | holds | descriptive |
-| 4. Results / 4.2 Anchors decide | guard | `s:by_anchor/no_named_symbol/graph/R@50/0 < 0.15` | holds | descriptive |
-| 4. Results / 4.2 Anchors decide | guard | `s:by_anchor/named_symbol/rrf+/R@5/1 > s:by_anchor/no_named_symbol/rrf+/R@5/2` | holds | descriptive |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:by_anchor/no_named_symbol/bm25/R@50` | 55.4% [42.9, 67.9] | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:by_anchor/no_named_symbol/rrf+/R@50` | 28.6% [17.9, 41.1] | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/diff` | +26.8 pp | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/ci/0` | +14.2 pp | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/ci/1` | +41.1 pp | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/mcnemar_p_holm` | < 0.001 | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:symbol_level/bm25/Hit@8k_tok` | 50.9% [42.1, 59.7] | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:symbol_level/rrf+/Hit@8k_tok` | 45.6% [36.8, 54.4] | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:comparisons/rrf+_vs_others_Hit@8k_tok/bm25/mcnemar_p_holm` | = 0.534 | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:symbol_level/rrf+/median_tokens_to_hit` | 6,464 | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | value | `s:symbol_level/bm25/median_tokens_to_hit` | 4,991 | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | guard | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/diff > 0` | holds | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | guard | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/mcnemar_p_holm < 0.05` | holds | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | guard | `s:comparisons/rrf+_vs_others_Hit@8k_tok/bm25/mcnemar_p_holm >= 0.05` | holds | post hoc |
-| 4. Results / 4.3 Fusion must be mode-dependent (post hoc) | guard | `s:symbol_level/rrf+/median_tokens_to_hit > s:symbol_level/bm25/median_tokens_to_hit` | holds | post hoc |
-| 4. Results / 4.4 Robustness (pre-specified) | value | `sens:n_anchors=1/rrf+/R@5` | 27.2% | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=10/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=10/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=30/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=30/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=100/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:rrf_k=100/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=5/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=5/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:bm25=(0.9, 0.4)/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:bm25=(0.9, 0.4)/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:bm25=(1.5, 0.9)/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:bm25=(1.5, 0.9)/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:gold_min_cov=0.01/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:gold_min_cov=0.01/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:gold_min_cov=1.0/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:gold_min_cov=1.0/rrf+/R@5 <= s:symbol_level/rrf+/R@5/2` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:rrf_k=10/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:rrf_k=30/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:rrf_k=100/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:n_anchors=5/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:bm25=(0.9, 0.4)/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:bm25=(1.5, 0.9)/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:gold_min_cov=0.01/rrf+/R@5` | holds | pre-specified |
-| 4. Results / 4.4 Robustness (pre-specified) | guard | `sens:n_anchors=1/rrf+/R@5 <= sens:gold_min_cov=1.0/rrf+/R@5` | holds | pre-specified |
+| 3. Method / Gold symbols | value | `s:coverage/label_full_coverage/0` | 267 | descriptive |
+| 3. Method / Gold symbols | value | `s:coverage/label_full_coverage/1` | 290 | descriptive |
+| 3. Method / Gold symbols | value | `audit:counts/header_agree` | 262 | descriptive |
+| 3. Method / Gold symbols | value | `audit:counts/header_checked` | 419 | descriptive |
+| 3. Method / Gold symbols | value | `audit:kinds/disagree: header names the preceding top-level def or class (git funcname heuristic)` | 154 | descriptive |
+| 3. Method / Model | value | `llm:meta/vllm/gpus` | 4 | descriptive |
+| 3. Method / Model | value | `llm:meta/prompt_sha` | 1737974fa6ea3223 | descriptive |
+| 3. Method / Model | value | `llm:meta/n_ok` | 114 | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:symbol_level/n` | 114 | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:symbol_level/rrf+/R@5` | 32.5% [23.7, 41.2] | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:symbol_level/rrf+/R@20` | 44.7% [36.0, 53.5] | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:symbol_level/bm25/R@50` | 68.4% [59.7, 77.2] | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:file_level/graph/R@5` | 50.8% [42.1, 59.5] | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:file_level/n` | 126 | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:comparisons/rrf+_vs_others_R@20/graph/mcnemar_p_holm` | < 0.001 | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/diff` | +7.0 pp | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/ci/0` | -1.8 pp | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/ci/1` | +15.8 pp | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | value | `s:comparisons/rrf+_vs_others_R@5/bm25/mcnemar_p_holm` | = 0.303 | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/ident/R@50/0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/ident+/R@50/0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/emb/R@50/0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/graph/R@50/0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:symbol_level/bm25/R@50/0 >= s:symbol_level/graph2/R@50/0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/ident/mcnemar_p_holm < 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/emb/mcnemar_p_holm < 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/ident/mcnemar_p_holm < 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/emb/mcnemar_p_holm < 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/graph/mcnemar_p_holm < 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/graph/diff > 0` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/graph/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/graph2/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/graph2/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/rrf/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/rrf/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@5/bm25/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.1 Overall (declared comparisons) | guard | `s:comparisons/rrf+_vs_others_R@20/bm25/mcnemar_p_holm >= 0.05` | holds | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:coverage/issue_names_resolvable_symbol` | 65 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:coverage/source_change` | 126 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/named_symbol/n` | 58 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:symbol_level/n` | 114 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/named_symbol/bm25/R@5/0` | 41.4% | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/no_named_symbol/bm25/R@5/0` | 8.9% | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/named_symbol/rrf+/R@5/0` | 53.4% | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/no_named_symbol/rrf+/R@5/0` | 10.7% | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/no_named_symbol/emb/R@50` | 7.1% [1.8, 14.3] | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/no_named_symbol/graph/R@50` | 8.9% [1.8, 17.9] | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:by_anchor/no_named_symbol/bm25/R@50/0` | 55.4% | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/0` | 28 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/1` | 8 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/2` | 18 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/3` | 12 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/4` | 21 | descriptive |
+| 4. Results / 4.2 Anchors | value | `s:hop_distance/None` | 27 | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/named_symbol/bm25/R@5/0 > s:by_anchor/no_named_symbol/bm25/R@5/0` | holds | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/named_symbol/emb/R@5/0 > s:by_anchor/no_named_symbol/emb/R@5/0` | holds | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/named_symbol/graph/R@5/0 > s:by_anchor/no_named_symbol/graph/R@5/0` | holds | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/named_symbol/rrf+/R@5/1 > s:by_anchor/no_named_symbol/rrf+/R@5/2` | holds | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/no_named_symbol/emb/R@50/0 < 0.15` | holds | descriptive |
+| 4. Results / 4.2 Anchors | guard | `s:by_anchor/no_named_symbol/graph/R@50/0 < 0.15` | holds | descriptive |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:by_anchor/no_named_symbol/bm25/R@50` | 55.4% [42.9, 67.9] | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:by_anchor/no_named_symbol/rrf+/R@50` | 28.6% [17.9, 41.1] | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/diff` | +26.8 pp | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/ci/0` | +14.2 pp | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/ci/1` | +41.1 pp | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/mcnemar_p_holm` | < 0.001 | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@20/rrf+/diff` | +7.1 pp | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/no_anchor_bm25_vs_fusion_R@20/rrf+/mcnemar_p_holm` | = 0.219 | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:symbol_level/bm25/Hit@8k_tok` | 50.9% [42.1, 59.7] | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:symbol_level/rrf+/Hit@8k_tok` | 45.6% [36.8, 54.4] | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | value | `s:comparisons/rrf+_vs_others_Hit@8k_tok/bm25/mcnemar_p_holm` | = 0.534 | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | guard | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/diff > 0` | holds | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | guard | `s:comparisons/no_anchor_bm25_vs_fusion_R@50/rrf+/mcnemar_p_holm < 0.05` | holds | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | guard | `s:comparisons/no_anchor_bm25_vs_fusion_R@20/rrf+/mcnemar_p_holm >= 0.05` | holds | post hoc |
+| 4. Results / 4.3 Without anchors, fusion dilutes BM25 in depth (post hoc) | guard | `s:comparisons/rrf+_vs_others_Hit@8k_tok/bm25/mcnemar_p_holm >= 0.05` | holds | post hoc |
+| 4. Results / 4.4 Robustness (declared parameters) | value | `sens:n_anchors=1/rrf+/R@5` | 27.2% | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:n_anchors=1/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:rrf_k=10/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:bm25=(0.9, 0.4)/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:bm25=(1.5, 0.9)/rrf+/R@5 >= s:symbol_level/rrf+/R@5/1` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:rrf_k=60/rrf+/R@5 >= sens:rrf_k=10/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:rrf_k=60/rrf+/R@5 >= sens:rrf_k=30/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:rrf_k=60/rrf+/R@5 >= sens:rrf_k=100/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:n_anchors=3/rrf+/R@5 >= sens:n_anchors=1/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:n_anchors=3/rrf+/R@5 >= sens:n_anchors=5/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:bm25=(1.2, 0.75)/rrf+/R@5 >= sens:bm25=(0.9, 0.4)/rrf+/R@5` | holds | descriptive |
+| 4. Results / 4.4 Robustness (declared parameters) | guard | `sens:bm25=(1.2, 0.75)/rrf+/R@5 >= sens:bm25=(1.5, 0.9)/rrf+/R@5` | holds | descriptive |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:symbol_level/lex/R@5` | 34.2% [25.4, 43.0] | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/rrf+/diff` | +1.8 pp | post hoc |
-| 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/rrf+/mcnemar_p_holm` | = 0.774 | post hoc |
+| 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/rrf+/ci/0` | -4.4 pp | post hoc |
+| 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/rrf+/ci/1` | +7.9 pp | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/bm25/diff` | +8.8 pp | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:comparisons/lex_vs_fusion_R@5/bm25/mcnemar_p_holm` | = 0.026 | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | value | `s:symbol_level/lex/R@50` | 70.2% [61.4, 78.1] | post hoc |
@@ -128,88 +139,84 @@ Every number and every machine-checked directional claim in PAPER.md, in reading
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | guard | `s:comparisons/lex_vs_fusion_R@5/bm25/mcnemar_p_holm < 0.05` | holds | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | guard | `s:comparisons/lex_vs_fusion_R@50/rrf+/diff > 0` | holds | post hoc |
 | 4. Results / 4.5 Without graph or embeddings (post hoc) | guard | `s:comparisons/lex_vs_fusion_R@50/rrf+/mcnemar_p_holm < 0.05` | holds | post hoc |
-| 4. Results / 4.6 Model in the loop | value | `llm:meta/vllm/gpus` | 4 | descriptive |
-| 4. Results / 4.6 Model in the loop | value | `llm:meta/prompt_sha` | 1737974fa6ea3223 | descriptive |
-| 4. Results / 4.6 Model in the loop | value | `llm:meta/n_ok` | 114 | descriptive |
-| 4. Results / 4.6 Model in the loop | value | `llm:meta/n_tasks` | 114 | descriptive |
-| 4. Results / 4.6 Model in the loop | guard | `llm:meta/rerank_parse_rate == 1` | holds | descriptive |
-| 4. Results / 4.6 Model in the loop | guard | `llm:meta/hyp_parse_rate == 1` | holds | descriptive |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:no_named_symbol/bm25/R@5` | 8.9% [1.8, 17.9] | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:no_named_symbol/rerank50/R@5` | 46.4% [33.9, 58.9] | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25` | +37.5 pp | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/0` | +25.0 pp | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/1` | +50.0 pp | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm` | < 0.001 | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/other_only` | 21 | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/rerank50/primary_only` | 0 | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@20/rerank50/diff_new_minus_bm25` | +26.8 pp | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@20/rerank50/mcnemar_p_holm` | < 0.001 | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:no_named_symbol/hyp_fused/R@5` | 23.2% [12.5, 35.7] | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | value | `llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm` | = 0.057 | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25 > 0` | holds | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@20/rerank50/diff_new_minus_bm25 > 0` | holds | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@20/rerank50/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@5/hyp_fused/ci_new_minus_bm25/0 > 0` | holds | pre-specified |
-| 4. Results / Creating anchors (H2, anchor-free issues) | guard | `llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm >= 0.05` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:all/policy/R@5` | 50.0% [41.2, 58.8] | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:all/rrf+/R@5` | 32.5% [23.7, 41.2] | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H1_policy_R@5/rrf+/diff` | +17.5 pp | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm` | < 0.001 | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:all/bm25/R@5` | 25.4% [17.5, 33.3] | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm` | < 0.001 | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H3_hypfused_R@5/rrf+/diff` | +7.9 pp | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H3_hypfused_R@5/rrf+/mcnemar_p_holm` | = 0.122 | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/rrf+/diff > 0` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/bm25/diff > 0` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/rrf+/diff > 0` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/rrf+/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/bm25/diff > 0` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/bm25/mcnemar_p_holm < 0.05` | holds | pre-specified |
-| 4. Results / The two-mode policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H3_hypfused_R@5/rrf+/mcnemar_p_holm >= 0.05` | holds | pre-specified |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:named_symbol/rerank50/R@5` | 75.9% [65.5, 86.2] | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:named_symbol/rrf+/R@5` | 53.4% [39.7, 65.5] | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:exploratory/rerank50_vs_rrf+_named_R@5/diff` | +22.4 pp | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:exploratory/rerank50_vs_rrf+_named_R@5/mcnemar_p_holm` | = 0.009 | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:exploratory/rerank50_vs_policy_all_R@5/diff` | +11.4 pp | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:ceiling/all/reachable` | 68.4% [59.7, 77.2] | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:ceiling/all/R@5_given_reachable` | 89.7% [82.0, 96.2] | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:cost/latency_s_p50` | 17.12 | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:cost/latency_s_p90` | 28.07 | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | value | `llm:cost/tokens_per_task_mean` | 3,682 | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | guard | `llm:exploratory/rerank50_vs_rrf+_named_R@5/diff > 0` | holds | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | guard | `llm:exploratory/rerank50_vs_rrf+_named_R@5/mcnemar_p_holm < 0.05` | holds | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | guard | `llm:exploratory/rerank50_vs_policy_all_R@5/diff > 0` | holds | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | guard | `llm:ceiling/all/R@5_given_reachable/0 > llm:ceiling/all/reachable/0` | holds | post hoc |
-| 4. Results / Post hoc: re-rank in both modes | guard | `llm:cost/latency_s_p50 < 18` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:gap/rerank50` | +29.4 pp [+11.9, +46.9] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:gap/bm25` | +32.5 pp [+18.2, +46.4] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:gap_minus_rerank/bm25` | +3.0 pp [-14.8, +22.0] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:R/anchored/0` | 81.0% | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:R/anchor_free/0` | 55.4% | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:C/anchored/0` | 93.6% | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:C/anchor_free/0` | 83.9% | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:contrib/reachability` | +22.8 pp [+7.5, +37.7] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:contrib/ranking` | +6.7 pp [-3.1, +17.6] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | value | `post:or_anchored/rerank50` | 4.31 [2.07, 10.60] | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:gap_minus_rerank/bm25/1 < 0` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:gap_minus_rerank/bm25/2 > 0` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:contrib/reachability/1 > 0` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:contrib/ranking/1 < 0` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:overlap_mean/anchor_free > post:overlap_mean/anchored` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:or_anchored/bm25/1 > 1` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:or_anchored/rrf+/1 > 1` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:or_anchored/rerank50/1 > 1` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:by_repo_hit5_unregistered/fastapi~fastapi/anchored/rerank50_rate > post:by_repo_hit5_unregistered/fastapi~fastapi/anchor_free/rerank50_rate` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:by_repo_hit5_unregistered/Textualize~rich/anchored/rerank50_rate > post:by_repo_hit5_unregistered/Textualize~rich/anchor_free/rerank50_rate` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:by_repo_hit5_unregistered/fastapi~fastapi/anchored/rrf+_rate > post:by_repo_hit5_unregistered/fastapi~fastapi/anchor_free/rrf+_rate` | holds | post hoc |
-| 4. Results / Why the anchor gap persists (post hoc, registered before computing) | guard | `post:by_repo_hit5_unregistered/Textualize~rich/anchored/rrf+_rate > post:by_repo_hit5_unregistered/Textualize~rich/anchor_free/rrf+_rate` | holds | post hoc |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `s:by_anchor/no_named_symbol/bm25/R@5` | 8.9% [1.8, 17.9] | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:no_named_symbol/rerank50/R@5` | 46.4% [33.9, 58.9] | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25` | +37.5 pp | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/0` | +25.0 pp | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/ci_new_minus_bm25/1` | +50.0 pp | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm` | < 0.001 | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/other_only` | 21 | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/rerank50/primary_only` | 0 | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@20/rerank50/diff_new_minus_bm25` | +26.8 pp | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@20/rerank50/mcnemar_p_holm` | < 0.001 | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:no_named_symbol/hyp_fused/R@5` | 23.2% [12.5, 35.7] | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | value | `llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm` | = 0.057 | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@5/rerank50/diff_new_minus_bm25 > 0` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@5/rerank50/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@20/rerank50/diff_new_minus_bm25 > 0` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@20/rerank50/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@5/hyp_fused/ci_new_minus_bm25/0 > 0` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:tests/H2_anchorfree_R@5/hyp_fused/mcnemar_p_holm >= 0.05` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:meta/rerank_parse_rate == 1` | holds | pre-specified |
+| 4. Results / 4.6 Model in the loop: creating anchors (H2) | guard | `llm:meta/hyp_parse_rate == 1` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `llm:all/policy/R@5` | 50.0% [41.2, 58.8] | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `s:symbol_level/rrf+/R@5/0` | 32.5% | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm` | < 0.001 | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `s:symbol_level/bm25/R@5/0` | 25.4% | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm` | < 0.001 | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H3_hypfused_R@5/rrf+/diff` | +7.9 pp | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | value | `llm:tests/H3_hypfused_R@5/rrf+/mcnemar_p_holm` | = 0.122 | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/rrf+/diff > 0` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/rrf+/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/bm25/diff > 0` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@5/bm25/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/rrf+/diff > 0` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/rrf+/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/bm25/diff > 0` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H1_policy_R@20/bm25/mcnemar_p_holm < 0.05` | holds | pre-specified |
+| 4. Results / The policy (H1) and hypothesis fusion (H3) | guard | `llm:tests/H3_hypfused_R@5/rrf+/mcnemar_p_holm >= 0.05` | holds | pre-specified |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:named_symbol/rerank50/R@5` | 75.9% [65.5, 86.2] | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `s:by_anchor/named_symbol/rrf+/R@5/0` | 53.4% | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:exploratory/rerank50_vs_rrf+_named_R@5/mcnemar_p_holm` | = 0.009 | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:ceiling/all/reachable` | 68.4% [59.7, 77.2] | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:ceiling/all/R@5_given_reachable` | 89.7% [82.0, 96.2] | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:cost/latency_s_p50` | 17.12 | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:cost/latency_s_p90` | 28.07 | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | value | `llm:cost/tokens_per_task_mean` | 3,683 | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | guard | `llm:exploratory/rerank50_vs_rrf+_named_R@5/diff > 0` | holds | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | guard | `llm:exploratory/rerank50_vs_rrf+_named_R@5/mcnemar_p_holm < 0.05` | holds | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | guard | `llm:ceiling/all/R@5_given_reachable/0 > llm:ceiling/all/reachable/0` | holds | post hoc |
+| 4. Results / Post hoc: re-rank in both modes, and its ceiling | guard | `llm:cost/latency_s_p50 < 18` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:gap/rerank50` | +29.4 pp [+11.9, +46.9] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:gap/bm25` | +32.5 pp [+18.2, +46.4] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:gap/rrf+` | +42.7 pp [+27.0, +58.2] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:gap_minus_rerank/bm25` | +3.0 pp [-14.8, +22.0] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:gap_minus_rerank/rrf+` | +13.3 pp [-5.8, +32.3] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:R/anchored/0` | 81.0% | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:R/anchor_free/0` | 55.4% | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:C/anchored/0` | 93.6% | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:C/anchor_free/0` | 83.9% | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:share_reachability` | 77.4% [45.0, 115.6] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:or_anchored/rerank50` | 4.31 [2.07, 10.60] | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:unestimable_resamples/or_anchored/bm25` | 55 | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | value | `post:unestimable_resamples/or_anchored/rrf+` | 28 | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:gap_minus_rerank/bm25/1 < 0` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:gap_minus_rerank/bm25/2 > 0` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:gap_minus_rerank/rrf+/1 < 0` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:share_reachability/1 < 0.5` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:overlap_mean/anchor_free > post:overlap_mean/anchored` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:or_anchored/bm25/1 > 1` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:or_anchored/rrf+/1 > 1` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:or_anchored/rerank50/1 > 1` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:by_repo_hit5_unregistered/fastapi~fastapi/anchored/rerank50_rate > post:by_repo_hit5_unregistered/fastapi~fastapi/anchor_free/rerank50_rate` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:by_repo_hit5_unregistered/Textualize~rich/anchored/rerank50_rate > post:by_repo_hit5_unregistered/Textualize~rich/anchor_free/rerank50_rate` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:by_repo_hit5_unregistered/fastapi~fastapi/anchored/rrf+_rate > post:by_repo_hit5_unregistered/fastapi~fastapi/anchor_free/rrf+_rate` | holds | post hoc |
+| 4. Results / Why the anchor gap persists (post hoc; plan committed in `cd93427` before the analysis code, with the first two point estimates already known) | guard | `post:by_repo_hit5_unregistered/Textualize~rich/anchored/rrf+_rate > post:by_repo_hit5_unregistered/Textualize~rich/anchor_free/rrf+_rate` | holds | post hoc |
 | 4. Results / 4.7 The agent | value | `agent:runs/S1/panel/n` | 24 | descriptive |
-| 4. Results / 4.7 The agent | value | `agent:failure/n_tags` | 5 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/solvable_runs` | 107 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/task_runs` | 120 | descriptive |
+| 4. Results / 4.7 The agent | value | `agent:runs/S1/panel/gold_solvable` | 21 | descriptive |
+| 4. Results / 4.7 The agent | value | `agent:runs/S3/panel/gold_solvable` | 22 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/rank1_rate` | 57.9% | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/resolved_min` | 4 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/resolved_max` | 5 | descriptive |
@@ -219,21 +226,24 @@ Every number and every machine-checked directional claim in PAPER.md, in reading
 | 4. Results / 4.7 The agent | value | `agent:failure/unresolved/RIGHT_FILE_TIMEOUT` | 20 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/unresolved/RIGHT_FILE_WRONG_FIX` | 20 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/unresolved_no_edit` | 35 | descriptive |
+| 4. Results / 4.7 The agent | value | `agent:failure/no_edit_read_gold` | 30 | descriptive |
+| 4. Results / 4.7 The agent | value | `agent:failure/no_edit_rank1_gold` | 26 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/tools/edit_file/malformed` | 77 | descriptive |
 | 4. Results / 4.7 The agent | value | `agent:failure/tools/edit_file/calls` | 248 | descriptive |
-| 4. Results / 4.7 The agent | value | `agent:failure/tools/run_command/malformed` | 0 | descriptive |
-| 4. Results / 4.7 The agent | value | `agent:failure/tools/run_command/calls` | 1,047 | descriptive |
 | 4. Results / 4.7 The agent | value | `ser:eras/edit_file/edit_file/missing_found_in_value` | 77 | descriptive |
 | 4. Results / 4.7 The agent | value | `ser:eras/edit_file/edit_file/well_formed_alphabetical` | 170 | descriptive |
 | 4. Results / 4.7 The agent | value | `ser:eras/edit_file/edit_file/well_formed` | 171 | descriptive |
 | 4. Results / 4.7 The agent | value | `ser:eras/edit_file/edit_file/closer_before_swallowed_key/backtick` | 72 | descriptive |
 | 4. Results / 4.7 The agent | value | `ser:eras/edit_file/edit_file/closer_before_swallowed_key/double_quote` | 5 | descriptive |
+| 4. Results / 4.7 The agent | value | `ser:eras/edit_file/write_file/missing_found_in_value` | 4 | descriptive |
+| 4. Results / 4.7 The agent | value | `ser:eras/edit_file/write_file/calls` | 94 | descriptive |
+| 4. Results / 4.7 The agent | value | `agent:failure/unresolved_with_malformed_edit` | 9 | descriptive |
 | 4. Results / 4.7 The agent | guard | `ser:eras/edit_file/edit_file/missing_found_in_value == agent:failure/tools/edit_file/malformed` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `ser:eras/edit_file/edit_file/missing_found_in_value == ser:eras/edit_file/edit_file/missing_required` | holds | descriptive |
+| 4. Results / 4.7 The agent | guard | `ser:eras/edit_file/write_file/missing_found_in_value == ser:eras/edit_file/write_file/missing_required` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `agent:failure/rank1_rate > 0.5` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `agent:failure/wrong_file_share < 0.2` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `agent:failure/unresolved_right_file > agent:failure/unresolved/WRONG_FILE` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `agent:failure/unresolved_no_edit > agent:failure/unresolved/WRONG_FILE` | holds | descriptive |
-| 4. Results / 4.7 The agent | guard | `agent:failure/tools/edit_file/rate > agent:failure/tools/run_command/rate` | holds | descriptive |
 | 4. Results / 4.7 The agent | guard | `agent:failure/resolved_max <= agent:runs/S1/panel/gold_solvable` | holds | descriptive |
 | 4. Results | value | `agentmd:eras` | (table) | descriptive |

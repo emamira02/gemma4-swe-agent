@@ -158,6 +158,12 @@ def aggregate(by_tag: dict) -> dict:
             "unresolved_runs": len(unres), "unresolved": {c: cats.get(c, 0) for c in CATEGORIES[2:]},
             "unresolved_right_file": sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE")),
             "unresolved_no_edit": cats.get("NO_EDIT", 0) + cats.get("NO_EDIT_TOOL", 0),
+            # how far the tool failure and localization reach into the losses (runs, not calls)
+            "unresolved_with_malformed_edit": sum(v.get("malformed_edits", 0) > 0 for v in unres),
+            "resolved_with_malformed_edit": sum(v.get("malformed_edits", 0) > 0 for v in solv if v["category"] == "RESOLVED"),
+            "no_edit_read_gold": sum(bool(v.get("read_gold")) for v in unres if v["category"] in ("NO_EDIT", "NO_EDIT_TOOL")),
+            "no_edit_rank1_gold": sum(v.get("localize_gold_file_rank") == 1 for v in unres
+                                      if v["category"] in ("NO_EDIT", "NO_EDIT_TOOL")),
             "wrong_file_share": round(cats.get("WRONG_FILE", 0) / max(1, len(unres)), 6),
             "right_file_share": round(sum(cats.get(c, 0) for c in CATEGORIES if c.startswith("RIGHT_FILE"))
                                       / max(1, len(unres)), 6),

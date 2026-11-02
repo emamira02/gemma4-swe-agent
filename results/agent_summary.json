@@ -12,7 +12,10 @@
   "S9",
   "S12",
   "S13",
-  "S14"
+  "S14",
+  "S15",
+  "S16",
+  "S17"
  ],
  "runs": {
   "B1": {
@@ -299,18 +302,52 @@
    }
   },
   "S14": {
+   "status": "COMPLETE",
+   "config_hash": "0d410b080341",
+   "public_score": 0.15
+  },
+  "S15": {
+   "status": "COMPLETE",
+   "config_hash": "a9049082de21"
+  },
+  "S16": {
    "status": "PENDING",
-   "config_hash": "0d410b080341"
+   "config_hash": "19922aedd503"
+  },
+  "S17": {
+   "status": "NOT_SUBMITTED",
+   "config_hash": null,
+   "panel": {
+    "n": 24,
+    "repos": [
+     "fastapi",
+     "rich"
+    ],
+    "gold_solvable": 24,
+    "resolved": 14,
+    "resolve_rate": 0.583333,
+    "timeouts": 2,
+    "empty_patch": 3,
+    "no_edit": 1,
+    "tasks_with_arg_errors": 0,
+    "first_edit_s_median": 181.1,
+    "calls": 514,
+    "arg_errors": 0,
+    "backtick_args": 9,
+    "max_time_minutes": 8.0,
+    "max_tool_calls": 28
+   }
   }
  },
  "scored": {
   "S1": 0.15,
   "S3": 0.12,
   "S5": 0.12,
-  "S12": 0.17
+  "S12": 0.17,
+  "S14": 0.15
  },
- "n_scored": 4,
- "n_panels": 12,
+ "n_scored": 5,
+ "n_panels": 13,
  "baseline": "B1",
  "failure": {
   "tags": [
@@ -342,6 +379,10 @@
   },
   "unresolved_right_file": 40,
   "unresolved_no_edit": 35,
+  "unresolved_with_malformed_edit": 9,
+  "resolved_with_malformed_edit": 4,
+  "no_edit_read_gold": 30,
+  "no_edit_rank1_gold": 26,
   "wrong_file_share": 0.117647,
   "right_file_share": 0.470588,
   "tools": {
@@ -413,6 +454,10 @@
    },
    "unresolved_right_file": 40,
    "unresolved_no_edit": 35,
+   "unresolved_with_malformed_edit": 9,
+   "resolved_with_malformed_edit": 4,
+   "no_edit_read_gold": 30,
+   "no_edit_rank1_gold": 26,
    "wrong_file_share": 0.117647,
    "right_file_share": 0.470588,
    "tools": {
@@ -482,6 +527,10 @@
    },
    "unresolved_right_file": 27,
    "unresolved_no_edit": 19,
+   "unresolved_with_malformed_edit": 20,
+   "resolved_with_malformed_edit": 5,
+   "no_edit_read_gold": 17,
+   "no_edit_rank1_gold": 14,
    "wrong_file_share": 0.148148,
    "right_file_share": 0.5,
    "tools": {
@@ -548,6 +597,10 @@
    },
    "unresolved_right_file": 9,
    "unresolved_no_edit": 4,
+   "unresolved_with_malformed_edit": 2,
+   "resolved_with_malformed_edit": 0,
+   "no_edit_read_gold": 4,
+   "no_edit_rank1_gold": 0,
    "wrong_file_share": 0.133333,
    "right_file_share": 0.6,
    "tools": {
@@ -601,17 +654,19 @@
    "S8",
    "S9",
    "S12",
-   "S13"
+   "S13",
+   "S17"
   ],
-  "n_runs": 12,
+  "n_runs": 13,
   "tasks": 34,
-  "runs_per_task_min": 2,
-  "runs_per_task_max": 12,
+  "runs_per_task_min": 3,
+  "runs_per_task_max": 13,
   "always": 13,
-  "never": 16,
-  "mixed": 5,
-  "mixed_share": 0.147059,
+  "never": 15,
+  "mixed": 6,
+  "mixed_share": 0.176471,
   "mixed_tasks": [
+   "fastapi_14419",
    "rich_3063",
    "rich_3471",
    "rich_3506",
@@ -621,8 +676,8 @@
   "by_repo": {
    "fastapi": {
     "always": 9,
-    "never": 3,
-    "mixed": 0
+    "never": 2,
+    "mixed": 1
    },
    "rich": {
     "always": 4,
@@ -645,6 +700,16 @@
   "S12": {
    "fastapi": {
     "resolved": 9,
+    "solvable": 12
+   },
+   "rich": {
+    "resolved": 4,
+    "solvable": 12
+   }
+  },
+  "S17": {
+   "fastapi": {
+    "resolved": 10,
     "solvable": 12
    },
    "rich": {

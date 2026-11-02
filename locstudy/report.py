@@ -274,6 +274,8 @@ def _render_slot(m: re.Match, docs: dict[str, dict]) -> str:
         return f"{v:.3f}"
     if fmt == "int":
         return f"{int(v):,}"
+    if fmt == "rint":
+        return f"{round(v):,}"
     return str(v)
 
 
@@ -286,7 +288,7 @@ def fill_template(template: str, docs: dict[str, dict]) -> str:
     <!-- if:src --> ... <!-- endif --> blocks are kept only when result source `src` exists (<!-- if:!src --> when it does not).
     <!-- claim: ... --> guards are checked on the kept text, then removed.
     fmt: pct (x100, 1 dp, %), dpct (signed percentage points), ci (mean [lo, hi] as %), p (p-value as "= 0.053" or
-    "< 0.001"), dci (signed pp with interval), f2ci (ratio with interval), f2, f3, int, raw."""
+    "< 0.001"), dci (signed pp with interval), f2ci (ratio with interval), f2, f3, int (truncated), rint (rounded), raw."""
     template = _keep_blocks(template, docs)
     bad = check_claims(template, docs)
     if bad:
@@ -402,7 +404,7 @@ def agent_table_eras(doc: dict, full_reasons: bool = False) -> str:
     """The paper's agent table: runs pooled per edit channel (analysis.failure_audit ERAS), with the panels they ran
     on, malformed tool calls and the public scores of the era's submitted tags; excluded tags get a short reason
     (the full one with full_reasons, as in RESULTS_AGENT.md)."""
-    head = ("| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls | Public score |\n"
+    head = ("| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls (all tools) | Public score |\n"
             "|---|---|---|---|---|---|")
     rows = []
     for era, e in doc.get("eras", {}).items():

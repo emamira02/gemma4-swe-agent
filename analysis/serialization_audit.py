@@ -44,12 +44,15 @@ def call_facts(name: str, args: dict) -> dict:
             "alphabetical": known == sorted(known) and len(known) == len(args)}
 
 
-def audit_tags(tags: tuple[str, ...], results: Path) -> dict:
+def audit_tags(tags: tuple[str, ...], results: Path, calls: list | None = None) -> dict:
+    """Counts per tool; with `calls`, also appends one text-free record per call that misses a required argument."""
     c, closers = Counter(), Counter()
     for tag in tags:
         for f in sorted((results / f"kaggle_eval_{tag}" / "agent_eval" / "results" / "traces").glob("trace_*.json")):
+            n = 0
             for s in json.loads(f.read_text(encoding="utf-8"))["steps"]:
                 for tc in s.get("tool_calls") or []:
+                    n += 1
                     name = tc["function_name"]
                     if name not in TOOLS:
                         continue
@@ -59,6 +62,9 @@ def audit_tags(tags: tuple[str, ...], results: Path) -> dict:
                         c[f"{name}/missing_required"] += 1
                         c[f"{name}/missing_found_in_value"] += len(x["found"]) == len(x["missing"])
                         closers.update(f"{name}/{k}" for k in x["closers"])
+                        if calls is not None:
+                            calls.append({"tag": tag, "task": f.stem.removeprefix("trace_"), "call": n, "tool": name,
+                                          "missing": x["missing"], "found": x["found"], "closer": x["closers"]})
                     else:
                         c[f"{name}/well_formed"] += 1
                         c[f"{name}/well_formed_alphabetical"] += x["alphabetical"]
@@ -74,7 +80,9 @@ def audit_tags(tags: tuple[str, ...], results: Path) -> dict:
 
 def build(results: Path) -> dict:
     eras = {era: ERAS[era] for era in ("edit_file", "public_prompt")}
-    return {"eras": {era: {"tags": list(tags), **audit_tags(tags, results)} for era, tags in eras.items()}}
+    calls: list[dict] = []
+    out = {"eras": {era: {"tags": list(tags), **audit_tags(tags, results, calls)} for era, tags in eras.items()}}
+    return {**out, "malformed_calls": calls}  # call = 1-based index of the tool call in the task's trace
 
 
 def main() -> None:

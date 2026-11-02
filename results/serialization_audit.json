@@ -52,5 +52,2077 @@
     }
    }
   }
- }
+ },
+ "malformed_calls": [
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 10,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 11,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 12,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 13,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 17,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 18,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 19,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 20,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 21,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 22,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 23,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 24,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 31,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3296",
+   "call": 44,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3675",
+   "call": 6,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3772",
+   "call": 13,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S1",
+   "task": "rich_3938",
+   "call": 37,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3063",
+   "call": 9,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3063",
+   "call": 10,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3067",
+   "call": 4,
+   "tool": "write_file",
+   "missing": [
+    "filepath"
+   ],
+   "found": [
+    "filepath"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3067",
+   "call": 5,
+   "tool": "write_file",
+   "missing": [
+    "filepath"
+   ],
+   "found": [
+    "filepath"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3067",
+   "call": 6,
+   "tool": "write_file",
+   "missing": [
+    "filepath"
+   ],
+   "found": [
+    "filepath"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3782",
+   "call": 21,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3782",
+   "call": 22,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3782",
+   "call": 23,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3782",
+   "call": 24,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3782",
+   "call": 25,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 16,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 17,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 18,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 19,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 20,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 21,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 22,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S2",
+   "task": "rich_3935",
+   "call": 23,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S3",
+   "task": "rich_3006",
+   "call": 8,
+   "tool": "write_file",
+   "missing": [
+    "filepath"
+   ],
+   "found": [
+    "filepath"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 15,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 16,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 17,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 22,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 23,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 24,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 25,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 26,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 27,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 28,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 29,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 30,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3063",
+   "call": 34,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3067",
+   "call": 6,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3067",
+   "call": 7,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3067",
+   "call": 8,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3067",
+   "call": 9,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3296",
+   "call": 12,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3296",
+   "call": 13,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3296",
+   "call": 14,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3296",
+   "call": 15,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3296",
+   "call": 16,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 29,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 30,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 31,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 32,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 33,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3472",
+   "call": 34,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3521",
+   "call": 21,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 17,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 18,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 19,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 20,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 21,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 22,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 23,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 24,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 25,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 26,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 27,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S4",
+   "task": "rich_3882",
+   "call": 35,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S5",
+   "task": "rich_3772",
+   "call": 13,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S5",
+   "task": "rich_3772",
+   "call": 14,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S5",
+   "task": "rich_3772",
+   "call": 15,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "S5",
+   "task": "rich_3772",
+   "call": 16,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 26,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 27,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 28,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 29,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 33,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 34,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 35,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 36,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 37,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 38,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 39,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 43,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 44,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 47,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 48,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 49,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 50,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 51,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 52,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 53,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 54,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 55,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 56,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 57,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 58,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 59,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 60,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 61,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 62,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 63,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 64,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 65,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 66,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 67,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 68,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 69,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 70,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 71,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 72,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 73,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 74,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 75,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 76,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 77,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 78,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 79,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3469",
+   "call": 80,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3944",
+   "call": 18,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_3944",
+   "call": 19,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "backtick"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 5,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 6,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 9,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 10,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 11,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 12,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 13,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  },
+  {
+   "tag": "B1",
+   "task": "rich_4070",
+   "call": 14,
+   "tool": "edit_file",
+   "missing": [
+    "old_string"
+   ],
+   "found": [
+    "old_string"
+   ],
+   "closer": [
+    "double_quote"
+   ]
+  }
+ ]
 }

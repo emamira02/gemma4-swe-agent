@@ -16,7 +16,10 @@ Rebuild: python -m analysis.failure_audit && python tools/agent_summary.py && py
 | S9 | 24 (24) | 12 | 4 | 2 | 96 | not submitted |
 | S12 | 24 (24) | 13 | 3 | 0 | 149 | 0.17 |
 | S13 | 14 (14) | 3 | 5 | 0 | 156 | not submitted |
-| S14 | – | – | – | – | – | pending |
+| S14 | – | – | – | – | – | 0.15 |
+| S15 | – | – | – | – | – | complete |
+| S16 | – | – | – | – | – | pending |
+| S17 | 24 (24) | 14 | 2 | 0 | 181 | not submitted |
 
 Pooled over S1, S2, S3, S4, S5: 107 solvable of 120 task runs, 22 resolved; localize ranks an edited file first in 62 (57.9%).
 
@@ -41,7 +44,7 @@ Pooled over S1, S2, S3, S4, S5: 107 solvable of 120 task runs, 22 resolved; loca
 
 ## Runs pooled per edit channel
 
-| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls | Public score |
+| Edit channel | Tags | Panel | Resolved / solvable runs | Malformed calls (all tools) | Public score |
 |---|---|---|---|---|---|
 | edit_file (two code arguments) | S1–S5 | rich | 22/107 | 119/2,655 (4.5%) | S1 0.15, S3 0.12, S5 0.12 |
 | heredoc editor (one argument) | S7, S8, S9, S12 | fastapi+rich; rich | 37/91 | 8/2,056 (0.4%) | S12 0.17 |
@@ -49,13 +52,13 @@ Pooled over S1, S2, S3, S4, S5: 107 solvable of 120 task runs, 22 resolved; loca
 
 *Excluded: S6 (editor unreachable in 15 tasks (infrastructure, fixed in S7)); S13 (targeted panel: 11 selected failures and 3 controls).*
 
-## Outcome stability over 12 panel runs (B1, S1, S2, S3, S4, S5, S6, S7, S8, S9, S12, S13)
+## Outcome stability over 13 panel runs (B1, S1, S2, S3, S4, S5, S6, S7, S8, S9, S12, S13, S17)
 
-34 tasks have at least two runs in which the reference patch resolves (2-12 runs each): 13 always resolved, 16 never, 5 mixed (rich_3063, rich_3471, rich_3506, rich_3772, rich_3777).
+34 tasks have at least two runs in which the reference patch resolves (3-13 runs each): 13 always resolved, 15 never, 6 mixed (fastapi_14419, rich_3063, rich_3471, rich_3506, rich_3772, rich_3777).
 
 | Repository | Always | Never | Mixed |
 |---|---|---|---|
-| fastapi | 9 | 3 | 0 |
+| fastapi | 9 | 2 | 1 |
 | rich | 4 | 13 | 5 |
 
 | Mixed panel | Repository | Resolved / solvable |
@@ -64,3 +67,5 @@ Pooled over S1, S2, S3, S4, S5: 107 solvable of 120 task runs, 22 resolved; loca
 | S9 | rich | 3/12 |
 | S12 | fastapi | 9/12 |
 | S12 | rich | 4/12 |
+| S17 | fastapi | 10/12 |
+| S17 | rich | 4/12 |
