@@ -1,9 +1,9 @@
 {
  "provenance": {
   "schema_version": 2,
-  "utc": "2026-10-12T16:54:09+00:00",
-  "git_commit": "e1f06d498a17dfb8efc8f2bfaab6c209ec8fc7ff",
-  "git_dirty": true,
+  "utc": "2026-11-02T22:40:39+00:00",
+  "git_commit": "6ac0a7339296963f17973fac721abb218b7c6592",
+  "git_dirty": false,
   "python": "3.11.9",
   "numpy": "2.3.5",
   "platform": "Windows-10-10.0.26200-SP0",
