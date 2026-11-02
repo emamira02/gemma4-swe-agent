@@ -1,5 +1,41 @@
 # Paper track plan (gemma-4-developer-agent-paper, due 2026-11-12 23:59 UTC)
 
+## Checkpoint 2026-11-02 22:30 UTC (read this first; the 29 Oct plan below is history where they differ)
+Verified this session (repo main, kaggle CLI, gh, kaggle.com pages):
+- Deadline 2026-11-12 23:59 UTC; entered in paper and main. No new paper-track discussion thread since the
+  2 Nov inventory (newest 754918). Host, 751804: "Github should work for sharing code" (paper track).
+- The GitHub repository is PUBLIC since its creation (2026-10-09 16:58 UTC, PublicEvent), not private as the
+  29 Oct plan says. Main rules 6.b: publicly shared Competition Code must also be shared on the competition's
+  Kaggle forum or notebooks. OPEN: owner decision.
+- H1-H3 chronology holds: LLM kernel v1 died of CUDA OOM (no model output); 6a28d29 (H1-H3) 16:33:42 CEST,
+  model outputs on disk 16:48:55 CEST, 10 Oct (git and file timestamps; Kaggle kernel versions not checked).
+- `python -m locstudy report` rebuilds PAPER.md byte-identically from results/*.json. results/summary.json
+  provenance is commit e1f06d4 (pre-rewrite id), dirty: regenerate from a clean commit before the final build.
+- F1 done (8229c35, a5a7d86): "Recall@k" renamed Hit@k (keys unchanged, earlier name stated in Methods);
+  4.10 eras marked as system comparisons; per-call serialization evidence (analysis/serialization_audit.py:
+  S1-S5 77/77 malformed edit_file calls carry old_string inside new_string, after a backtick 72 or quote 5;
+  B1 57/57); paper/CLAIMS.md (every number and guard with key and status) and paper/WORDCOUNT.md
+  (gate 2,993; 2,732 without references and markdown-only tokens).
+- kaggle-loop run of 2026-10-31 20:20 UTC still shows "running" (no activity since 20:20:44): same pattern as
+  the 28 Oct incident; 1 Nov had no submission. Not touched here.
+
+Novelty audit (one reader through a summarising fetch tool; verify each figure before citing it):
+| Claim | Nearest prior | Verdict | Remaining difference / discriminating check |
+|---|---|---|---|
+| C1 anchors stratify localization | arXiv 2610.33958 (25 Oct 2026: hop depth from issue-mentioned code, Gemma 4 E4B, McNemar+Holm; no results for its "no mention" bucket); LocAgent 5.3; Agentless 6.1; SweRank lexical-overlap bins | partly known | per-signal results on the anchor-free stratum; show anchor status predicts hits beyond lexical overlap (CPU, post hoc) |
+| C2 untuned Gemma 4 31B re-rank of BM25 top-50 | SweRank (fine-tuned listwise; untuned GPT-4.1 strong; "retrieval not the bottleneck"); 2607.11046 (file level, Qwen 32B, top-20) | partly known | untuned quantized offline model, symbol level, signatures only, pre-specified on anchor-free issues; pool coverage explains the opposite bottleneck to SweRank |
+| C3 reading budget | EXAM score (effort before first fault) | partly known | token-denominated variant; keep as a cost metric, not a contribution |
+| C4 serialization failure | ingredients public (template sorts keys; parser takes the rest of an unterminated string; gemma4-agent-lab PR #20 symptom, no diagnosis) | mechanism not found | per-call evidence now in repo; causal A/B (rename keys so old text sorts first) needs GPU |
+| C5 losses after localization | arXiv 2511.00197, 2610.33958, 2607.09691 | known (direction) | setting only |
+| C6 evaluation under 1 submission/day | arXiv 2609.17394 (discordant instances, McNemar+Holm), 2602.07150 | partly known | drop or one sentence |
+
+Proposal for F2 (needs the owner's OK before the rewrite): two contributions instead of six. Central: issue
+anchors decide which signals work, and the untuned competition model as re-ranker closes most of the anchor gap
+(pre-specified H2), moving the bottleneck to candidate generation. Secondary: the offline agent's losses come
+after localization, and one of them is a serialization failure diagnosed per call. Related work rewritten against
+2610.33958, SweRank, 2607.11046, 2607.09691 and in-competition work (748395, 750732, BudgetAudit, codegraph-loc).
+CPU-only additions: lexical-overlap control for C1/C2 (post hoc, declared). No new inference unless approved.
+
 ## Verified facts (competition pages, read 2026-10-29)
 - Submission: a Kaggle Writeup with title and subtitle, abstract, introduction, methods and experiments, related
   work and citations; **at most 3,000 words**; unpublished research; non-archival. Optional: a public notebook in
