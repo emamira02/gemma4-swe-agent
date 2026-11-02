@@ -167,6 +167,8 @@ def test_template_filling_is_strict():
     assert report.fill_template(neg, docs) == "no model" and report.fill_template(neg, {**docs, "llm": {"x": 1}}) == "model"
     assert report.fill_template("p {{s:p|p}}, q {{s:q|p}}, d {{s:d|dpct}}", {"s": {"p": 0.0004, "q": 0.0574, "d": -0.0526}}) == \
         "p < 0.001, q = 0.057, d -5.3 pp"
+    assert report.fill_template("{{s:g|dci}} {{s:o|f2ci}}", {"s": {"g": [0.2943, 0.1188, -0.05], "o": [4.3114, 2.0652, 10.5956]}}) == \
+        "+29.4 pp [+11.9, -5.0] 4.31 [2.07, 10.60]"
 
 
 def test_claims_guard_the_prose():
@@ -278,8 +280,10 @@ def test_claim_registry_lists_rendered_values_with_status():
     from locstudy import report
     docs = {"s": {"h": [0.25, 0.1, 0.4], "p": 0.01}}
     tpl = ("# T\n## Abstract\nHit {{s:h|ci}}.\n\n## 4. Results\n**4.3 Mode (post hoc).** p {{s:p|p}}.<!-- claim: s:p < 0.05 -->"
-           "\n\n**Creating anchors (H2).** {{s:h/0|pct}}\n\n<!-- if:llm -->**4.9 Model.** {{llm:x}}<!-- endif -->")
+           "\n\n**Creating anchors (H2).** {{s:h/0|pct}}\n\n**4.6 Robustness (pre-specified).** {{s:p|p}}"
+           "\n\n<!-- if:llm -->**4.9 Model.** {{llm:x}}<!-- endif -->")
     reg = report.claim_registry(tpl, docs)
+    assert "| 4. Results / 4.6 Robustness (pre-specified) | value | `s:p` | = 0.010 | pre-specified |" in reg
     assert "| Abstract | value | `s:h` | 25.0% [10.0, 40.0] | restates section 4 |" in reg
     assert "| 4. Results / 4.3 Mode (post hoc) | value | `s:p` | = 0.010 | post hoc |" in reg
     assert "| 4. Results / 4.3 Mode (post hoc) | guard | `s:p < 0.05` | holds | post hoc |" in reg

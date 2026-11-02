@@ -111,6 +111,9 @@ def analyze(rows: list[dict], ov: np.ndarray, n_boot: int = 10_000, seed: int = 
         cell["n"] += 1
         for m in METHODS:
             cell[m] += int(_hit(r, m, 5))
+    for cells in by_repo.values():
+        for cell in cells.values():
+            cell.update({f"{m}_rate": round(cell[m] / cell["n"], 4) for m in METHODS})
     return {"registered": "docs/posthoc-anchor-analysis-2026-11-02.md", "status": "post hoc",
             "n": {"anchored": int(anch.sum()), "anchor_free": int((~anch).sum())},
             "params": {"n_boot": n_boot, "seed": seed, "pool": POOL, "k": 5},

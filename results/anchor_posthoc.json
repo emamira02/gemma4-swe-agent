@@ -136,13 +136,19 @@
     "n": 26,
     "bm25": 3,
     "rrf+": 2,
-    "rerank50": 10
+    "rerank50": 10,
+    "bm25_rate": 0.1154,
+    "rrf+_rate": 0.0769,
+    "rerank50_rate": 0.3846
    },
    "anchored": {
     "n": 32,
     "bm25": 14,
     "rrf+": 14,
-    "rerank50": 22
+    "rerank50": 22,
+    "bm25_rate": 0.4375,
+    "rrf+_rate": 0.4375,
+    "rerank50_rate": 0.6875
    }
   },
   "encode/httpx": {
@@ -150,7 +156,10 @@
     "n": 1,
     "bm25": 1,
     "rrf+": 1,
-    "rerank50": 1
+    "rerank50": 1,
+    "bm25_rate": 1.0,
+    "rrf+_rate": 1.0,
+    "rerank50_rate": 1.0
    }
   },
   "psf/requests": {
@@ -158,13 +167,19 @@
     "n": 9,
     "bm25": 3,
     "rrf+": 6,
-    "rerank50": 8
+    "rerank50": 8,
+    "bm25_rate": 0.3333,
+    "rrf+_rate": 0.6667,
+    "rerank50_rate": 0.8889
    },
    "anchor_free": {
     "n": 3,
     "bm25": 1,
     "rrf+": 1,
-    "rerank50": 2
+    "rerank50": 2,
+    "bm25_rate": 0.3333,
+    "rrf+_rate": 0.3333,
+    "rerank50_rate": 0.6667
    }
   },
   "Textualize/rich": {
@@ -172,13 +187,19 @@
     "n": 27,
     "bm25": 1,
     "rrf+": 3,
-    "rerank50": 14
+    "rerank50": 14,
+    "bm25_rate": 0.037,
+    "rrf+_rate": 0.1111,
+    "rerank50_rate": 0.5185
    },
    "anchored": {
     "n": 16,
     "bm25": 6,
     "rrf+": 10,
-    "rerank50": 13
+    "rerank50": 13,
+    "bm25_rate": 0.375,
+    "rrf+_rate": 0.625,
+    "rerank50_rate": 0.8125
    }
   }
  }
