@@ -1,7 +1,10 @@
 # Paper track plan (gemma-4-developer-agent-paper, due 2026-11-12 23:59 UTC)
 
 ## Checkpoint 2026-11-03 (read this first)
-- Writeup DRAFT on Kaggle, not submitted: https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/anchored-or-not-localization-and-re-ranking-in-an
+- SUBMITTED 2026-11-03 ~06:38 UTC (owner in chat: "invialo ora, submit il writeups"), content of commit f710ad0;
+  writeups page shows "Submitted" under Your Work. Kaggle: editable until the deadline; at close the writeup
+  becomes public under CC BY 4.0, attributed to the Kaggle display name. Later edits: tools/writeup_sync.js.
+- Writeup (before submission, a draft): https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/anchored-or-not-localization-and-re-ranking-in-an
   ("Draft (Ready to submit)", checklist 6/6). Title shortened to fit Kaggle's 80 characters (8e70215); subtitle =
   second line of PAPER.md; description = PAPER.md from "## Abstract" (commit f710ad0), figures uploaded to Kaggle
   storage; card from tools/writeup_card.py; Project Link = the public GitHub repository. Site counter: 2,949 words
@@ -111,7 +114,7 @@ the in-container localization and editing skills would be the resource).
 | 2-4 Nov | DONE 2 Nov (2db4f35, owner OK for F2 in chat): rewrite around two contributions, registered post hoc anchor analyses (cd93427, 55ac7a9), serialization audit, related work vs nearest priors; build green at 2,911 words | paper/PAPER.md |
 | 5-6 Nov | DONE 2 Nov (c3c581e): independent review, 15 findings, responses in paper/REVIEW.md (2 open: publish text-free model ranks; manual label sample). Figure legibility at writeup width checked 3 Nov | REVIEW.md |
 | 7-8 Nov | DONE 3 Nov: writeup draft on Kaggle (Claude in Chrome), GitHub link in Project Links instead of a notebook; site count 2,974 | draft writeup |
-| 9 Nov | Clean-commit build, Emanuele confirms in chat, submit | submitted writeup |
+| 9 Nov | Clean-commit build, sync the submitted writeup (submitted 3 Nov with the owner's OK; edits allowed until the deadline) | updated writeup |
 | 10-12 Nov | Buffer only | |
 
 ## Decisions (Emanuele, chat 2026-10-29)
