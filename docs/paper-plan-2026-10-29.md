@@ -1,6 +1,20 @@
 # Paper track plan (gemma-4-developer-agent-paper, due 2026-11-12 23:59 UTC)
 
-## Checkpoint 2026-11-02 22:30 UTC (read this first; the 29 Oct plan below is history where they differ)
+## Checkpoint 2026-11-03 (read this first)
+- Writeup DRAFT on Kaggle, not submitted: https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/anchored-or-not-localization-and-re-ranking-in-an
+  ("Draft (Ready to submit)", checklist 6/6). Title shortened to fit Kaggle's 80 characters (8e70215); subtitle =
+  second line of PAPER.md; description = PAPER.md from "## Abstract" (commit f710ad0), figures uploaded to Kaggle
+  storage; card from tools/writeup_card.py; Project Link = the public GitHub repository. Site counter: 2,949 words
+  in the description + 12 title + 13 subtitle = 2,974 (references included); build gate 2,998.
+- Update procedure: tools/writeup_sync.js (run in the editor page, keeps the Kaggle figure URLs). kaggle-paper-final
+  (9 Nov) rewritten to sync this draft instead of creating one.
+- Kaggle's submit prompt: a submitted writeup can be retracted, edited and resubmitted until the deadline; ties go
+  to the earlier entry. 20 or more other submitted writeups exist (hidden until close; not readable).
+- Figures at writeup width (892 px): legible; Figure 1 tick labels are the smallest.
+- GitHub traffic (14-day window): 584 clones from 191 sources since 26 Oct, 24 page views from 3 visitors, 0 forks,
+  0 stars. Who cloned is not knowable.
+
+## Checkpoint 2026-11-02 22:30 UTC (the 29 Oct plan below is history where they differ)
 Verified this session (repo main, kaggle CLI, gh, kaggle.com pages):
 - Deadline 2026-11-12 23:59 UTC; entered in paper and main. No new paper-track discussion thread since the
   2 Nov inventory (newest 754918). Host, 751804: "Github should work for sharing code" (paper track).
@@ -95,8 +109,8 @@ the in-container localization and editing skills would be the resource).
 | 30 Oct-2 Nov | DONE 29 Oct (eras, stability, per-repo, era table in 4.10; build green at 2,992 words). Extend analysis to all panels: failure audit for S6-S13 and B1, per-repository splits, outcome stability metric, serialization table, claim guards; tests | results/*.json, guards |
 | 31 Oct-1 Nov | P1 panels (already scheduled, p1-panel-1..4) | optional row; DROPPED 2 Nov (S16ctl verdict has no owner task; not needed for the two-contribution paper) |
 | 2-4 Nov | DONE 2 Nov (2db4f35, owner OK for F2 in chat): rewrite around two contributions, registered post hoc anchor analyses (cd93427, 55ac7a9), serialization audit, related work vs nearest priors; build green at 2,911 words | paper/PAPER.md |
-| 5-6 Nov | DONE 2 Nov (c3c581e): independent review, 15 findings, responses in paper/REVIEW.md (2 open: publish text-free model ranks; manual label sample). Still to do: figure legibility at writeup width | REVIEW.md |
-| 7-8 Nov | Code notebook (if approved) and writeup draft on Kaggle (Claude in Chrome, Emanuele signed in); word count as the site counts it | draft writeup |
+| 5-6 Nov | DONE 2 Nov (c3c581e): independent review, 15 findings, responses in paper/REVIEW.md (2 open: publish text-free model ranks; manual label sample). Figure legibility at writeup width checked 3 Nov | REVIEW.md |
+| 7-8 Nov | DONE 3 Nov: writeup draft on Kaggle (Claude in Chrome), GitHub link in Project Links instead of a notebook; site count 2,974 | draft writeup |
 | 9 Nov | Clean-commit build, Emanuele confirms in chat, submit | submitted writeup |
 | 10-12 Nov | Buffer only | |
 
@@ -106,7 +120,9 @@ the in-container localization and editing skills would be the resource).
   General Rule 6.b. The paper cites it in section 8. "Study only" no longer applies: the agent bundles are public.
   POSTED 2026-11-02 ~22:58 UTC from emanuelemiranda (owner: "Sì, pubblica", text approved in chat, via his Chrome):
   https://www.kaggle.com/competitions/gemma-4-developer-agent/discussion/755172 , visible signed out.
-- Code: DECIDED (a), a Kaggle notebook in Project Links, private until 12 Nov and public afterwards.
+- Code: DECIDED (a), a Kaggle notebook in Project Links, private until 12 Nov and public afterwards. SUPERSEDED
+  2026-11-03: the repository is public (since 9 Oct) and linked on the forum, so Project Links carries the GitHub
+  link; no notebook (owner: "devi fare tutto tu").
 - Code contents: DECIDED (Emanuele: "Yes, study only"): study and analysis code only (localization study, panel
   aggregates in results/agent_runs, the analysis that produces every number); the agent's skill scripts and prompt
   are described in the text and released after 2 Dec, because the notebook becomes public 20 days before the
