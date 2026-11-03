@@ -1,0 +1,11 @@
+{
+ "tag": "PUB1",
+ "zip_sha256": "e140569d0829ef8af0fd37a1443ec364df1cc49a4325c27ec55b256bc33f6ca8",
+ "git_head_at_freeze": "c8dd4ef7f53e0b30798f01dd8e420fa8d10a4dc6",
+ "files": {
+  "agent.yaml": "680799291cc7",
+  "configs/sampling.yaml": "571a934e8991",
+  "eval_config.yaml": "916cf6cb34a6",
+  "prompts/system.md": "7f8dde62578a"
+ }
+}

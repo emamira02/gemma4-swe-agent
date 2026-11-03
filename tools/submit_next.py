@@ -9,7 +9,8 @@ This script submits the first queued tag that is not in runs.csv, only when
   - no submission was made today (UTC) and none is pending (Kaggle accepts one at a time), and
   - the tag passes the release gate (its own dev-panel SANITY or a passing GATE.json; tools/kaggle_submit.py
     enforces it again).
-It never skips a queued tag silently: a tag that fails the gate stops the queue and is reported.
+It never skips a queued tag silently: a tag that fails the gate stops the queue and is reported, unless its entry
+carries "owner_exception" (Emanuele's own chat approval, quoted), which is passed to kaggle_submit.py and logged.
 """
 from __future__ import annotations
 
@@ -50,10 +51,14 @@ def main() -> int:
         return 0
     man = json.loads((ROOT / "candidates" / nxt["tag"] / "MANIFEST.json").read_text(encoding="utf-8"))
     ok, why = submittable(nxt["tag"], man["zip_sha256"])
-    if not ok:
+    exc = (nxt.get("owner_exception") or "").strip()  # Emanuele's chat approval, quoted in the queue entry
+    if not ok and not exc:
         print(f"queue STOPPED: {nxt['tag']} fails the release gate ({why}); a human decision is needed")
         return 4
     cmd = [sys.executable, str(ROOT / "tools" / "kaggle_submit.py"), "--tag", nxt["tag"], "--hypothesis", nxt["hypothesis"]]
+    if not ok:
+        print(f"{nxt['tag']} fails the release gate ({why}); submitting on the owner exception: {exc}")
+        cmd += ["--owner-exception", exc]
     if a.dry_run:
         cmd.append("--dry-run")
     print("running:", " ".join(cmd[1:4]), "...")

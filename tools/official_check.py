@@ -6,7 +6,8 @@
 2. compile_submission with tool names bound to stand-ins and the competition model alias -> a live ADK agent tree
 3. lists the tools the model will actually see (harness tools + SkillToolset tools), the generation config
    and instruction size, and renders the harness' initial user prompt (build_agent_prompt) for a sample task.
-Exit code 0 only if everything compiles and the agent exposes run_skill_script, submit_patch and run_command.
+Exit code 0 only if everything compiles and the agent exposes submit_patch, run_command and, when the bundle has
+skills/, run_skill_script.
 """
 from __future__ import annotations
 
@@ -90,7 +91,9 @@ def main() -> int:
               "instruction_chars": len(agent.instruction or ""), "sub_agents": [a.name for a in agent.sub_agents],
               "generate_content_config": json.loads(gc.model_dump_json(exclude_none=True)) if gc else None}
     print(json.dumps(report, indent=1))
-    missing = {"run_skill_script", "submit_patch", "run_command"} - set(tools)
+    # run_skill_script is required only from bundles that ship skills (a prompt-only public bundle has none)
+    missing = {"submit_patch", "run_command"} | ({"run_skill_script"} if (bundle / "skills").is_dir() else set())
+    missing -= set(tools)
     if missing:
         print(f"MISSING TOOLS: {sorted(missing)}")
         return 1

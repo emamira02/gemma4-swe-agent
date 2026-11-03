@@ -10,3 +10,5 @@ The S10 system prompt (agent/prompts/system.md from candidate S10 on) adapts the
 edit_file/write_file replaced by this repository's heredoc editor, localize and finalize skills added, backticks
 removed, and the call plan's first call set to localize. build/baselines/B1 is Wilmer E. Henao's (verracodeguacas)
 "Gemma 4 Agent: Budget-Fit Single Agent" (Apache License 2.0), used unmodified as a dev-panel baseline only.
+candidates/PUB1 is Igor Zharov's (flexonafft) "Gemma 4 | Budget - Aware Coding Agent v2" version 10 (Apache
+License 2.0), its four files unmodified, submitted once as a public reference draw.

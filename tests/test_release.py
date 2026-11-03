@@ -78,3 +78,26 @@ def test_submit_queue_file_is_well_formed():
     assert len(tags) == len(set(tags)) and all(e.get("hypothesis") and e.get("added") for e in q)
     for t in tags:  # every queued tag is a frozen candidate (never a baseline such as B1)
         assert (ROOT / "candidates" / t / "MANIFEST.json").exists(), t
+
+
+@pytest.mark.parametrize("exception", [None, "Emanuele: \"ok\""])
+def test_submit_next_gate_failure_needs_a_quoted_owner_exception(tmp_path, monkeypatch, exception):
+    from tools import kaggle_submit, submit_next
+    entry = {"tag": "X1", "hypothesis": "h", "added": "2026-11-03"}
+    if exception:
+        entry["owner_exception"] = exception
+    (tmp_path / "candidates" / "X1").mkdir(parents=True)
+    (tmp_path / "candidates" / "X1" / "MANIFEST.json").write_text(json.dumps({"zip_sha256": "s"}), encoding="utf-8")
+    (tmp_path / "submit_queue.json").write_text(json.dumps([entry]), encoding="utf-8")
+    for name, value in (("ROOT", tmp_path), ("QUEUE", tmp_path / "submit_queue.json"), ("RUNS", tmp_path / "runs.csv")):
+        monkeypatch.setattr(submit_next, name, value)
+    monkeypatch.setattr(kaggle_submit, "pending_submissions", lambda: [])
+    monkeypatch.setattr(rg, "submittable", lambda tag, sha: (False, "no panel"))
+    sent = []
+    monkeypatch.setattr(submit_next.subprocess, "run", lambda cmd, cwd=None: sent.append(cmd) or type("R", (), {"returncode": 0})())
+    monkeypatch.setattr(sys, "argv", ["submit_next.py"])
+    rc = submit_next.main()
+    if exception:
+        assert rc == 0 and sent[0][-2:] == ["--owner-exception", exception]
+    else:
+        assert rc == 4 and not sent

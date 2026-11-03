@@ -1,5 +1,11 @@
 [
  {
+  "tag": "PUB1",
+  "added": "2026-11-03",
+  "hypothesis": "public Budget-Aware Coding Agent v2 V10 by flexonafft (Apache 2.0), 4 files verbatim, no skills, 0.22 in its own public draw; one more draw of the top public notebook (owner choice), ahead of S18",
+  "owner_exception": "Emanuele, chat 2026-11-03 ~09:15 UTC, asked what the next daily slot is for: \"Invia il pubblico 0,22\""
+ },
+ {
   "tag": "S12",
   "added": "2026-10-27",
   "hypothesis": "public Budget-Aware V10 prompt (attributed) + heredoc editor + localize/finalize, V10 budget; mixed panel 13/24 (fastapi 9/12, rich 4/12), 8.57 h"
