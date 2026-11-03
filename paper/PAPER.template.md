@@ -74,22 +74,41 @@ Four public repositories, dominated by fastapi and rich, and one model: the hidd
 Code and result files: https://github.com/emamira02/gemma4-swe-agent. Competition data are never redistributed: `scripts/fetch_data.sh` downloads the dev subset, and `python -m locstudy all` recomputes every localization table and figure from `data/`, with data hashes, commit and parameters (a full rerun reproduced every value). Kaggle kernels produce the model outputs (`kernels/llm-localization`) and agent traces, which stay private as they contain task text; `locstudy llm`, `analysis.anchor_posthoc`, `analysis.failure_audit`, `tools/agent_summary.py` and `analysis.serialization_audit` derive the committed result files, which keep task ids and counts only. `paper/CLAIMS.md` maps every number to its result key; the build fails if a guarded claim contradicts the results.
 
 ## References
+
 Bellam, S. (2026). How do small coding agents use code graphs and embeddings? arXiv:2610.33958.
+
 Caumartin, G., Chen, T.-H., Costa, D. E. (2026). Retrieval-oriented code representations in agentic bug localization. arXiv:2607.11046.
+
 Chen, Z., et al. (2025). LocAgent: Graph-guided LLM agents for code localization. ACL.
+
 Cormack, G. V., et al. (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. SIGIR.
+
 Hassan, A. (2026). Model-free localization benchmark on the 129 public tasks. Kaggle discussion 748395.
+
 Holm, S. (1979). A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics.
+
 Jimenez, C. E., et al. (2024). SWE-bench: Can language models resolve real-world GitHub issues? ICLR.
+
 Kochhar, P. S., Tian, Y., Lo, D. (2014). Potential biases in bug localization: Do they matter? ASE.
+
 McNemar, Q. (1947). Note on the sampling error of the difference between correlated proportions or percentages. Psychometrika.
+
 Ouyang, S., et al. (2025). RepoGraph: Enhancing AI software engineering with repository-level code graph. ICLR.
+
 Rahman, M. M., Roy, C. K. (2018). Improving IR-based bug localization with context-aware query reformulation. ESEC/FSE.
+
 Reddy, R. G., et al. (2026). SweRank: Software issue localization with code ranking. ICLR.
+
 Robertson, S., Zaragoza, H. (2009). The probabilistic relevance framework: BM25 and beyond. Foundations and Trends in IR.
+
 Sam-Bodden, B. (2026). What context does a coding agent actually need to act? arXiv:2607.09691.
+
 Wang, Q., Parnin, C., Orso, A. (2015). Evaluating the usefulness of IR-based fault localization techniques. ISSTA.
+
 Wold, J. (2026). Pre-registration: anchor distance and small-agent failure. Kaggle discussion 750732.
+
 Wong, W. E., et al. (2016). A survey on software fault localization. IEEE TSE.
+
 Xia, C. S., et al. (2024). Agentless: Demystifying LLM-based software engineering agents. arXiv:2407.01489.
+
 Yang, J., et al. (2024). SWE-agent: Agent-computer interfaces enable automated software engineering. NeurIPS.
