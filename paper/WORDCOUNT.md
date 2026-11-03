@@ -5,18 +5,18 @@
 |---|---|
 | Build gate: all whitespace tokens (limit 3,000) | 2,998 |
 | Without references | 2,715 |
-| Without references and markdown-only tokens | 2,628 |
+| Without references and markdown-only tokens | 2,629 |
 
 Rule (host, discussion 743255): title, abstract, text, captions and table text count; figures and references do not. No official counter is published; the gate keeps references in, so it should not undercount.
 
 | Section (gate count) | Words |
 |---|---|
-| Title and subtitle | 24 |
+| Title and subtitle | 26 |
 | Abstract | 221 |
 | 1. Introduction | 112 |
 | 2. Setting and data | 64 |
-| 3. Method | 471 |
-| 4. Results | 1,284 |
+| 3. Method | 470 |
+| 4. Results | 1,283 |
 | 5. Implications for agent design | 81 |
 | 6. Related work | 245 |
 | 7. Limitations | 115 |
