@@ -1,6 +1,12 @@
 # Paper track plan (gemma-4-developer-agent-paper, due 2026-11-12 23:59 UTC)
 
-## Checkpoint 2026-11-03 (read this first)
+## Checkpoint 2026-11-09 (kaggle-paper-final run)
+- Gate passed: 2,998 words, 0 slots, all claim guards, pytest 63 passed / 2 skipped. locstudy run+report from clean
+  c50ff6c: summary values identical, provenance git_dirty False; committed 3eeff17. PAPER.md byte-identical to the
+  submitted f710ad0, so the writeup was not re-saved: live page checked (title, subtitle, 4 figures load, status
+  "Submitted!"). Writeup stays submitted; nothing retracted.
+
+## Checkpoint 2026-11-03
 - SUBMITTED 2026-11-03 ~06:38 UTC (owner in chat: "invialo ora, submit il writeups"), content of commit f710ad0;
   writeups page shows "Submitted" under Your Work. Kaggle: editable until the deadline; at close the writeup
   becomes public under CC BY 4.0, attributed to the Kaggle display name. Later edits: tools/writeup_sync.js.
