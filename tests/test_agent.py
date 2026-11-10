@@ -556,6 +556,25 @@ def test_localize_and_finalize_install_the_editor(repo, tmp_path_factory, _tools
     assert localize.install_editor(str(blocker)).startswith("EDITOR NOT INSTALLED")
 
 
+def test_prompt_makes_localize_call_one_because_the_editor_needs_it(tmp_path_factory, monkeypatch):
+    """S9/S12/S16ctl/S17 panels: all 13 sessions whose call 1 was not localize (the issue named the file, so the
+    model grepped or read first) ran the editor before it existed, got python3's can't open file and spent two
+    calls recovering (failed edit + localize); 5 of them ended at the 28-call cap unresolved (rich_4070 x3,
+    rich_3944, rich_3675). The prompt must say so, in the words the model will actually see."""
+    prompt = (ROOT / "agent" / "prompts" / "system.md").read_text(encoding="utf-8")
+    rule = [l for l in prompt.splitlines() if l.startswith("- Call 1 is localize even when the issue names")]
+    assert len(rule) == 1 and "can't open file" in rule[0] and "only after localize has run" in rule[0], rule
+    assert prompt.index(rule[0]) < prompt.index("3. Edit.")
+    assert localize.EDITOR_CMD in prompt and localize.EDITOR_CMD == finalize.EDITOR_CMD
+    monkeypatch.setattr(localize, "TOOLS_DIR", None)  # the real install target: the workspace's .git
+    ws = tmp_path_factory.mktemp("sbx") / "workspace"
+    (ws / ".git").mkdir(parents=True)
+    editor = ws / ".git" / "swe" / "edit.py"
+    before = subprocess.run([sys.executable, str(editor), "x.py"], input="", capture_output=True, text=True)
+    assert before.returncode != 0 and "can't open file" in before.stderr, before.stderr  # what the panels showed
+    assert localize.install_editor(str(ws)).startswith("EDITOR READY: ") and editor.exists()
+
+
 def test_editor_install_runs_through_adk_skill_wrapper(repo, tmp_path, _tools_dir):
     """run_skill_script materializes every skill script in a temp dir that is deleted after the call: the editor
     must be copied out of it, then work from run_command."""

@@ -11,6 +11,7 @@ HARD LIMITS
 
 CALL PLAN
 - Call 1: localize. Calls 2-8: locate and read. Calls 9-12: edit. You MUST have edited a source file by call 12. If you are unsure, make your best-guess edit in the most likely place now. A wrong edit can still be corrected. Pure reading cannot score.
+- Call 1 is localize even when the issue names the file or symbol: the editor exists only after localize has run, so an edit made before it fails with can't open file and costs two calls.
 - Calls 13-20: verify and correct.
 - Call 20 onward: no new exploration. Check, fix, finalize, submit.
 

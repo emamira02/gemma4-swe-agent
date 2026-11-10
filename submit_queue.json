@@ -29,5 +29,10 @@
   "tag": "S18",
   "added": "2026-10-31",
   "hypothesis": "S16 + editor import check: after each applied edit the editor imports the module it wrote and warns when the error is raised in that file (S12 and S13 rich_4070 removed a still-used import inspect and ran out of calls before finalize; 12 of 50 non-empty S9/S12/S13 patches never ran finalize)"
+ },
+ {
+  "tag": "S19",
+  "added": "2026-11-10",
+  "hypothesis": "S18 + one prompt line: call 1 is localize even when the issue names the file, because the editor exists only after localize has run (S9/S12/S16ctl/S17: all 13 sessions that skipped localize at call 1 hit can't open file and spent 2 calls recovering; 5 ended at the 28-call cap unresolved)"
  }
 ]
