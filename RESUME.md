@@ -224,6 +224,17 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 - Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
   extra_body); left unedited because agent/ must equal the frozen candidate.
 
+## Findings 2026-11-12 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
+- Gating: submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ == candidates/S19
+  /bundle, S17 WAIT_PANEL stale (verdict with Emanuele) -> proceeded to evidence.
+- Evidence unchanged: newest panels S16ctl / S17 (24 + 24 sessions); hidden-test tails re-read: every unresolved
+  task fails on behaviour (assertion values, IndexError rich_3471, AttributeError rich_3472, collection errors in
+  rich_3930 = missing gold _unicode_data package, NameError inspect S16ctl rich_4070 = class fixed by S14/S18), none on
+  a tool, packaging or editor defect. Public draws of the S12 line unchanged (0.17/0.15/0.15/0.17/0.13).
+- Decision: same as 2026-11-11, no fix verifiable without a GPU; prompt budget 6/6 used. Options for Emanuele are
+  unchanged: (1) queue S17 (sampling, panel 14/24 vs 13/24); (2) confirm GPU quota for an S19 mixed panel (new
+  evidence); (3) approve P4 (call cap 36) for a panel. Without one of these, kaggle-improve cannot ship a new version.
+
 ## Findings 2026-11-11 (kaggle-improve; no new panel since 2026-11-09; S19 0.13 public; NO VERSION QUEUED)
 - Gating: submit_queue.json exhausted (all 7 tags in runs.csv, S19 COMPLETE 0.13), g4-agent-eval COMPLETE, S17
   WAIT_PANEL stale (verdict with Emanuele) -> proceeded. Public draws of the S12 line: 0.17, 0.15, 0.15, 0.17, 0.13
