@@ -224,6 +224,17 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 - Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
   extra_body); left unedited because agent/ must equal the frozen candidate.
 
+## Findings 2026-11-13 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
+- Gating: submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ == candidates/S19
+  /bundle, working tree clean -> proceeded to evidence (third day without a queued version: no slot used 11-11..13).
+- Hidden-test tails of the unresolved gold-solvable tasks re-read (S16ctl 11, S17 10): all behaviour failures.
+  28-call cap reached in 5 (S16ctl: fastapi_14419, rich_3472, rich_3935, rich_3944, rich_4070) and 4-5 (S17:
+  rich_3472, rich_3675, rich_3944, rich_4070, fastapi_13920 at 27): the largest class, but its lever is P4 (call cap,
+  agent.yaml) = panel required. New detail: S17 rich_4070 fails only test_input_password (stdin read) with a patch
+  that touches rich/logging.py only (lazy imports), i.e. wrong file, not an editor or import defect.
+- Decision: same as 11-11/11-12, no fix verifiable without a GPU, prompt budget 6/6 used; options for Emanuele
+  unchanged: (1) queue S17, (2) GPU quota for an S19 mixed panel, (3) approve P4 (call cap 36) for a panel.
+
 ## Findings 2026-11-12 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
 - Gating: submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ == candidates/S19
   /bundle, S17 WAIT_PANEL stale (verdict with Emanuele) -> proceeded to evidence.
