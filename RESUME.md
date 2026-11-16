@@ -224,6 +224,13 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 - Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
   extra_body); left unedited because agent/ must equal the frozen candidate.
 
+## Findings 2026-11-16 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
+- Gating (11:30 UTC): submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ ==
+  candidates/S19/bundle, tree clean; S17 row still WAIT_PANEL (verdict with Emanuele) -> stop condition of step 2 met.
+- Evidence unchanged (newest results/kaggle_eval_S16ctl / S17, no new traces or scores). Classes as on 11-11..11-15:
+  28-call cap 4-5 per panel, RIGHT_FILE_WRONG_FIX 4-6; levers need a GPU panel. Sixth day unused (slots 11-11..16).
+- Options for Emanuele unchanged: (1) queue S17, (2) GPU quota for an S19 mixed panel, (3) approve P4 (call cap 36).
+
 ## Findings 2026-11-15 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
 - Gating: submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ == candidates/S19
   /bundle, tree clean; S17 row still WAIT_PANEL (verdict with Emanuele) -> stop condition of step 2 met.
