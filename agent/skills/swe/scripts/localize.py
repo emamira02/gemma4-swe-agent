@@ -31,6 +31,7 @@ MAX_FILES = 6000
 MAX_FILE_BYTES = 800_000
 MAX_OUT_CHARS = 6500          # ranked list, files, literals, tests
 SOURCE_MAX_LINES, SOURCE_MAX_CHARS = 80, 4500  # rank-1 source shown in anchored mode
+OUTLINE_FILES, OUTLINE_MAX_CHARS, OUTLINE_LINE_CHARS = 3, 3000, 100  # symbol map of the top files (outline_block)
 SKIP_DIRS = frozenset({".git", ".hg", ".svn", "node_modules", ".venv", "venv", "env", ".env", "build", "dist",
                        "site-packages", "__pycache__", ".tox", ".nox", ".eggs", ".mypy_cache", ".pytest_cache",
                        ".ruff_cache", "htmlcov", ".idea", ".vscode"})
@@ -435,7 +436,7 @@ def localize(query: str, k: int, root: str) -> int:
     text = "\n".join(out)
     if len(text) > MAX_OUT_CHARS:
         text = text[:MAX_OUT_CHARS - 20] + "\n...[truncated]"
-    print(text + source_block(top, mode, src_texts))
+    print(text + source_block(top, mode, src_texts) + outline_block(top, idx))
     return 0
 
 
@@ -453,6 +454,68 @@ def source_block(top: list[Sym], mode: str, src_texts: dict[str, list[str]]) -> 
         return ""
     return (f"\nSOURCE OF #1 {s.path} lines {s.start}-{s.end} (exact text; if this is the place to fix, copy the SEARCH "
             f"lines from it and edit without reading the file again):\n----- begin -----\n{body}\n----- end -----")
+
+
+def _pack(entries: list[str]) -> list[str]:
+    """Several entries per output line, at most OUTLINE_LINE_CHARS each."""
+    lines: list[str] = []
+    for e in entries:
+        if lines and len(lines[-1]) + 2 + len(e) <= OUTLINE_LINE_CHARS:
+            lines[-1] += "  " + e
+        else:
+            lines.append(e)
+    return lines
+
+
+def outline_block(top: list[Sym], idx: Index) -> str:
+    """Map the highest-ranked files: every def/class with its line range, so the next read or edit needs no search.
+
+    S9/S12/S16ctl/S17 traces: 108 run_command searches asked only where a def or class is, and each one cost a call
+    of the session's 28; replaying those sessions' own queries, this map answers 61 of 106 against 33 for the ranked
+    list alone. OUTLINE_MAX_CHARS is shared by the files, what the first one leaves goes to the next, which keeps the
+    whole output near 9 kB. Selection when a file does not fit its share: the symbols
+    already printed in the ranked list, then the file's top-level defs and classes, then the members nearest its
+    best-ranked symbol; the kept entries always print in line order, and the header gives the one search that
+    produces the rest.
+    """
+    rank = {s.qual: r for r, s in enumerate(top)}
+    paths: list[str] = []
+    for s in top:
+        if s.path not in paths:
+            paths.append(s.path)
+    paths = paths[:OUTLINE_FILES]
+    out: list[str] = []
+    left = OUTLINE_MAX_CHARS
+    for pos, path in enumerate(paths):
+        syms = sorted((s for s in idx.by_path.get(path, ()) if s.short != "<module>"), key=lambda s: (s.start, s.end))
+        if not syms:
+            continue
+        cap = left if pos == len(paths) - 1 else max(1, left // (len(paths) - pos))
+        entry = [f"{s.start}-{s.end} {s.short}"[:OUTLINE_LINE_CHARS] for s in syms]
+        total = len(syms)
+        size = sum(len(e) + 2 for e in entry)
+        if size <= cap:
+            keep = set(range(total))
+        else:
+            anchor = min(range(total), key=lambda i: rank.get(syms[i].qual, len(top) + i))
+            order = sorted(range(total), key=lambda i: (syms[i].qual not in rank, "." in syms[i].short,
+                                                        abs(i - anchor), i))
+            keep, size = set(), 0
+            for i in order:
+                if size + len(entry[i]) + 2 > cap:
+                    break
+                size += len(entry[i]) + 2
+                keep.add(i)
+        shown = [e for i, e in enumerate(entry) if i in keep]
+        if not shown:
+            continue
+        left -= size
+        head = (f"\nOUTLINE {path} (every def and class, line ranges; read_file or edit at these):"
+                if len(shown) == total else
+                f"\nOUTLINE {path} ({len(shown)} of {total} defs and classes, line ranges; the rest with one search: "
+                f"grep -nE 'def |class ' {path}):")
+        out.append(head + "\n" + "\n".join(_pack(shown)))
+    return "".join(out)
 
 
 if __name__ == "__main__":

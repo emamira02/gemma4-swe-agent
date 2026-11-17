@@ -89,6 +89,10 @@ r = subprocess.run([sys.executable, "-c", "import runpy, sys; sys.argv = ['scrip
 shutil.rmtree(td)
 case("A install via materialized localize", r.returncode == 0 and ("EDITOR READY: python3 " + ED) in r.stdout
      and os.path.isfile(ED), r.stdout + r.stderr)
+# S20: the outline of the top files (every def/class with its line range) replaces the "where is def X" searches
+case("A localize outlines the ranked file with exact line ranges",
+     "OUTLINE pkg/markup.py (every def and class, line ranges" in r.stdout and "4-7 escape" in r.stdout
+     and "10-11 other" in r.stdout and "`" not in r.stdout, r.stdout[-1500:])
 
 code, out, err = sh("python3 " + ED + " pkg/markup.py <<'EOF'\n" + BLOCK + "EOF")
 case("A quoted heredoc applies verbatim", code == 0 and NEW.encode() in read("pkg/markup.py"), out + err)
@@ -192,6 +196,25 @@ if err is None:
         case("B localize through run_skill_script installs the editor in the sandbox workspace",
              "EDITOR READY: python3 /workspace/.git/swe/edit.py" in (res.stdout or "") and os.path.isfile(sed),
              f"sandbox workspace {sws}\n" + (res.stdout or "")[-900:] + (res.stderr or "")[-600:])
+        case("B the outline reaches the model through the skill wrapper",
+             "OUTLINE pkg/markup.py (every def and class, line ranges" in (res.stdout or "")
+             and "4-7 escape" in (res.stdout or "") and "10-11 other" in (res.stdout or ""),
+             (res.stdout or "")[-1200:])
+        # S20 raises localize's longest output from ~8.0 kB (measured in the S9-S17 panels) to ~9.3 kB: check that the
+        # harness hands the whole thing to the model, last line included, instead of cutting it at a buffer size.
+        with open(os.path.join(sws, "pkg", "big.py"), "w") as fh:
+            fh.write("\n\n".join(f"def handler_for_wide_case_{i:03d}(value, other=None, *, flag=False, "
+                                 f"label='wide'):\n    return value + {i}" for i in range(500)) + "\n\n\n"
+                     + "def wide_target(value, other=None, *, flag=False, label='wide'):\n"
+                     + "".join(f"    value = value + {i}  # padding line {i}\n" for i in range(60))
+                     + "    return value\n")  # ranked list, rank 1 source and outline together: ~10 kB
+        res2 = exe.execute_code(None, CodeExecutionInput(code=wrap._build_wrapper_code(
+            skill, "scripts/localize.py", {"query": "wide_target in pkg/big.py returns the wrong offset"})))
+        so = res2.stdout or ""
+        case("B a 9 kB localize output arrives whole, editor line last",
+             len(so) > 8500 and so.rstrip().endswith("/workspace/.git/swe/edit.py") and "OUTLINE pkg/big.py" in so
+             and "SOURCE OF #1 pkg/big.py" in so, f"len {len(so)}\n" + so[:300] + "\n...\n" + so[-300:])
+        os.remove(os.path.join(sws, "pkg", "big.py"))
 
         def run(cmd):
             r = mgr.exec(sid, cmd, timeout=100)

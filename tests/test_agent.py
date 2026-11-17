@@ -276,6 +276,38 @@ def test_localize_shows_rank1_source_only_when_anchored(repo):
     assert "SOURCE OF #1" not in run_localize(repo, 'header value is empty, error "empty header value"')  # lexical mode
 
 
+def test_localize_outlines_the_top_ranked_files(repo):
+    """S9/S12/S16ctl/S17 traces: 106 run_command searches asked only where a def or class is, and each cost one of
+    the 28 calls (S17 rich_4070 spent 6 on def log / def input / def export_ / def __call__ in rich/console.py).
+    The symbol table that produced the ranking answers them for free: 33 of the 106 were already in the ranked list,
+    46 are in the outline (results/private/outline_ab.json, same real queries on the data/repos snapshots)."""
+    out = run_localize(repo, "parse_header returns wrong part for custom sep")
+    assert "OUTLINE pkg/core.py (every def and class, line ranges; read_file or edit at these):" in out
+    sect = out.split("OUTLINE pkg/core.py")[1].split("\nOUTLINE ")[0]
+    for entry in ("6-11 parse_header", "14-24 Client", "19-20 Client.close", "22-24 Client.is_closed"):
+        assert entry in sect, sect                      # methods and the decorator line, as the editor needs them
+    starts = [int(t.split("-")[0]) for t in sect.split() if t[:1].isdigit() and "-" in t]
+    assert starts == sorted(starts) and "<module>" not in sect   # line order; a whole-file range is no edit target
+    assert "tests/test_core.py" not in out.split("OUTLINE")[1]   # test files are never offered as edit targets
+    assert len(out.split("OUTLINE")) - 1 <= localize.OUTLINE_FILES
+
+
+def test_localize_outline_trims_a_big_file_around_the_ranked_symbol(repo):
+    (repo / "pkg" / "huge.py").write_text(
+        "\n\n".join(f"def helper_{i}(value):\n    return value + {i}" for i in range(400)) + "\n", encoding="utf-8")
+    git(repo, "-c", "user.email=a@b", "-c", "user.name=t", "add", "-A")
+    out = run_localize(repo, "helper_200 in pkg/huge.py returns the wrong offset")
+    head = next(l for l in out.splitlines() if l.startswith("OUTLINE pkg/huge.py"))
+    assert "of 400 defs and classes" in head and "grep -nE 'def |class ' pkg/huge.py" in head  # one call, not six
+    sect = out.split("OUTLINE pkg/huge.py")[1].split("\nOUTLINE ")[0].split("\nEDITOR ")[0]
+    assert "helper_200" in sect and "helper_201" in sect  # the ranked symbol and its neighbours are always kept
+    starts = [int(t.split("-")[0]) for t in sect.split() if t[:1].isdigit() and "-" in t]
+    assert starts == sorted(starts) and len(starts) < 400
+    assert len(sect) <= localize.OUTLINE_MAX_CHARS + len(head)
+    assert len(out) <= (localize.MAX_OUT_CHARS + localize.SOURCE_MAX_CHARS + localize.OUTLINE_MAX_CHARS
+                        + 4 * localize.OUTLINE_LINE_CHARS)
+
+
 def test_finalize_removes_workspace_tmp_dir(repo):
     (repo / "tmp").mkdir()
     (repo / "tmp" / "check.py").write_text("print(1)\n")

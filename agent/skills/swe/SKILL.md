@@ -14,7 +14,9 @@ file paths, function or class names, options, config keys, quoted error text, a 
 Output: mode (anchored = names in the query resolved to symbols; lexical = ranking by word overlap only), the top
 symbols as path:first-last, symbol name, signature and docstring, the files they live in, literal matches of
 quoted text, and related test files. Re-rank the list using the issue, then read_file only the best one to three
-line ranges. Optional: args {"query": "...", "k": 40} for a longer list. It also installs the editor.
+line ranges. It ends with an OUTLINE of each of the top three files: every def and class with its line range, so
+finding a neighbouring function or class needs no search. Optional: args {"query": "...", "k": 40} for a longer
+list. It also installs the editor.
 
 ## the editor: how to change files
 Call run_command with the code in a quoted heredoc, each marker on its own line:

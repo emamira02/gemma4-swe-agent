@@ -111,10 +111,13 @@ not by the single best public score.
 | S12 (cb8fcafd455f) | mixed panel done 2026-10-27 10:08 UTC: 13/24 resolved (fastapi 9/12, rich 4/12; S9 12/24 on the same tasks, differing only on rich_3506), timeouts 3, empty 3, no_edit 1, arg_errors 0 in 480 calls, editor not applied 6/48, editor missing 3 before any localize call and 0 after, first edit median 149 s, mean task 257 s -> 8.57 h for 120 tasks. Rule: SANITY PASSED; READY (13 >= S9's 12, fastapi 9 >= 9). SUBMITTED 2026-10-27 21:33 UTC (kernel v4), PENDING; packager printed worst_case_hours 17.25 (nominal bound; panel measured 8.57 h) |
 | Paper | 2026-10-26: 4.10 rewritten from the pooled S1-S4 failure audit (results/failure_audit.json -> agent_summary "failure"): 59.3% rank-1 edited file, >= half of unresolved runs edited a gold file, edit_file 73/208 vs run_command 0/807 malformed; abstract agent sentence; SweRank (Reddy et al., ICLR 2026, arXiv 2505.07849, verified) in related work; compact table + paper/RESULTS_AGENT.md; build now fails above 3,000 words (2,968 now, room for ~2 more tag rows); 93 claim guards pass. Refresh: python -m analysis.failure_audit && python tools/agent_summary.py && python -m locstudy report |
 
+| S20 (1f99ca5ffcaf) | frozen 2026-11-17 (candidates/S20): S19 bundle + localize OUTLINE of the top 3 files; GATE PASSED vs S12 2026-11-17 12:11 UTC; editor_check v12 on Kaggle (CPU) 31/31 with the three new cases (outline twice, 10 kB output whole); QUEUED in submit_queue.json after S19 |
+
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
 Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always use the frozen copy (tools/kaggle_submit.py).
 | Tag | Status | Change vs previous | Hypothesis |
 |---|---|---|---|
+| S20 | GATE PASSED 2026-11-17 12:11 UTC (sha 1f99ca5ffcaf; base S12; prompt diff 6/6 unchanged, agent.yaml / eval_config / sampling byte-identical; skills = harness sandbox editor_check v12; 66 + 41 tests, 2 skipped); QUEUED 2026-11-17 in submit_queue.json after S19, ships at the next free slot via tools/submit_next.py; no panel of its own (RESUME has had no GPU quota figure since 2026-11-02) | S19 + localize ends with an OUTLINE of its top 3 ranked files: every def and class with its line range, 3000 chars shared by the files, and a file that does not fit keeps the symbols already ranked, its top-level defs and classes and the members nearest its best-ranked symbol, in line order, with the one search that lists the rest in its header | S9/S12/S16ctl/S17: 108 of 441 repository searches asked nothing but where a def or class is (35 of 96 sessions, up to 8 in one; S17 rich_4070 spent 7 of its 30 calls that way before the 28-call cap); by rank of the searched file in localize's own FILES line: 25 rank1, 28 rank2, 4 rank3, 2 rank4, 24 rank5, 23 outside the top 6. Replay of the real queries: 33 of 106 answered by S19, 61 by S20, none lost, for +2.5k chars on one observation (mean localize stdout 7515 vs ~5000) and no extra wall-clock |
 | PUB1 | SUBMITTED 2026-11-06 22:11 UTC (tools/submit_next.py, owner exception logged; kernel v8), COMPLETE, public score 0.18 (seen 2026-11-07 17:21 UTC; one draw, above S12 0.17 within noise, below its own 0.22); queued 2026-11-03 at the head of submit_queue.json, ahead of S18 (owner choice; frozen sha e140569d0829, no panel, gate fails by design) | not ours: the public notebook "Gemma 4 | Budget-Aware Coding Agent v2" V10 (flexonafft, Apache 2.0; public score 0.22, best version V10 of 10), its 4 files verbatim (sha256 of each equal to the notebook's own output): edit_file/write_file tools, no skills, temperature 0.2, 8 min / 28 calls / 80 turns / 240 s | one more draw of the top public notebook. Expected mean ~10/58 like its prompt family (Budget-Fit ~10/58 over ten draws; S12, built on this prompt, 0.17); a score above S12 is one draw, not evidence of a better mean. Never a final selection without pooled evidence |
 | S2 | SKIPPED (superseded by S3 on 2026-10-13: tie on resolves, newest wins; S3 fewer timeouts) (panel: resolved 4/21 = S1; tasks with malformed calls 14 -> 5; timeouts 16 -> 14; empty patches 7 -> 9; no_edit 5 = 5) | backtick-free prompt/outputs, <=3 reads before edit, edit by call 6, 32-call cap | malformed calls and over-exploration cause most S1 timeouts |
 | S3 | SUBMITTED 2026-10-13 (panel: resolved_on_solvable 4/22; timeouts 12; empty_patch 7; tasks_with_arg_errors 3; no_edit 5; timeouts+no_edit 17 vs S2 19 -> READY) | S2 + localize shows rank-1 source in anchored mode (edit without a read), write_file /tmp misuse explained, finalize deletes /workspace/tmp | S2 traces: 10-24 reads per task and first edit at 122 s median dominate the 14 timeouts |
@@ -223,6 +226,41 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 - Tag S17 is taken (frozen 2026-10-29); kaggle-improve's next tag is S18.
 - Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
   extra_body); left unedited because agent/ must equal the frozen candidate.
+
+## Findings 2026-11-17 (kaggle-improve; S9/S12/S16ctl/S17 traces re-mined call by call; S20 QUEUED)
+- Gating: submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE and downloaded, agent/ ==
+  candidates/S19/bundle, tree clean. The S17 queue row still opens with WAIT_PANEL, but its panel and the S16ctl
+  control both finished 2026-11-02 and are in results/ (nothing is running, the verdict is a question for Emanuele,
+  not a wait), so after six unused slots (11-11..11-16) this run proceeded instead of stopping on stale text.
+- Where the 28 calls go (S16ctl 474 calls / 24 sessions, S17 514): run_command 250 / 260, read_file 157 / 190,
+  run_skill_script 43 / 42 (localize + finalize), submit_patch 24 / 22. Inside run_command: repository searches
+  (grep, git grep, find, git ls-files) 111 / 110, editor 44 / 48, python -c 57 / 72, test runs 17 / 6.
+  Sessions at the cap (>= 28 calls): 6 of 24 in S16ctl, 9 of 24 in S17; they resolve 5 of 15 against 27 of 48 overall.
+- NEW failure class, measured over all 96 sessions of S9/S12/S16ctl/S17: 108 of the 441 searches ask nothing but
+  where a def or class is (grep -n "def analyze_param" fastapi/dependencies/utils.py, grep -n "class Console"
+  rich/console.py, ...). 35 sessions do it, up to 8 times (S9 rich_3935 8, S9 rich_3882 7, S17 rich_4070 7: def log,
+  def input, def export_, def __call__, def __enter__, def _collect_renderables, all in one file). By rank of the
+  searched file in localize's own FILES line: rank1 25, rank2 28, rank3 4, rank4 2, rank5 24, outside the top 6 23.
+  localize had already parsed every one of those symbols to build the ranking; it printed only the global top k.
+- Second class, no lever this version: 157 of 681 read_file calls re-request a line range the session had already
+  received in full and that no edit had changed since (S9 41/176, S12 24/158, S16ctl 39/157, S17 53/190; S17
+  rich_4070 15 of 17, S16ctl rich_4070 13 of 15). read_file is a harness tool, so only the prompt could forbid it,
+  and the prompt budget is 6/6 changed lines vs S12 (release_gate rule 5). Left for a day with --allow-prompt-change.
+- Rejected after measuring (hypothesis of the morning): extract_identifiers drops ALL_CAPS names, so a constant
+  named in the issue never anchors. Over the 99 real localize queries only 12 contain such a token that exists in
+  the repository and exactly one of those points at a gold file (TYPE_CHECKING, noise). No fix built.
+- S20 = S19 + localize prints an OUTLINE of its top 3 files: every def and class with its line range, 3000 chars
+  shared by the files (what one leaves goes to the next); a file that does not fit keeps the symbols already in the
+  ranked list, then its top-level defs and classes, then the members nearest its best-ranked symbol, always in line
+  order, and its header names the one search that lists the rest. No prompt, agent.yaml, eval_config or sampling change.
+- Verified without a GPU: the 96 real queries replayed against the data/repos snapshots, old = frozen
+  candidates/S19 localize, new = S20 (results/private/outline_ab.json). Of the 106 structural searches those
+  sessions made, the S19 output answered 33, S20 answers 61 (+28, none lost). Cost: mean localize stdout 7515 chars
+  against ~5000 (max 9334), about +625 tokens on one observation, no extra wall-clock (the symbol table was already
+  built). Variants measured the same way: 2 files/2600 chars 46, 2/4200 48, 3/2400 57, 3/3000 61, 4/3200 56,
+  4/4800 61 -> 3/3000 is the best per character. Plus 2 new unit tests and editor_check v12 (30 -> 31 cases,
+  all passing on Kaggle): the outline through the docker exec chain, through the harness skill wrapper, and a
+  10 kB localize output arriving whole with its editor line last (the panels had only proven 8.0 kB).
 
 ## Findings 2026-11-16 (kaggle-improve; no new panel since 2026-11-02; NO VERSION QUEUED, tag S20 unused)
 - Gating (11:30 UTC): submit_queue.json exhausted (all 7 tags in runs.csv), g4-agent-eval COMPLETE, agent/ ==
