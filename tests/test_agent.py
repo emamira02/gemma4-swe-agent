@@ -423,6 +423,46 @@ def test_edit_backslash_count_tier(repo):
     assert r.returncode == 1 and "cannot be scaled" in r.stdout and cells.read_text(encoding="utf-8") == before, r.stdout
 
 
+def test_edit_doubled_brace_tier(repo):
+    """S12, S16ctl and S17 rich_3944: SEARCH '@font-face {' for '@font-face {{' in a str.format template, NOT APPLIED
+    at similarity 0.99 each time, one call lost (S16ctl and S17 ended at the 28-call cap)."""
+    fmt = repo / "pkg" / "fmt.py"
+    fmt.write_text('SVG = """\\\n    @font-face {{\n        font-family: "Fira Code";\n    }}\n'
+                   '    .{unique_id}-matrix {{\n        font-family: Fira Code, monospace;\n'
+                   '        font-size: {char_height}px;\n    }}\n"""\n', encoding="utf-8")
+    payload = (block('    @font-face {\n        font-family: "Fira Code";',
+                     '    @font-face {\n        font-family: "{font_family}";')
+               + block('    .{unique_id}-matrix {\n        font-family: Fira Code, monospace;\n        font-size: {char_height}px;',
+                       '    .{unique_id}-matrix {\n        font-family: "{font_family}", monospace;\n'
+                       '        font-size: {char_height}px;'))
+    r = run_edit(repo, payload, "pkg/fmt.py")
+    assert r.returncode == 0 and "doubled braces" in r.stdout, r.stdout
+    text = fmt.read_text(encoding="utf-8")
+    assert text == ('SVG = """\\\n    @font-face {{\n        font-family: "{font_family}";\n    }}\n'
+                    '    .{unique_id}-matrix {{\n        font-family: "{font_family}", monospace;\n'
+                    '        font-size: {char_height}px;\n    }}\n"""\n'), text
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("fmt_check", fmt)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert "@font-face {\n" in mod.SVG.format(font_family="F", unique_id="u", char_height=1)
+    # f-string: literal braces doubled, the {x!r} field kept
+    fs = repo / "pkg" / "fs.py"
+    fs.write_text('def f(x):\n    return f"{{ value: {x!r} }}"\n', encoding="utf-8")
+    r = run_edit(repo, block('    return f"{ value: {x!r} }"', '    return f"{ val: {x!r} }"'), "pkg/fs.py")
+    assert r.returncode == 0 and fs.read_text(encoding="utf-8") == 'def f(x):\n    return f"{{ val: {x!r} }}"\n', r.stdout
+    # a replacement that already doubles some braces is ambiguous: nothing written
+    before = fmt.read_text(encoding="utf-8")
+    r = run_edit(repo, block("    @font-face {\n        font-family: \"{font_family}\";",
+                             "    @font-face {{\n        font-family: x;"), "pkg/fmt.py")
+    assert r.returncode == 1 and "mixes both spellings" in r.stdout and fmt.read_text(encoding="utf-8") == before, r.stdout
+    # single braces in the file (a dict literal) never match a SEARCH typed with braces it does not have
+    d = repo / "pkg" / "d.py"
+    d.write_text("D = {'a': 1}\n", encoding="utf-8")
+    r = run_edit(repo, block("D = {{'a': 1}}", "D = {'a': 2}"), "pkg/d.py")
+    assert r.returncode == 1 and "EDIT NOT APPLIED" in r.stdout and d.read_text(encoding="utf-8") == "D = {'a': 1}\n"
+
+
 def test_edit_refuses_ambiguous_empty_and_breaking_edits(repo):
     (repo / "pkg" / "dup.py").write_text("def a():\n    return 1\n\n\ndef b():\n    return 1\n", encoding="utf-8")
     before = (repo / "pkg" / "dup.py").read_text(encoding="utf-8")

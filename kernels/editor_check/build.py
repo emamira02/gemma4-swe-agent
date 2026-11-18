@@ -249,6 +249,18 @@ if err is None:
              code == 0 and rx.endswith(('"^[' + bs + 'u0020-' + bs + 'u007e]*$")\n').encode()) and (bs * 2).encode() not in rx,
              out + "\nFILE:\n" + rx.decode())
         os.remove(os.path.join(sws, "pkg", "rx.py"))
+        # S21: doubled-brace tier (S12/S16ctl/S17 rich_3944: '@font-face {' typed for '@font-face {{' in a template)
+        with open(os.path.join(sws, "pkg", "fmt.py"), "w") as fh:
+            fh.write('SVG = """\\\n    @font-face {{\n        font-family: "Fira Code";\n    }}\n"""\n')
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/fmt.py <<'EOF'\n<<<<<<< SEARCH\n    @font-face {\n"
+                        '        font-family: "Fira Code";\n=======\n    @font-face {\n        font-family: "{font_family}";\n'
+                        ">>>>>>> REPLACE\nEOF")
+        fm = read("pkg/fmt.py", sws)
+        case("B doubled braces matched and the replacement escaped through the sandbox heredoc",
+             code == 0 and "doubled braces" in out
+             and fm == b'SVG = """\\\n    @font-face {{\n        font-family: "{font_family}";\n    }}\n"""\n',
+             out + "\nFILE:\n" + fm.decode())
+        os.remove(os.path.join(sws, "pkg", "fmt.py"))
         code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n<<<<<<< SEARCH\n    nothing here\n"
                         "=======\nx\n>>>>>>> REPLACE\nEOF")
         case("B failure message names the /workspace spelling", code == 1 and

@@ -22,7 +22,8 @@ S1-S4) and a quoted heredoc passes code verbatim, without any escaping.
 Matching: exact, then ignoring trailing whitespace and surrounding blank lines, then ignoring a uniform indentation
 offset (the replacement is shifted by the same offset), then ignoring the number of backslashes when every run
 in the file is the same multiple of the run typed (the replacement is scaled by it; a run it cannot scale refuses
-the edit). A SEARCH that is missing or ambiguous changes nothing and
+the edit), then with literal braces written once where the file is a format template that writes them twice
+({{ }}; the replacement is escaped the same way). A SEARCH that is missing or ambiguous changes nothing and
 prints the closest region with line numbers; resending a block this editor already applied is reported, not redone. A
 Python result that does not compile is not written; a
 written package module that no longer imports is reported. Writes are atomic and keep line endings, final newline and file
@@ -281,7 +282,7 @@ def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int,
     if shifted:
         return "indentation", shifted
     if not _bs_runs(core):
-        return "none", []
+        return _brace_tier(lines, core)
     cs = [_bs_collapse(ln) for ln in core]
     scaled = []
     for i in range(len(lines) - m + 1):
@@ -292,7 +293,44 @@ def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int,
     if scaled:
         k = scaled[0][2].factor
         return f"backslash count (the file has {k} for each of yours; the replacement was scaled the same way)", scaled
-    return "none", []
+    return _brace_tier(lines, core)
+
+
+# a str.format replacement field: {name}, {0}, {}, {a.b[0]!r:>{w}} without nesting
+FIELD_RX = re.compile(r"\{(?:[A-Za-z_]\w*|\d*)(?:\.[A-Za-z_]\w*|\[[^\[\]{}]*\])*(?:![rsa])?(?::[^{}]*)?\}")
+
+
+def _brace_escape(ln: str) -> str:
+    """Double every brace outside a replacement field: how a str.format template or f-string spells a literal brace."""
+    parts, pos = [], 0
+    for m in FIELD_RX.finditer(ln):
+        parts += [ln[pos:m.start()].replace("{", "{{").replace("}", "}}"), m.group()]
+        pos = m.end()
+    return "".join(parts) + ln[pos:].replace("{", "{{").replace("}", "}}")
+
+
+def _brace_tier(lines: list[str], core: list[str]):
+    """When the file region is a format template that writes literal braces twice ({{ }}) and SEARCH is that region
+    with them written once, fields such as {unique_id} kept: match it and escape the replacement the same way. The
+    model types the rendered text (S12, S16ctl and S17 rich_3944: '@font-face {' for '@font-face {{' in
+    CONSOLE_SVG_FORMAT, NOT APPLIED at similarity 0.99, one call lost each time)."""
+    if any("{{" in ln or "}}" in ln for ln in core):
+        return "none", []
+    es = [_brace_escape(ln.rstrip()) for ln in core]
+    if es == [ln.rstrip() for ln in core]:
+        return "none", []
+    m = len(core)
+    hits = [i for i in range(len(lines) - m + 1)
+            if lines[i].rstrip() == es[0] and [ln.rstrip() for ln in lines[i:i + m]] == es]
+
+    def escape(ln: str) -> str:
+        if "{{" in ln or "}}" in ln:
+            raise EditError("the file writes each literal brace twice ({{ and }}) and your SEARCH matched it with single "
+                            "braces, but the replacement mixes both spellings: write the replacement with single "
+                            "braces too (fields such as {name} stay as they are), or replace by line numbers")
+        return _brace_escape(ln)
+    return ("doubled braces (the file is a format template that writes each literal brace twice; the replacement "
+            "was escaped the same way)"), [(i, i + m, escape) for i in hits]
 
 
 def closest(lines: list[str], search: list[str]) -> tuple[float, int, int]:

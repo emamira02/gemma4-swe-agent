@@ -1,0 +1,62 @@
+{
+ "tag": "S21",
+ "base": "S12",
+ "zip_sha256": "be39c3fbfd48f07016bf209c6f629c5bcc3fc462a959067e1b03206a82037e73",
+ "checks": {
+  "rebuilds_to_frozen_sha": true,
+  "official_compile": true,
+  "base_passed_panel_sanity": true,
+  "budget_model_sampling_tools_same_as_base": true,
+  "skills_passed_harness_sandbox_check": true,
+  "prompt_change_small_or_allowed": true,
+  "agent_dir_equals_candidate": true,
+  "tests_pass": true
+ },
+ "notes": {
+  "official": "compiled: LlmAgent with tools ['run_command', 'read_file', 'get_status', 'submit_patch', 'list_skills', 'load_skill', 'load_skill_resource', 'run_skill_script']",
+  "base_sanity": {
+   "tag": "S12",
+   "panel": true,
+   "n": 24,
+   "finished": 24,
+   "resolved_on_solvable": 13,
+   "hours_120": 8.57,
+   "editor_missing_after_localize": [],
+   "checks": {
+    "finished": true,
+    "resolved_on_solvable": true,
+    "hours_120": true,
+    "editor_missing_after_localize": true
+   },
+   "passed": true
+  },
+  "harness_sandbox_check": [
+   "v13"
+  ],
+  "prompt_changed_lines": 6,
+  "changed_files_vs_base": [
+   "prompts/system.md",
+   "skills/swe/SKILL.md",
+   "skills/swe/scripts/edit.py",
+   "skills/swe/scripts/finalize.py",
+   "skills/swe/scripts/localize.py"
+  ],
+  "tests": {
+   "repo": {
+    "returncode": 0,
+    "tail": [
+     "67 passed, 2 skipped in 46.43s"
+    ]
+   },
+   "grader_venv": {
+    "returncode": 0,
+    "tail": [
+     "42 passed in 51.82s"
+    ]
+   }
+  }
+ },
+ "allow_prompt_change": false,
+ "passed": true,
+ "at": "2026-11-18 11:42 UTC"
+}

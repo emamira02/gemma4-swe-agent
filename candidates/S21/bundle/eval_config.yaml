@@ -1,0 +1,9 @@
+# S10: the budget of the public Budget-Aware V10 / Budget-Fit family (8 min, 28 counted calls, 80 turns, 240 s),
+# scored many times within the 12 h limit (tools/build_submission.py PROVEN_BUDGET). That family ends sessions early
+# (B1 on our panel: mean 277 s, 9.2 h for 120 tasks); our S8 prompt with this budget used the whole cap (11.7 h), so
+# the dev panel's 120 x mean task time <= 11 h check decides. timeout_seconds is also the hidden-test timeout.
+evaluation:
+  max_time_minutes: 8.0
+  timeout_seconds: 240
+  max_tool_calls: 28
+  max_turns: 80
