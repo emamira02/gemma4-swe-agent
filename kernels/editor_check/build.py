@@ -237,6 +237,14 @@ if err is None:
         case("B code naming /tmp, /workspace, /usr/local/bin reaches the file as written",
              code == 0 and (lit + "\n").encode() in read("pkg/markup.py", sws), out + "\nFILE:\n" + read("pkg/markup.py", sws).decode())
         subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
+        # S22: a heredoc closed by two EOF lines (S9 rich_4070 x4, S17 rich_3930 x4: applied, but exit 127 and
+        # status error); localize put a no-op EOF in the sandbox venv bin, the first PATH entry of run_command
+        guard = os.path.join(str(mgr._sandboxes[sid]["venv"]), "bin", "EOF")
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n" + BLOCK + "EOF\nEOF\n")
+        case("B a doubled EOF line after the heredoc exits 0 with the APPLIED report",
+             code == 0 and "APPLIED to pkg/markup.py" in out and "command not found" not in out
+             and NEW.encode() in read("pkg/markup.py", sws) and os.path.isfile(guard), f"exit {code}\n" + out)
+        subprocess.run(["git", "-C", sws, "checkout", "-q", "--", "pkg/markup.py"])
         # S15: backslash-count tier through bash, the quoted heredoc and the sandbox's command rewriting
         bs = chr(92)
         with open(os.path.join(sws, "pkg", "rx.py"), "w") as fh:

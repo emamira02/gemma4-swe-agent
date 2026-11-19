@@ -1,0 +1,15 @@
+{
+ "tag": "S22",
+ "zip_sha256": "8201ae5a50d8c68f5afd86d71cc8bf3aba24a6bc12f70f0bc4fc95ab3db8ec28",
+ "git_head_at_freeze": "6f641547748dd02e9e02f793707308f5b8c7fa52",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "0a6bbacd1b56",
+  "eval_config.yaml": "e9e609af3000",
+  "prompts/system.md": "c3ddd0420005",
+  "skills/swe/scripts/edit.py": "ba9aa473964d",
+  "skills/swe/scripts/finalize.py": "5e3c75f6df8f",
+  "skills/swe/scripts/localize.py": "daf75d310db5",
+  "skills/swe/SKILL.md": "d751396dd1a3"
+ }
+}

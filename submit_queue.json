@@ -44,5 +44,10 @@
   "tag": "S21",
   "added": "2026-11-18",
   "hypothesis": "S20 + editor doubled-brace tier: a SEARCH typed with single literal braces matches a str.format/f-string region that writes them twice ({unique_id}-style fields kept) and the replacement is escaped the same way (S12, S16ctl, S17 rich_3944: '@font-face {' for '@font-face {{' NOT APPLIED at similarity 0.99, one call lost each time; replay of the 3 real commands: S20 0/3, S21 3/3, S17 result equal to the gold hunks)"
+ },
+ {
+  "tag": "S22",
+  "added": "2026-11-19",
+  "hypothesis": "S21 + EOF guard: localize and finalize put a no-op EOF executable in the task sandbox's own venv bin (first PATH entry of every run_command), so an editor heredoc closed by two EOF lines ends with status ok and the APPLIED report instead of exit 127 and 'EOF: command not found' (S9 rich_4070 x4, S17 rich_3930 x4 despite the S16 prompt rule: 8 applied edits reported as errors; S9 rich_4070 then spent 17 calls re-checking the file and hit the cap). editor_check v14 33/33 on Kaggle incl. the replay through the harness sandbox"
  }
 ]

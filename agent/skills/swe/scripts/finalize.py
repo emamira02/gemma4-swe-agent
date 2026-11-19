@@ -35,6 +35,37 @@ TOOLS_DIR = os.environ.get("SWE_TOOLS_DIR")  # tests only; the default is the wo
 EDITOR_CMD = "/workspace/.git/swe/edit.py"
 
 
+EOF_GUARD = b"#!/bin/sh\n# swe skill: a heredoc closed by two EOF lines runs this as a command; exit 0 keeps the edit's output\nexit 0\n"
+
+
+def install_eof_guard() -> bool:
+    """Put a no-op executable named EOF in the task sandbox's own venv bin directory, the first PATH entry of every
+    run_command. An editor heredoc closed by two EOF lines then ends with status ok and the editor's APPLIED
+    output, instead of exit 127, status error and "EOF: command not found" as the only visible message (S9 and S17
+    rich_4070 / rich_3930: 8 applied edits reported as errors; S9 rich_4070 then spent 17 calls re-checking the
+    file). Only a VIRTUAL_ENV whose bin is PATH's first entry is touched (the harness sandbox); never raises."""
+    try:
+        venv = os.environ.get("VIRTUAL_ENV") or ""
+        first = (os.environ.get("PATH") or "").split(os.pathsep)[0]
+        b = os.path.join(venv, "bin")
+        if not venv or not first or os.path.realpath(first) != os.path.realpath(b) or not os.path.isdir(b):
+            return False
+        dst = os.path.join(b, "EOF")
+        if os.path.lexists(dst):
+            with open(dst, "rb") as fh:
+                if fh.read() != EOF_GUARD:
+                    return False  # not ours: leave it alone
+        else:
+            tmp = f"{dst}.{os.getpid()}.tmp"
+            with open(tmp, "wb") as fh:
+                fh.write(EOF_GUARD)
+            os.chmod(tmp, 0o755)
+            os.replace(tmp, dst)
+        return os.access(dst, os.X_OK)
+    except Exception:
+        return False
+
+
 def install_editor(root: str) -> str:
     """Copy the sibling edit.py (materialized next to this script by run_skill_script) to <workspace>/.git/swe/,
     where run_command can call it after this script's temporary directory is gone. Commands spell it
@@ -61,6 +92,7 @@ def install_editor(root: str) -> str:
             os.replace(tmp, dst)
     except OSError as e:
         return f"EDITOR NOT INSTALLED ({type(e).__name__}: {e}); run this script once more."
+    install_eof_guard()
     in_workspace = not TOOLS_DIR and os.path.basename(os.path.normpath(root)) == "workspace"
     return f"EDITOR READY: python3 {EDITOR_CMD if in_workspace else dst.replace(os.sep, '/')}"
 

@@ -647,6 +647,50 @@ def test_prompt_makes_localize_call_one_because_the_editor_needs_it(tmp_path_fac
     assert localize.install_editor(str(ws)).startswith("EDITOR READY: ") and editor.exists()
 
 
+def test_eof_guard_turns_a_doubled_heredoc_terminator_into_status_ok(tmp_path, monkeypatch):
+    """S9 rich_4070 (x4) and S17 rich_3930 (x4): the editor heredoc was closed by two EOF lines; the edit applied,
+    but bash then ran EOF as a command (exit 127), so run_command returned status error with "EOF: command not
+    found" as error_message and the APPLIED report only in details. S9 rich_4070 spent its next 17 calls
+    re-checking the file and ended at the cap. install_editor now puts a no-op EOF in the sandbox venv's bin, the
+    first PATH entry of every run_command (swegemma SubprocessManager.exec), and nowhere else."""
+    venv = tmp_path / "venv"
+    (venv / "bin").mkdir(parents=True)
+    ws = tmp_path / "workspace"
+    (ws / ".git").mkdir(parents=True)
+    monkeypatch.setattr(localize, "TOOLS_DIR", None)
+    monkeypatch.setattr(finalize, "TOOLS_DIR", None)
+    guard = venv / "bin" / "EOF"
+    # not the sandbox layout: no VIRTUAL_ENV, or its bin is not PATH's first entry -> nothing written anywhere
+    monkeypatch.delenv("VIRTUAL_ENV", raising=False)
+    assert localize.install_eof_guard() is False
+    monkeypatch.setenv("VIRTUAL_ENV", str(venv))
+    monkeypatch.setenv("PATH", os.pathsep.join(["/usr/bin", str(venv / "bin")]))
+    assert localize.install_eof_guard() is False and not guard.exists()
+    # sandbox layout: install_editor (localize and finalize alike) writes the guard, output line unchanged
+    monkeypatch.setenv("PATH", os.pathsep.join([str(venv / "bin"), "/usr/bin", "/bin"]))
+    assert localize.install_editor(str(ws)) == "EDITOR READY: python3 /workspace/.git/swe/edit.py"
+    assert guard.read_bytes() == localize.EOF_GUARD == finalize.EOF_GUARD and b"`" not in guard.read_bytes()
+    guard.unlink()
+    assert finalize.install_editor(str(ws)).startswith("EDITOR READY: ") and guard.exists()
+    assert localize.install_eof_guard() is True  # idempotent
+    guard.write_bytes(b"#!/bin/sh\nexit 3\n")  # someone else's EOF is never overwritten
+    assert localize.install_eof_guard() is False and guard.read_bytes() == b"#!/bin/sh\nexit 3\n"
+    guard.unlink()
+    assert localize.install_eof_guard() is True
+    bash = shutil.which("bash")
+    if os.name != "posix" or not bash:
+        pytest.skip("the bash replay needs a POSIX shell (covered by kernels/editor_check case B on Kaggle)")
+    (ws / "m.py").write_text("def f():\n    return 1\n")
+    cmd = (f"python3 {ws / '.git' / 'swe' / 'edit.py'} m.py <<'EOF'\n<<<<<<< SEARCH\n    return 1\n=======\n"
+           "    return 2\n>>>>>>> REPLACE\nEOF\nEOF\n")
+    env = {**os.environ, "PATH": os.pathsep.join([str(venv / "bin"), os.environ.get("PATH", "")])}
+    r = subprocess.run([bash, "-c", cmd], cwd=ws, env=env, capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0 and "APPLIED to m.py" in r.stdout and r.stderr == "", (r.stdout, r.stderr)
+    guard.unlink()
+    r = subprocess.run([bash, "-c", cmd], cwd=ws, env=env, capture_output=True, text=True, timeout=60)
+    assert r.returncode == 127 and "EOF" in r.stderr  # control: what the panels showed
+
+
 def test_editor_install_runs_through_adk_skill_wrapper(repo, tmp_path, _tools_dir):
     """run_skill_script materializes every skill script in a temp dir that is deleted after the call: the editor
     must be copied out of it, then work from run_command."""
@@ -768,6 +812,8 @@ def test_editor_copies_are_in_sync():
     assert edit.PROTECTED.pattern == finalize.PROTECTED.pattern
     assert inspect.getsource(edit.importable) == inspect.getsource(finalize.importable)
     assert inspect.getsource(localize.install_editor) == inspect.getsource(finalize.install_editor)
+    assert inspect.getsource(localize.install_eof_guard) == inspect.getsource(finalize.install_eof_guard)
+    assert localize.EOF_GUARD == finalize.EOF_GUARD
 
 
 def test_submissions_csv_parser_skips_cli_notices_and_fails_closed():

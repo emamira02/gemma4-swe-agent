@@ -113,11 +113,13 @@ not by the single best public score.
 
 | S20 (1f99ca5ffcaf) | frozen 2026-11-17 (candidates/S20): S19 bundle + localize OUTLINE of the top 3 files; GATE PASSED vs S12 2026-11-17 12:11 UTC; editor_check v12 on Kaggle (CPU) 31/31 with the three new cases (outline twice, 10 kB output whole); QUEUED in submit_queue.json after S19 |
 | S21 (be39c3fbfd48) | frozen 2026-11-18 (candidates/S21): S20 bundle + editor doubled-brace tier; GATE PASSED vs S12 2026-11-18; editor_check v13 on Kaggle (CPU) 32/32 incl. the new case; QUEUED in submit_queue.json after S20 |
+| S22 (8201ae5a50d8) | frozen 2026-11-19 (candidates/S22): S21 bundle + EOF guard in install_editor (localize and finalize); GATE PASSED vs S12 2026-11-19; editor_check v14 on Kaggle (CPU) 33/33 incl. the doubled-EOF replay through the harness sandbox; QUEUED in submit_queue.json after S21 |
 
 ## Submission queue (when nothing is pending, kaggle-loop submits the READY entry with the most panel resolves, newest on ties)
 Candidates are frozen in candidates/<TAG>/ (bundle + sha); submissions always use the frozen copy (tools/kaggle_submit.py).
 | Tag | Status | Change vs previous | Hypothesis |
 |---|---|---|---|
+| S22 | QUEUED 2026-11-19 in submit_queue.json after S21 (ships at the next free slot via tools/submit_next.py); GATE PASSED 2026-11-19 (sha 8201ae5a50d8; base S12; prompt, agent.yaml, eval_config, sampling unchanged vs S21; skills = editor_check v14 33/33; 67 + 42 tests, 3 + 1 skipped); no panel of its own | S21 + install_eof_guard(): a no-op EOF executable in the sandbox venv bin (first PATH entry of run_command, per task, deleted with the sandbox); printed output unchanged | Findings 2026-11-19: 8 applied edits in 2 sessions came back as status error (exit 127, error_message 'EOF: command not found', APPLIED only in details) after a second EOF line; S9 rich_4070 then spent 17 calls re-grepping the file. Expected: those calls return status ok with the APPLIED report; small (2 of 96 sessions), zero risk to tiers or output |
 | S21 | SUBMITTED 2026-11-18 ~19:06 UTC via tools/submit_next.py (gate OK, kernel v12, PENDING). Earlier: QUEUED 2026-11-18 in submit_queue.json after S20 (ships at the next free slot via tools/submit_next.py); GATE PASSED 2026-11-18 (sha be39c3fbfd48; base S12; prompt, agent.yaml, eval_config, sampling unchanged vs S20; skills = editor_check v13 32/32; 67 + 42 tests, 2 skipped); no panel of its own | S20 + edit.py tier 5: literal braces typed once match a format-template region that writes them twice, fields kept, replacement escaped; mixed replacement refused | Findings 2026-11-18: 3 of the 20 NOT APPLIED in S9/S12/S16ctl/S17 (rich_3944 x3, similarity 0.99, one call lost each, 2 sessions then hit the 28-call cap); replay S20 0/3 vs S21 3/3, S17 result byte-equal to the gold hunks of rich/_export_format.py. Expected: +0 to +1 task (call saved), no regression possible on edits tiers 1-4 already applied |
 | S20 | SUBMITTED 2026-11-17 ~15:25 UTC via tools/submit_next.py (gate OK, kernel v11), COMPLETE, public score 0.13 (seen 2026-11-18 19:05 UTC). Earlier: GATE PASSED 2026-11-17 12:11 UTC (sha 1f99ca5ffcaf; base S12; prompt diff 6/6 unchanged, agent.yaml / eval_config / sampling byte-identical; skills = harness sandbox editor_check v12; 66 + 41 tests, 2 skipped); QUEUED 2026-11-17 in submit_queue.json after S19, ships at the next free slot via tools/submit_next.py; no panel of its own (RESUME has had no GPU quota figure since 2026-11-02) | S19 + localize ends with an OUTLINE of its top 3 ranked files: every def and class with its line range, 3000 chars shared by the files, and a file that does not fit keeps the symbols already ranked, its top-level defs and classes and the members nearest its best-ranked symbol, in line order, with the one search that lists the rest in its header | S9/S12/S16ctl/S17: 108 of 441 repository searches asked nothing but where a def or class is (35 of 96 sessions, up to 8 in one; S17 rich_4070 spent 7 of its 30 calls that way before the 28-call cap); by rank of the searched file in localize's own FILES line: 25 rank1, 28 rank2, 4 rank3, 2 rank4, 24 rank5, 23 outside the top 6. Replay of the real queries: 33 of 106 answered by S19, 61 by S20, none lost, for +2.5k chars on one observation (mean localize stdout 7515 vs ~5000) and no extra wall-clock |
 | PUB1 | SUBMITTED 2026-11-06 22:11 UTC (tools/submit_next.py, owner exception logged; kernel v8), COMPLETE, public score 0.18 (seen 2026-11-07 17:21 UTC; one draw, above S12 0.17 within noise, below its own 0.22); queued 2026-11-03 at the head of submit_queue.json, ahead of S18 (owner choice; frozen sha e140569d0829, no panel, gate fails by design) | not ours: the public notebook "Gemma 4 | Budget-Aware Coding Agent v2" V10 (flexonafft, Apache 2.0; public score 0.22, best version V10 of 10), its 4 files verbatim (sha256 of each equal to the notebook's own output): edit_file/write_file tools, no skills, temperature 0.2, 8 min / 28 calls / 80 turns / 240 s | one more draw of the top public notebook. Expected mean ~10/58 like its prompt family (Budget-Fit ~10/58 over ten draws; S12, built on this prompt, 0.17); a score above S12 is one draw, not evidence of a better mean. Never a final selection without pooled evidence |
@@ -228,6 +230,28 @@ by at least half; otherwise fix the cause seen in the traces first (new tag), ne
 - Tag S17 is taken (frozen 2026-10-29); kaggle-improve's next tag is S18.
 - Repo fact: the sampling.yaml comment "top_k dropped by LiteLLM" is false locally (LiteLLM 1.93.2 sends it in
   extra_body); left unedited because agent/ must equal the frozen candidate.
+
+## Findings 2026-11-19 (kaggle-improve; S9/S12/S16ctl/S17 traces + harness source; S22 built on S21)
+- Gating: all 9 submit_queue.json tags in runs.csv (S21 PENDING, sent 11-18 19:07 UTC), g4-agent-eval COMPLETE,
+  agent/ == candidates/S21/bundle, tree clean -> proceeded. No new panel or score since 11-18.
+- Audit classes (python -m analysis.failure_audit), S16ctl / S17: RIGHT_FILE_WRONG_FIX 6 / 4, NO_EDIT 2 / 3,
+  WRONG_FILE 2 / 3; behaviour failures, no deterministic lever (as on 11-18). Empty patches at the 28-call cap:
+  rich_3472 in S12, S16ctl, S17 (28 calls of grep/read_file, the edit came at call 29: pure exploration) and
+  rich_3935 in S12, S16ctl; model behaviour, prompt budget 6/6 used.
+- Editor calls not applied and not NOT APPLIED, 32 over the 4 panels: 19 at the budget cap, 5 ls/find of the editor
+  (before localize), 1 unbalanced quote (S17 fastapi_9555), 8 DOUBLED EOF: S9 rich_4070 x4 and S17 rich_3930 x4
+  (S17 already has the S16 prompt rule). Each one APPLIED (or reported NOT APPLIED) on stdout, then bash ran the
+  second EOF line as a command: exit 127. swegemma tools/execution.py run_command then returns status error with
+  error_message = stderr only ('EOF: command not found'); the editor's report survives only under details.stdout.
+  S9 rich_4070 after 4 such errors spent calls 17-33 re-grepping console.py and ended at the cap, patch kept.
+- S22 = S21 + install_eof_guard() inside install_editor (same code in localize.py and finalize.py, parity test):
+  writes a no-op EOF (sh, exit 0) into VIRTUAL_ENV/bin only when that is PATH's first entry, which is exactly the
+  per-task sandbox venv of swegemma SubprocessManager.exec (deleted with the sandbox); never overwrites a foreign
+  EOF, never raises, prints nothing (localize/finalize output byte-identical). Tiers, prompt, configs unchanged.
+- Verified without a GPU: unit test (layout checks, idempotent, foreign file kept, bash replay on POSIX: exit 0 +
+  APPLIED vs control exit 127), editor_check v14 on Kaggle 33/33: the doubled-EOF heredoc through the harness
+  sandbox after localize ran through run_skill_script exits 0 with the APPLIED report, .git/swe and EOF outside the
+  patch. Expected effect small (2 of 96 sessions); never conclude from S22's single public draw.
 
 ## Findings 2026-11-18 (kaggle-improve; S9/S12/S16ctl/S17 traces re-mined; S21 built on S20)
 - Gating: all 8 submit_queue.json tags in runs.csv (S20 PENDING, sent 11-17 15:22 UTC, no score yet), g4-agent-eval
