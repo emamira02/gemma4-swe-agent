@@ -23,7 +23,9 @@ Matching: exact, then ignoring trailing whitespace and surrounding blank lines, 
 offset (the replacement is shifted by the same offset), then ignoring the number of backslashes when every run
 in the file is the same multiple of the run typed (the replacement is scaled by it; a run it cannot scale refuses
 the edit), then with literal braces written once where the file is a format template that writes them twice
-({{ }}; the replacement is escaped the same way). A SEARCH that is missing or ambiguous changes nothing and
+({{ }}; the replacement is escaped the same way), then ignoring blank lines between the lines typed and, in Python
+files, comment-only lines the SEARCH left out (the file's own are kept where the replacement leaves their neighbours
+unchanged). A SEARCH that is missing or ambiguous changes nothing and
 prints the closest region with line numbers; resending a block this editor already applied is reported, not redone. A
 Python result that does not compile is not written; a
 written package module that no longer imports is reported. Writes are atomic and keep line endings, final newline and file
@@ -256,8 +258,9 @@ def _bs_scaler(search: list[str], window: list[str]):
     return scale
 
 
-def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int, object]]]:
-    """(tier, [(start, end, reindent)]) for the first tier with any match; end is exclusive."""
+def find(lines: list[str], search: list[str], comments: bool = False) -> tuple[str, list[tuple[int, int, object]]]:
+    """(tier, [(start, end, reindent)]) for the first tier with any match; end is exclusive. comments: comment-only
+    file lines may be skipped by the last tier (Python files)."""
     ident = lambda ln: ln  # noqa: E731
     n = len(search)
     exact = [(i, i + n, ident) for i in range(len(lines) - n + 1) if lines[i:i + n] == search]
@@ -282,7 +285,7 @@ def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int,
     if shifted:
         return "indentation", shifted
     if not _bs_runs(core):
-        return _brace_tier(lines, core)
+        return _late_tiers(lines, core, comments)
     cs = [_bs_collapse(ln) for ln in core]
     scaled = []
     for i in range(len(lines) - m + 1):
@@ -293,7 +296,78 @@ def find(lines: list[str], search: list[str]) -> tuple[str, list[tuple[int, int,
     if scaled:
         k = scaled[0][2].factor
         return f"backslash count (the file has {k} for each of yours; the replacement was scaled the same way)", scaled
-    return _brace_tier(lines, core)
+    return _late_tiers(lines, core, comments)
+
+
+def _late_tiers(lines: list[str], core: list[str], comments: bool):
+    tier, hits = _brace_tier(lines, core)
+    return (tier, hits) if hits else _gap_tier(lines, core, comments)
+
+
+GAP_TIER = ("blank lines or comment lines between your lines (the file's own were kept where the replacement leaves "
+            "their neighbours unchanged)")
+
+
+def _gap_tier(lines: list[str], core: list[str], comments: bool):
+    """When SEARCH equals a file region except for blank lines (more, fewer or none where the file has them) and, in
+    Python files, comment-only lines it left out: match it. The replacement keeps the file's own blank and comment lines
+    wherever both neighbours are unchanged in it, and drops SEARCH-only blank lines there (S9 fastapi_5077: one blank
+    line typed for PEP 8's two between functions; S17 rich_3930: a '# Binary search ...' line left out of 32; NOT
+    APPLIED at similarity 0.95 and 0.96, then a read_file and a retyped edit)."""
+    rs = [ln.rstrip() for ln in core]
+    if sum(1 for ln in rs if ln.strip()) < 2:
+        return "none", []
+
+    def skippable(ln: str) -> bool:
+        return not ln.strip() or comments and ln.lstrip().startswith("#")
+    hits = []
+    for i in range(len(lines)):
+        if lines[i].rstrip() != rs[0]:
+            continue
+        j, k, extra, dropped = 0, i, [], []
+        while j < len(rs) and k < len(lines):
+            if lines[k].rstrip() == rs[j]:
+                j, k = j + 1, k + 1
+            elif not rs[j].strip():
+                dropped.append(j)
+                j += 1
+            elif skippable(lines[k]):
+                extra.append((j, lines[k]))
+                k += 1
+            else:
+                break
+        if j == len(rs) and (extra or dropped):
+            hits.append((i, k, _regap(rs, extra, dropped)))
+    return GAP_TIER, hits
+
+
+def _regap(rs: list[str], extra: list[tuple[int, str]], dropped: list[int]):
+    """A reindent-compatible object whose .whole(repl) puts the file-only lines (extra: (index in SEARCH they precede,
+    line)) back and removes the SEARCH-only blank lines, but only inside runs the replacement left unchanged."""
+    def whole(repl: list[str]) -> list[str]:
+        rr = [ln.rstrip() for ln in repl]
+        ins: dict[int, list[str]] = {}
+        keep = [True] * len(repl)
+        for op, a, b, c, _ in difflib.SequenceMatcher(None, rs, rr, autojunk=False).get_opcodes():
+            if op != "equal":
+                continue
+            for j in dropped:
+                if a <= j < b:
+                    keep[c + j - a] = False
+            for j, ln in extra:
+                if a < j < b:
+                    ins.setdefault(c + j - a, []).append(ln)
+        out: list[str] = []
+        for r, ln in enumerate(repl):
+            out += ins.get(r, [])
+            if keep[r]:
+                out.append(ln)
+        return out
+
+    def ident(ln: str) -> str:
+        return ln
+    ident.whole = whole
+    return ident
 
 
 # a str.format replacement field: {name}, {0}, {}, {a.b[0]!r:>{w}} without nesting
@@ -374,7 +448,7 @@ def _unnumber(lines: list[str]) -> list[str] | None:
     return [NUMBERED_RX.match(ln).group(1) if ln.strip() else ln for ln in lines] if ms and all(ms) else None
 
 
-def _locate(out: list[str], body: list[str], divs: list[int]):
+def _locate(out: list[str], body: list[str], divs: list[int], comments: bool = False):
     """(search, replace, tier, hits) for one block. Each divider is a candidate split; among the splits whose SEARCH
     matches exactly once the longest SEARCH wins (a = line inside old code yields a shorter, wrong SEARCH; one inside
     new code yields a SEARCH that cannot match). Without a unique match the first split is reported."""
@@ -384,10 +458,10 @@ def _locate(out: list[str], body: list[str], divs: list[int]):
         if not _strip_blank_edges(search):
             cand = (search, repl, "empty", [])
         else:
-            tier, hits = find(out, search)
+            tier, hits = find(out, search, comments)
             plain = _unnumber(search)
             if not hits and plain:
-                tier, hits = find(out, plain)
+                tier, hits = find(out, plain, comments)
                 search, repl, tier = plain, _unnumber(repl) or repl, tier + " and line numbers"
             cand = (search, repl, tier, hits)
         first = first or cand
@@ -421,8 +495,9 @@ def apply_blocks(lines: list[str], blocks, rel: str, journal: set[str] = frozens
     A block whose SEARCH is gone counts as already applied only if this editor applied that exact block before and
     its replacement is still there: the replacement text alone may also occur elsewhere. Raises EditError."""
     out, report, regions, keys = list(lines), [], [], []
+    comments = rel.endswith((".py", ".pyi"))
     for b, (body, divs) in enumerate(blocks, 1):
-        search, repl, tier, hits = _locate(out, body, divs)
+        search, repl, tier, hits = _locate(out, body, divs, comments)
         key = block_key(rel, search, repl)
         if tier == "empty":
             raise EditError(f"block {b}: SEARCH is empty. Put the existing lines to replace (or the line just before "
@@ -444,7 +519,7 @@ def apply_blocks(lines: list[str], blocks, rel: str, journal: set[str] = frozens
         if not tier.startswith("exact"):  # the match ignored blank edges of SEARCH: drop as many from the replacement
             (lead, trail), (rl, rt) = _edges(search), _edges(repl)
             repl = repl[min(lead, rl):len(repl) - min(trail, rt)] if _strip_blank_edges(repl) else []
-        new = [reindent(ln) for ln in repl]
+        new = reindent.whole(repl) if hasattr(reindent, "whole") else [reindent(ln) for ln in repl]
         out[start:end] = new
         delta = len(new) - (end - start)
         regions = [(lo + delta, hi + delta) if lo > start else (lo, hi) for lo, hi in regions]

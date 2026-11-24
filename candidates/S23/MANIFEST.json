@@ -1,0 +1,15 @@
+{
+ "tag": "S23",
+ "zip_sha256": "32bf0f717b93cdcdaddfb82c91542bacb8e9a31cad93bc27ad3608ea604370fe",
+ "git_head_at_freeze": "9b7ba5c99efbf28ab7d976c8ab8cf511814fa7f3",
+ "files": {
+  "agent.yaml": "76e973584b06",
+  "configs/sampling.yaml": "0a6bbacd1b56",
+  "eval_config.yaml": "e9e609af3000",
+  "prompts/system.md": "c3ddd0420005",
+  "skills/swe/scripts/edit.py": "2e81bfd51e47",
+  "skills/swe/scripts/finalize.py": "5e3c75f6df8f",
+  "skills/swe/scripts/localize.py": "daf75d310db5",
+  "skills/swe/SKILL.md": "d751396dd1a3"
+ }
+}

@@ -463,6 +463,46 @@ def test_edit_doubled_brace_tier(repo):
     assert r.returncode == 1 and "EDIT NOT APPLIED" in r.stdout and d.read_text(encoding="utf-8") == "D = {'a': 1}\n"
 
 
+def test_edit_blank_and_comment_line_tier(repo):
+    """S9 fastapi_5077: one blank line typed for PEP 8's two between functions; S17 rich_3930: a comment line left
+    out of a 32-line SEARCH. Both NOT APPLIED (similarity 0.95 / 0.96), then a read_file and a retyped edit."""
+    src = repo / "pkg" / "gap.py"
+    text = ("def a(x):\n    if x:\n        x = 1\n    return x\n\n\ndef b(y):\n    # Binary search until we find it\n"
+            "    lo = 0\n    hi = y\n    return lo + hi\n")
+    src.write_text(text, encoding="utf-8")
+    # one blank line where the file has two: the file's two are kept (unchanged neighbours)
+    r = run_edit(repo, block("    return x\n\ndef b(y):", "    return x + 1\n\ndef b(y):"), "pkg/gap.py")
+    assert r.returncode == 0 and "blank lines or comment lines" in r.stdout, r.stdout
+    assert src.read_text(encoding="utf-8") == text.replace("    return x\n", "    return x + 1\n"), src.read_text()
+    # comment left out: matched, and the comment survives because its neighbours are unchanged
+    r = run_edit(repo, block("def b(y):\n    lo = 0\n    hi = y\n    return lo + hi", "def b(y):\n    lo = 0\n    hi = y\n    return lo - hi"),
+                 "pkg/gap.py")
+    assert r.returncode == 0 and "blank lines or comment lines" in r.stdout, r.stdout
+    assert "    # Binary search until we find it\n    lo = 0\n    hi = y\n    return lo - hi\n" in src.read_text(encoding="utf-8")
+    # the model rewrote the lines around the comment: its replacement decides, the comment is not re-inserted there
+    r = run_edit(repo, block("def b(y):\n    lo = 0", "def b(y, z=0):\n    lo = z"), "pkg/gap.py")
+    assert r.returncode == 0 and "# Binary search" not in src.read_text(encoding="utf-8"), r.stdout
+    compile(src.read_text(encoding="utf-8"), "gap.py", "exec")
+    # an extra blank line in SEARCH that the file does not have is not written back where nothing changed
+    src.write_text("X = 1\nY = 2\nZ = 3\n", encoding="utf-8")
+    r = run_edit(repo, block("X = 1\n\nY = 2\nZ = 3", "X = 1\n\nY = 2\nZ = 4"), "pkg/gap.py")
+    assert r.returncode == 0 and src.read_text(encoding="utf-8") == "X = 1\nY = 2\nZ = 4\n", src.read_text()
+    # a comment the file does not have, or a different code line, is still NOT APPLIED and nothing is written
+    for bad in ("X = 1\n# new comment\nY = 2", "X = 1\nW = 0\nY = 2"):
+        r = run_edit(repo, block(bad, "X = 0\nY = 0"), "pkg/gap.py")
+        assert r.returncode == 1 and "EDIT NOT APPLIED" in r.stdout and src.read_text(encoding="utf-8") == "X = 1\nY = 2\nZ = 4\n"
+    # two regions equal up to blank lines: ambiguous, nothing written
+    src.write_text("def f():\n    a = 1\n\n    b = 2\n\n\ndef g():\n    a = 1\n    b = 2\n\n\nh = 0\n", encoding="utf-8")
+    before = src.read_text(encoding="utf-8")
+    r = run_edit(repo, block("    a = 1\n\n\n    b = 2", "    a = 3\n    b = 2"), "pkg/gap.py")
+    assert r.returncode == 1 and "occurs 2 times" in r.stdout and src.read_text(encoding="utf-8") == before, r.stdout
+    # outside Python files a '#' line (a Markdown heading) is never skipped
+    md = repo / "docs.md"
+    md.write_text("intro\n# Usage\nrun it\n", encoding="utf-8")
+    r = run_edit(repo, block("intro\nrun it", "intro\nrun it now"), "docs.md")
+    assert r.returncode == 1 and md.read_text(encoding="utf-8") == "intro\n# Usage\nrun it\n", r.stdout
+
+
 def test_edit_refuses_ambiguous_empty_and_breaking_edits(repo):
     (repo / "pkg" / "dup.py").write_text("def a():\n    return 1\n\n\ndef b():\n    return 1\n", encoding="utf-8")
     before = (repo / "pkg" / "dup.py").read_text(encoding="utf-8")

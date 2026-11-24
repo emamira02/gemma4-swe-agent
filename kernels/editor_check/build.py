@@ -269,6 +269,20 @@ if err is None:
              and fm == b'SVG = """\\\n    @font-face {{\n        font-family: "{font_family}";\n    }}\n"""\n',
              out + "\nFILE:\n" + fm.decode())
         os.remove(os.path.join(sws, "pkg", "fmt.py"))
+        # S23: blank-line / comment-line tier (S9 fastapi_5077: one blank typed for two; S17 rich_3930: comment left out)
+        gap_src = ("def a(x):\n    return x\n\n\ndef b(y):\n    # Binary search until we find it\n    lo = 0\n"
+                   "    return lo + y\n")
+        with open(os.path.join(sws, "pkg", "gap.py"), "w") as fh:
+            fh.write(gap_src)
+        code, out = run("python3 /workspace/.git/swe/edit.py pkg/gap.py <<'EOF'\n<<<<<<< SEARCH\n    return x\n\ndef b(y):\n"
+                        "    lo = 0\n    return lo + y\n=======\n    return x + 1\n\ndef b(y):\n    lo = 0\n    return lo - y\n"
+                        ">>>>>>> REPLACE\nEOF")
+        gp = read("pkg/gap.py", sws)
+        case("B blank and comment lines matched through the sandbox heredoc, the file's own kept",
+             code == 0 and "blank lines or comment lines" in out
+             and gp == gap_src.replace("return x\n", "return x + 1\n").replace("lo + y", "lo - y").encode(),
+             out + "\nFILE:\n" + gp.decode())
+        os.remove(os.path.join(sws, "pkg", "gap.py"))
         code, out = run("python3 /workspace/.git/swe/edit.py pkg/markup.py <<'EOF'\n<<<<<<< SEARCH\n    nothing here\n"
                         "=======\nx\n>>>>>>> REPLACE\nEOF")
         case("B failure message names the /workspace spelling", code == 1 and
